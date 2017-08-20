@@ -1,0 +1,49 @@
+For registration
+1.Device name
+2.ssid
+3.password
+{"Devicename":"sureshkumarg","ssid":"Gkwave","password":"sureshg23"}
+-------------------
+if u send
+{"Cpuinfo":1}
+we got msg
+{
+  "Model Name": "WIFI remote-Basic",
+  "Model No": "GKWAVE-B01000",
+  "DeviceName": "geek",
+  "ssid": "Gkwave",
+  "password": "sureshg23",
+  "Mac address": "5C:CF:7F:92:82:75",
+  "IPaddress": [
+    192,
+    168,
+    1,
+    8
+  ]
+}
+
+---------------------
+To get ip
+{"Getip":}
+we got msg
+{
+  "IPaddress": [
+    192,
+    168,
+    1,
+    8
+  ]
+}
+--------------------
+
+For switch on the device
+we send
+{"Relay1":1}
+For switch off the device
+we send
+{"Relay1":0}
+----------------------
+To get status of the relay
+we send
+{"State":}
+we got msg
