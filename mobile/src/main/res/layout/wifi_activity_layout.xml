@@ -1,0 +1,146 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main_layout"
+    android:layout_width="fill_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:orientation="vertical"
+    android:screenOrientation="portrait">
+
+
+    <FrameLayout
+        android:id="@+id/master_frame_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="visible">
+
+        <RelativeLayout
+            android:id="@+id/master_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible">
+
+            <Spinner
+                android:id="@+id/wifi_ssid_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="100dp"
+                android:ellipsize="end"
+                android:ems="10"
+                android:focusable="true"
+                android:maxHeight="60dp"
+                android:maxLines="1"
+                android:minHeight="50dp"
+                android:paddingLeft="7dp" />
+
+            <EditText
+                android:id="@+id/wifi_pwd"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/wifi_ssid_spinner"
+                android:layout_marginEnd="20dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="40dp"
+                android:background="@drawable/bg_edit_text"
+                android:drawableLeft="@drawable/ic_lock_white"
+                android:drawablePadding="50dp"
+                android:ellipsize="end"
+                android:ems="10"
+                android:focusable="true"
+                android:hint="Enter router password"
+                android:inputType="textPassword"
+                android:maxHeight="60dp"
+                android:maxLines="1"
+                android:minHeight="50dp"
+                android:paddingLeft="5dp" />
+
+            <LinearLayout
+                android:id="@+id/connect_skip_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/wifi_pwd"
+                android:layout_marginTop="40dp"
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <Button
+                    android:id="@+id/btn_connect"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/margin_normal"
+                    android:layout_marginRight="@dimen/margin_normal"
+                    android:layout_weight="1"
+                    android:background="@drawable/login_button_shape"
+                    android:maxHeight="50dp"
+                    android:onClick="onConnectClick"
+                    android:padding="12dp"
+                    android:text="@string/connect"
+                    android:textColor="@android:color/white"
+                    android:textSize="18sp" />
+
+                <Button
+                    android:id="@+id/btn_skip"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/margin_normal"
+                    android:layout_marginRight="@dimen/margin_normal"
+                    android:layout_weight="1"
+                    android:background="@drawable/login_button_shape"
+                    android:maxHeight="50dp"
+                    android:onClick="onSkipClick"
+                    android:padding="12dp"
+                    android:text="@string/skip"
+                    android:textColor="@android:color/white"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btn_scan"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/connect_skip_container"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="@dimen/margin_normal"
+                android:layout_marginLeft="@dimen/margin_normal"
+                android:layout_marginRight="@dimen/margin_normal"
+                android:background="@drawable/login_button_shape"
+                android:maxHeight="50dp"
+                android:onClick="onScanClick"
+                android:padding="12dp"
+                android:text="@string/scan_wifi"
+                android:textColor="@android:color/white"
+                android:textSize="18sp" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/loading_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:alpha="0.2"
+            android:background="@color/warm_grey_two"
+            android:visibility="gone">
+
+            <ProgressBar
+                android:id="@+id/loading_progressbar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true" />
+
+            <TextView
+                android:id="@+id/loading_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/loading_progressbar"
+                android:layout_centerInParent="true"
+                android:gravity="center"
+                android:padding="@dimen/padding_normal"
+                android:text="@string/wait_for_scan_result"
+                android:textColor="@color/black_two" />
+        </RelativeLayout>
+
+    </FrameLayout>
+
+</RelativeLayout>

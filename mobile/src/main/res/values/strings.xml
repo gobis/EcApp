@@ -1,3 +1,20 @@
 <resources>
-    <string name="app_name">" EcApp"</string>
+    <string name="app_name">"Ez Control"</string>
+
+
+
+    <!--commonly used string-->
+    <string name="send">Send</string>
+    <string name="ip_hint">Enter your IP here</string>
+    <string name="port_hint">Enter your Port here</string>
+    <string name="command_hint">Enter your command here</string>
+
+
+    <string name="connect">Connect</string>
+    <string name="skip">Skip</string>
+    <string name="scan_wifi">Scan</string>
+
+    <string name="wait_for_scan_result">Please wait, Scanning for Wifi...</string>
+    <string name="connection_loading_text">Please wait, While making connection...</string>
+
 </resources>

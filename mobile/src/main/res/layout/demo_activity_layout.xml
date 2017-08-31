@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <EditText
+        android:id="@+id/udp_ip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/ip_hint"
+        android:paddingLeft="@dimen/padding_large"
+        android:layout_marginLeft="@dimen/margin_normal"
+        android:digits="1234567890."
+        android:layout_marginBottom="@dimen/margin_normal"
+        android:inputType="number" />
+
+    <EditText
+        android:id="@+id/udp_port"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/port_hint"
+        android:paddingLeft="@dimen/padding_large"
+        android:layout_marginLeft="@dimen/margin_normal"
+        android:layout_marginBottom="@dimen/margin_normal"
+        android:inputType="number" />
+
+
+    <EditText
+        android:id="@+id/command"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/command_hint"
+        android:paddingLeft="@dimen/padding_large"
+        android:layout_marginLeft="@dimen/margin_normal"
+        android:layout_marginBottom="@dimen/margin_normal"
+        android:inputType="textPersonName" />
+
+    <Button
+        android:id="@+id/demo_cmd_send"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/NormalButtonStyle"
+        android:background="@drawable/button_effect"
+        android:onClick="onCommandSendClick"
+        android:text="@string/send" />
+</LinearLayout>

@@ -3,4 +3,128 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
+    <color name="selected">#3F51B5</color>
+
+    <color name="warm_grey_two">#909090</color>
+
+    <color name="login_bg_color">#00314D</color>
+    <color name="dark_gray">#555555</color>
+    <color name="light_gray">#9d9d9d</color>
+    <color name="light_gray_color">#E6E6E6</color>
+    <color name="lighter_gray">#d3d3d3</color>
+    <color name="blue">#1289c4</color>
+    <color name="red">#ff0000</color>
+    <color name="translucent_white">#eeffffff</color>
+
+    <!-- Alarms -->
+    <color name="divider_line">#bababa</color>
+    <color name="acknowledge_bg">#53d553</color>
+    <color name="unacknowledged_bg">#ffffff</color>
+    <color name="clear_bg">#e53e3e</color>
+    <color name="acknowledged_item_bg">#e5e5e5</color>
+    <color name="alarm_status_title">#e33e38</color>
+    <color name="alarm_details_background">#f5f5f5</color>
+    <color name="alarm_details_description">#707070</color>
+    <color name="alarm_details_acknowledge_button_bg">#39b54a</color>
+    <color name="alarm_details_momentary_unlock">#009fe0</color>
+    <color name="alarms_row_divider">#bababa</color>
+    <color name="alarm_details_item_color">#454545</color>
+    <color name="alert_title">#e33e37</color>
+    <color name="alert_btn">#157efb</color>
+    <color name="pinned_section_header_bg">#d3d3d3</color>
+    <color name="pinned_section_header_text_color">#747474</color>
+    <!-- App tour -->
+    <color name="anim_menu_text_color">#707070</color>
+    <color name="color_black">#000000</color>
+    <!-- 66000000 -->
+    <color name="black_overlay">#ffffff</color>
+    <color name="video_layout_background">#323232</color>
+    <color name="translucent">#80000000</color>
+    <color name="darker_translucent">#AA000000</color>
+
+    <!-- My Sites -->
+    <color name="sites_header_background_color">#f5f6f6</color>
+    <color name="sites_header_text_color">#717171</color>
+
+    <color name="sites_name_color">#464646</color>
+    <color name="sites_address_color">#717171</color>
+    <color name="lock_down_color">#009fe0</color>
+    <color name="open_all_stroke_color">#ffffff</color>
+    <color name="lock_down_active_text_color">#e8a108</color>
+    <color name="address_color">#707070</color>
+    <color name="door_status_green">#3bad49</color>
+    <color name="door_status_red">#e33e38</color>
+    <color name="camera_screen_bottom_bar">#272727</color>
+    <!-- My Sites Details -->
+    <color name="warning_red">#ff0000</color>
+    <color name="black">#000000</color>
+
+    <!-- Settings -->
+    <color name="setting_background">#f7f7f7</color>
+    <color name="txt_color">#454545</color>
+    <color name="role_color">#707070</color>
+    <color name="ss_divider_color">#d0d0d0</color>
+    <color name="logout">#E33E38</color>
+    <color name="user_name_txt_color">#303030</color>
+    <color name="brownish_grey">#606060</color>
+    <color name="profile_divider_color">#cacaca</color>
+    <color name="color_leaf">#7eb338</color>
+
+    <!-- People -->
+    <color name="people_bakground">#F5F5F5</color>
+    <color name="person_nametxt">#454545</color>
+    <color name="cardid">#707070</color>
+    <color name="people_divider_color">#B2B2B2</color>
+    <color name="sticky_background">#E5E5E5</color>
+    <color name="user_img_text_background">#F0F0F0</color>
+    <color name="people_unblock">#7EB338</color>
+    <color name="white_two">#f7f7f7</color>
+    <color name="expiry_color">#c83a24</color>
+    <color name="card_bg">#f2f2f2</color>
+    <color name="card_unblock_info_bg">#fff3d3</color>
+    <color name="card_unblock_info_outer">#ffd867</color>
+    <color name="block_text_color">#ee3124</color>
+    <color name="card_active_color">#98c260</color>
+
+
+    <color name="greyishBrownTwo">#3f3f3f</color>
+    <color name="whiteThree">#ececec</color>
+    <color name="white">#ffffff</color>
+    <color name="waterBlue">#1792e5</color>
+    <color name="pinkishGrey">#D0D0D0</color>
+    <color name="greyishBrown">#404040</color>
+    <color name="warmGrey">#808080</color>
+    <color name="water_blue">#1792e5</color>
+    <color name="item_count_color">#505050</color>
+    <color name="ping_grey_two">#c0c0c0</color>
+    <color name="white_three">#e0e0e0</color>
+    <color name="warm_grey">#909090</color>
+    <color name="devices_background">#787878</color>
+    <color name="black_two">#101010</color>
+    <color name="black_four">#303030</color>
+    <color name="pinkish_grey">#d0d0d0</color>
+    <color name="all_white_row_divider">#E0E0E0</color>
+    <color name="section_header_bg">#e5e5e5</color>
+
+
+    <!-- Forgot Password screen related colors-->
+    <color name="black_three_40">#66000000</color>
+    <color name="tomato">#ee3124</color>
+
+    <color name="greyish">#b0b0b0</color>
+    <color name="black_three">#000000</color>
+    <color name="cherry">#de0021</color>
+    <color name="dark">#263238</color>
+    <color name="greeny_blue">#4cb5ab</color>
+    <color name="vermillion">#f31b1b</color>
+    <color name="black_three_60">#99000000</color>
+    <color name="white_four">#d8d8d8</color>
+    <color name="black_three_50">#80000000</color>
+    <color name="black_five">#252525</color>
+    <color name="warm_grey_0">#00999999</color>
+    <color name="warm_grey_four">#a0a0a0</color>
+    <color name="mossy_green">#658f2d</color>
+
+
 </resources>

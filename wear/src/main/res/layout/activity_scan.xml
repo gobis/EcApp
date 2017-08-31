@@ -5,7 +5,7 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.gw.ecapp.ScanActivity"
+    tools:context="com.gw.ecapp.scangateway.ScanActivity"
     tools:deviceIds="wear">
 
     <TextView
