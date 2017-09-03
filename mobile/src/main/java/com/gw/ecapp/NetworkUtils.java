@@ -1,8 +1,12 @@
 package com.gw.ecapp;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.wifi.ScanResult;
+import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.text.TextUtils;
 
 import com.gw.ecapp.engine.udpEngine.AppUtils;
 
@@ -38,7 +42,7 @@ public class NetworkUtils {
 
             int size = scanResults.size();
             int maxLevel = 5;
-            for (int i = 0; i <= size - 1; i++) {
+            for (int i = 0; i < size; i++) {
                 // filtering the scan results based on ServiceSetID
                 if (scanResults.get(i).SSID != null) {
                     int level = WifiManager.calculateSignalLevel(scanResults.get(i).level, maxLevel);
@@ -57,4 +61,31 @@ public class NetworkUtils {
         }
         return wifiArrayList;
     }
+
+
+    public static String getCurrentSsid(Context context){
+        String ssid = null;
+        ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connManager.getActiveNetworkInfo();
+        if (null != networkInfo && networkInfo.isConnected()) {
+            final WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+            final WifiInfo connectionInfo = wifiManager.getConnectionInfo();
+            if (connectionInfo != null && !TextUtils.isEmpty(connectionInfo.getSSID())) {
+                ssid = connectionInfo.getSSID();
+            }
+        }
+        return ssid;
+    }
+
+
+    public static boolean isWifiNetworkAvailable(Context context){
+        WifiManager mng = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        return mng.isWifiEnabled();
+    }
+
+    public static void enableWifiConnection(Context context){
+        WifiManager wifi = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        wifi.setWifiEnabled(true);
+    }
+
 }

@@ -1,4 +1,4 @@
-package com.gw.ecapp.startup;
+package com.gw.ecapp.startup.SpinnerAdapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -27,7 +27,6 @@ public class WifiSsidAdapter extends BaseAdapter {
 
     public WifiSsidAdapter(Context context){
         mContext = context ;
-
     }
 
     public void setData(ArrayList<HashMap<String, String>> data){
@@ -60,6 +59,7 @@ public class WifiSsidAdapter extends BaseAdapter {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         ViewHolder viewHolder = null;
         if (convertView == null) {
+            viewHolder = new ViewHolder();
             convertView = inflater.inflate(R.layout.wifi_list_row, parent, false);
             viewHolder.wifiName = (TextView) convertView.findViewById(R.id.wifi_name);
             viewHolder.wifiStrength = (ImageView) convertView.findViewById(R.id.wifi_strength);
@@ -74,7 +74,7 @@ public class WifiSsidAdapter extends BaseAdapter {
 
         int wifiLevel = Integer.parseInt(wifiMap.get(AppUtils.WIFI_LEVEL).toString());
 
-        switch (wifiLevel){
+        switch (wifiLevel) {
             case 2:
                 viewHolder.wifiStrength.setImageResource(R.drawable.assetswifi__range_4b);
                 break;

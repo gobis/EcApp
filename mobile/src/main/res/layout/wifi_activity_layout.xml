@@ -115,31 +115,7 @@
 
         </RelativeLayout>
 
-        <RelativeLayout
-            android:id="@+id/loading_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:alpha="0.2"
-            android:background="@color/warm_grey_two"
-            android:visibility="gone">
-
-            <ProgressBar
-                android:id="@+id/loading_progressbar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true" />
-
-            <TextView
-                android:id="@+id/loading_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/loading_progressbar"
-                android:layout_centerInParent="true"
-                android:gravity="center"
-                android:padding="@dimen/padding_normal"
-                android:text="@string/wait_for_scan_result"
-                android:textColor="@color/black_two" />
-        </RelativeLayout>
+       <include layout="@layout/overlay_layout"/>
 
     </FrameLayout>
 

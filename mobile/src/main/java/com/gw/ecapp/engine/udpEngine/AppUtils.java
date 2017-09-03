@@ -1,6 +1,7 @@
 package com.gw.ecapp.engine.udpEngine;
 
 import java.net.InetAddress;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 /**
@@ -24,6 +25,9 @@ public class AppUtils {
     public static final int UDP_TIMEOUT = 5000;   // time out in milli sec
 
     public static final int UNI_CAST_MAX_RETRY_COUNT = 3;   // uni cast retry count
+
+
+    public static final long WIFI_CONN_WAIT_TIME = 25 * 1000;
 
     public static final String GATEWAY_PREFIX = "Device";
 

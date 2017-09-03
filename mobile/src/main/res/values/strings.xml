@@ -17,4 +17,12 @@
     <string name="wait_for_scan_result">Please wait, Scanning for Wifi...</string>
     <string name="connection_loading_text">Please wait, While making connection...</string>
 
+
+    <string name="connect_to_wrong_ssid">Wifi is not connected to selected router, Try again...</string>
+
+    <string name="unable_connect_to_given_wifi">Unable to connect to %1$s , Try again</string>
+
+    <string name="no_devices_found">No Devices found, Try again</string>
+
+
 </resources>

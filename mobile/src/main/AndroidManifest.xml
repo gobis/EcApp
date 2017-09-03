@@ -18,18 +18,31 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <meta-data
+            android:name="com.google.android.gms.vision.DEPENDENCIES"
+            android:value="barcode"/>
+        <!--values are barcode , ocr , face -->
+
         <activity android:name=".scangateway.ScanActivity">
         </activity>
 
         <activity android:name=".demo.DemoActivity"
             android:screenOrientation="portrait">
+        </activity>
+
+
+        <activity android:name=".startup.WifiActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
+        <activity android:name=".configuration.DeviceListActivity"
+            android:screenOrientation="portrait">
+        </activity>
 
     </application>
 

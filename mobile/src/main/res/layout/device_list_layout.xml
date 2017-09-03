@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ListView
+        android:id="@+id/device_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:divider="@color/white_four"
+        android:dividerHeight="2dp"/>
+
+
+    <TextView
+        android:id="@+id/no_devices_found"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/black"
+        android:text="@string/no_devices_found"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:visibility="gone"/>
+
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:text="@string/scan_wifi"
+        android:layout_marginBottom="@dimen/margin_normal"
+        android:layout_marginLeft="@dimen/margin_normal"
+        android:layout_marginRight="@dimen/margin_normal"
+        android:background="@drawable/login_button_shape"
+        android:maxHeight="50dp"
+        android:onClick="onScanClick"
+        />
+
+    <include
+        layout="@layout/overlay_layout"
+        />
+</RelativeLayout>
