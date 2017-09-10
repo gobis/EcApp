@@ -11,11 +11,10 @@ public class GetIpMsgPacket extends Message {
     @SerializedName("Cpuinfo")
     private String mCpuInfo;
 
-
-
     public GetIpMsgPacket(){
-
+        mCpuInfo = "";
     }
+
 
     public String getCpuInfo() {
         return mCpuInfo;
@@ -24,4 +23,5 @@ public class GetIpMsgPacket extends Message {
     public void setCpuInfo(String cpuInfo) {
         mCpuInfo = cpuInfo;
     }
+
 }

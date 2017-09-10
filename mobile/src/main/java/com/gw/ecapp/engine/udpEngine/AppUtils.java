@@ -29,11 +29,12 @@ public class AppUtils {
 
     public static final long WIFI_CONN_WAIT_TIME = 25 * 1000;
 
-    public static final String GATEWAY_PREFIX = "Device";
+    public static final String GATEWAY_PREFIX = "GKWAVE";
 
 
     public static final String SSID = "SSID";
     public static final String WIFI_LEVEL = "WifiLevel";
+
 
 
     public static void setUdpUniCastIp(String inetAddress, int portNumber){

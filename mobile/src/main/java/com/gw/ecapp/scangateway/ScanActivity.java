@@ -28,7 +28,6 @@ public class ScanActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
         mPresenter.getWifiAccessPointsList();
     }
 

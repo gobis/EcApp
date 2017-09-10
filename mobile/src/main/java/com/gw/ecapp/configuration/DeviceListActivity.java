@@ -1,15 +1,25 @@
 package com.gw.ecapp.configuration;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.gw.ecapp.AppConfig;
+import com.gw.ecapp.DialogListener;
+import com.gw.ecapp.DialogManager;
 import com.gw.ecapp.NetworkUtils;
 import com.gw.ecapp.R;
+import com.gw.ecapp.WifiConnection;
+import com.gw.ecapp.devicecontrol.DeviceControlListActivity;
+import com.gw.ecapp.engine.udpEngine.AppUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,7 +28,7 @@ import java.util.HashMap;
  * Created by iningosu on 9/3/2017.
  */
 
-public class DeviceListActivity extends AppCompatActivity {
+public class DeviceListActivity extends AppCompatActivity implements WifiConnection.ConnectionStatusInterface {
 
     private ListView mDeviceListView;
 
@@ -29,6 +39,16 @@ public class DeviceListActivity extends AppCompatActivity {
 
     RelativeLayout mOverlayContainer;
     TextView mNoResultText;
+
+    private String mSelectedDevicePassword;
+
+    private Context mCurrentContext;
+
+    private WifiConnection mWifiConnection;
+
+    private String mSelectedSSID;
+
+    TextView mLoadingText;
 
 
     @Override
@@ -42,12 +62,24 @@ public class DeviceListActivity extends AppCompatActivity {
 
         // ui mapping done
 
+        mWifiConnection = WifiConnection.getInstance(this);
 
+        mCurrentContext = DeviceListActivity.this;
 
         mDeviceListAdapter = new DeviceListAdapter(this);
 
         mDeviceListView = (ListView) findViewById(R.id.device_list);
+
+        mLoadingText = (TextView) findViewById(R.id.loading_text);
+
         mDeviceListView.setAdapter(mDeviceListAdapter);
+
+        mDeviceListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                showPasswordDialog(mWifiList.get(position).get(AppUtils.SSID));
+            }
+        });
 
     }
 
@@ -67,7 +99,8 @@ public class DeviceListActivity extends AppCompatActivity {
     private void getWifiList(){
 
         showOverlayWhileFetchingWifi();
-        mWifiList =  NetworkUtils.getWifiAccessPointsList(false,DeviceListActivity.this);
+        mWifiList =  NetworkUtils.getWifiAccessPointsList(
+                AppConfig.DeviceFilter,DeviceListActivity.this);
         hideOverlayWhenWifiIsCompleted();
 
         mDeviceListAdapter.setData(mWifiList);
@@ -104,6 +137,116 @@ public class DeviceListActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+    }
+
+    private void showPasswordDialog(final String selectedDevice) {
+        mSelectedSSID = selectedDevice;
+        DialogManager.showGenericConfirmDialogForOneButtons(
+                DeviceListActivity.this,
+                getString(R.string.connect_to_device_wifi, selectedDevice), getString(R.string.connect), new DialogListener() {
+                    @Override
+                    public void positiveButtonClick(String devicePassword) {
+                        mSelectedDevicePassword = devicePassword;
+                        Toast.makeText(DeviceListActivity.this, "password " + devicePassword, Toast.LENGTH_SHORT).show();
+                        makeConnection(selectedDevice, devicePassword);
+                    }
+                });
+    }
+
+
+    @Override
+    public void ConnectionStatus(WifiConnection.ConnStatus status) {
+
+        switch (status){
+            case CONNECTING:
+                break;
+            case CONNECTED:
+                 checkWifiConnection();
+                break;
+            case DISCONNECTED:
+                break;
+            case CONNECTION_START:
+                break;
+            case TIMEOUT:
+                 connectionTimeOut();
+                break;
+            case UNKNOWN:
+                connectionUnknownStatus();
+                break;
+        }
+    }
+
+
+    private void checkWifiConnection(){
+
+        onSuccessfulWifiConnection();
+        // get currently connected ssid
+        String currentSsid = NetworkUtils.getCurrentSsid(DeviceListActivity.this);
+
+        // remove double quoute from leading and trail
+        currentSsid = currentSsid.replaceAll("\"","");
+
+        if(mSelectedSSID.equalsIgnoreCase(currentSsid)){
+            navigateToNextScreen();
+            Toast.makeText(mCurrentContext," Conneciton successful",Toast.LENGTH_SHORT).show();
+        }else {
+            Toast.makeText(mCurrentContext,getString(R.string.connect_to_wrong_ssid),Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+    /**
+     * responsible to handle connection time out when user unable to connect to network
+     */
+    private void connectionTimeOut(){
+        onSuccessfulWifiConnection();
+        Toast.makeText(mCurrentContext,getString(R.string.unable_connect_to_given_wifi,mSelectedSSID), Toast.LENGTH_SHORT).show();
+
+    }
+
+    /**
+     * responsible to handle connection time out when user unable to connect to network
+     */
+    public void makeConnection(String deviceSsid, String devicepassword){
+        showLoadingWifiConnection();
+        mWifiConnection.startReceivingWifiChanges(getApplicationContext());
+        mWifiConnection.ConnectToServiceSetID(getApplicationContext(),deviceSsid,devicepassword);
+    }
+
+
+    private void connectionUnknownStatus(){
+        onSuccessfulWifiConnection();
+        Toast.makeText(mCurrentContext,getString(R.string.unable_connect_to_given_wifi,mSelectedSSID), Toast.LENGTH_SHORT).show();
+    }
+
+    public void showLoadingWifiConnection(){
+        // get ssid and pwd , and make connection
+        mOverlayContainer.setVisibility(View.VISIBLE);
+        mLoadingText.setText(getString(R.string.connection_loading_text));
+    }
+
+
+    public void onSuccessfulWifiConnection(){
+        // get ssid and pwd , and make connection
+        mOverlayContainer.setVisibility(View.GONE);
+
+    }
+
+    private void showProgressWhileScanWifi(){
+        mOverlayContainer.setVisibility(View.VISIBLE);
+        mLoadingText.setText(getString(R.string.wait_for_scan_result));
+    }
+
+
+    private void hideProgressOnScanDone(){
+        mOverlayContainer.setVisibility(View.GONE);
+        mLoadingText.setText("");
+    }
+
+
+    private void navigateToNextScreen(){
+        Intent intent = new Intent(this, DeviceControlListActivity.class);
+        startActivity(intent);
     }
 
 

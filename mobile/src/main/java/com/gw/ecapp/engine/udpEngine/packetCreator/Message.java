@@ -3,6 +3,9 @@ package com.gw.ecapp.engine.udpEngine.packetCreator;
 import com.google.gson.annotations.SerializedName;
 import com.gw.ecapp.engine.udpEngine.AppUtils;
 
+import java.util.Calendar;
+import java.util.UUID;
+
 /**
  * Created by iningosu on 8/25/2017.
  */
@@ -14,13 +17,14 @@ public class Message {
     private String mMessageId;
 
     @SerializedName("retryCount")
-    private int mRetryCount  = 0;
+    private transient int mRetryCount  = 0;
 
     @SerializedName("timestamp")
-    private long mTimeStampInMillis;
+    private transient  long mTimeStampInMillis;
 
     public Message(){
-
+        mMessageId = UUID.randomUUID().toString();
+        mTimeStampInMillis = Calendar.getInstance().getTimeInMillis();
     }
 
     public Message(String messageId , long timestamp) {

@@ -25,4 +25,6 @@
     <string name="no_devices_found">No Devices found, Try again</string>
 
 
+    <string name="connect_to_device_wifi">Kindly provide password to %1$s to make connection</string>
+
 </resources>
