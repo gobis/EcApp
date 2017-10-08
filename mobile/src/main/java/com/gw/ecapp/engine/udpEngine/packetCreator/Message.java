@@ -1,7 +1,7 @@
 package com.gw.ecapp.engine.udpEngine.packetCreator;
 
 import com.google.gson.annotations.SerializedName;
-import com.gw.ecapp.engine.udpEngine.AppUtils;
+import com.gw.ecapp.AppUtils;
 
 import java.util.Calendar;
 import java.util.UUID;
@@ -12,6 +12,9 @@ import java.util.UUID;
 
 public class Message {
 
+
+    @SerializedName("origin")
+    private String mOrigin;
 
     @SerializedName("id")
     private String mMessageId;
@@ -25,6 +28,7 @@ public class Message {
     public Message(){
         mMessageId = UUID.randomUUID().toString();
         mTimeStampInMillis = Calendar.getInstance().getTimeInMillis();
+        mOrigin = AppUtils.ORIGIN;
     }
 
     public Message(String messageId , long timestamp) {

@@ -10,4 +10,6 @@ public interface CommsInterface {
 
    void sendData(Message msg);
 
+   void ReceivedData(Message msg);
+
 }

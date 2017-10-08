@@ -6,12 +6,13 @@ import com.google.gson.annotations.SerializedName;
  * Created by iningosu on 8/25/2017.
  */
 
-public class GetIpMsgPacket extends Message {
+public class GetCpuMsgPacket extends Message {
 
-    @SerializedName("Cpuinfo")
+    @SerializedName("cpuInfo")
     private String mCpuInfo;
 
-    public GetIpMsgPacket(){
+    public GetCpuMsgPacket(){
+        super();
         mCpuInfo = "";
     }
 

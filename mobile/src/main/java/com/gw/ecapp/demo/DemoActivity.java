@@ -8,9 +8,10 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.gw.ecapp.AppUtils;
 import com.gw.ecapp.R;
 import com.gw.ecapp.engine.CommEngine;
-import com.gw.ecapp.engine.udpEngine.AppUtils;
+import com.gw.ecapp.engine.udpEngine.EngineUtils;
 import com.gw.ecapp.engine.udpEngine.udpComms.UDPClient;
 
 /**
@@ -61,8 +62,8 @@ public class DemoActivity extends AppCompatActivity {
         String portNumber = mPortNumber.getEditableText().toString();
 
         if(AppUtils.validateIp(ipAddress)) {
-            if (null == AppUtils.UDP_UNI_CAST_IP || AppUtils.UDP_UNI_CAST_IP.isEmpty()) {
-                AppUtils.setUdpUniCastIp(ipAddress, Integer.parseInt(portNumber));
+            if (null == EngineUtils.UDP_UNI_CAST_IP || EngineUtils.UDP_UNI_CAST_IP.isEmpty()) {
+                EngineUtils.setUdpUniCastIp(ipAddress, Integer.parseInt(portNumber));
             }
 
             String cmd = mCommand.getEditableText().toString();

@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.gw.ecapp.R;
-import com.gw.ecapp.engine.udpEngine.AppUtils;
+import com.gw.ecapp.engine.udpEngine.EngineUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -71,9 +71,9 @@ public class DeviceListAdapter extends BaseAdapter {
 
         HashMap wifiMap = mMasterData.get(position);
 
-        viewHolder.wifiName.setText(wifiMap.get(AppUtils.SSID).toString());
+        viewHolder.wifiName.setText(wifiMap.get(EngineUtils.SSID).toString());
 
-        int wifiLevel = Integer.parseInt(wifiMap.get(AppUtils.WIFI_LEVEL).toString());
+        int wifiLevel = Integer.parseInt(wifiMap.get(EngineUtils.WIFI_LEVEL).toString());
 
         switch (wifiLevel) {
             case 2:

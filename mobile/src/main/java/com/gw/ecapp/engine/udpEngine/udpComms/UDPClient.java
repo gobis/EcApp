@@ -8,7 +8,7 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.gw.ecapp.engine.CommEngine;
-import com.gw.ecapp.engine.udpEngine.AppUtils;
+import com.gw.ecapp.engine.udpEngine.EngineUtils;
 import com.gw.ecapp.engine.udpEngine.packetCreator.Message;
 
 import java.net.DatagramPacket;
@@ -18,7 +18,6 @@ import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.UUID;
 
 /**
  * Created by iningosu on 8/25/2017.
@@ -30,7 +29,7 @@ public class UDPClient extends CommEngine {
     private static UDPClient mUDP_instance;
     private Context mContext;
     private DatagramSocket clientReceiveSocket;
-    private DatagramSocket clientSendSocket;
+    private DatagramSocket clientSocket;
     private Thread receiverThread;
 
     private Gson gson ;
@@ -55,12 +54,16 @@ public class UDPClient extends CommEngine {
     private UDPClient() {
 
         try {
+
+
             if (null == clientReceiveSocket) {
-                clientReceiveSocket = new DatagramSocket(AppUtils.UDP_UNI_CAST_PORT);
+                clientReceiveSocket = new DatagramSocket(EngineUtils.UDP_UNI_CAST_PORT);
             }
-            if (null == clientSendSocket) {
-                clientSendSocket = new DatagramSocket();
+
+            if (null == clientSocket) {
+                clientSocket = new DatagramSocket();
             }
+
 
          /*   if (null == clients) {
                 clients = new CopyOnWriteArrayList<>();
@@ -74,7 +77,7 @@ public class UDPClient extends CommEngine {
             mUiHandler = new Handler();
         }
 
-        if (null == receiverThread) {
+       /* if (null == receiverThread) {
             receiverThread = new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -83,42 +86,65 @@ public class UDPClient extends CommEngine {
             }, "MsgListeningThread");
 
             receiverThread.start();
-        }
+        }*/
     }
 
 
     public void SendMessage(byte[] dataToSend) {
         try {
-            InetAddress IPAddress = InetAddress.getByName(AppUtils.UDP_UNI_CAST_IP)/*AppUtils.UDP_UNI_CAST_IP*/;
-            Log.i(getClass().getSimpleName(), "Sending Data to IP:PORT" + IPAddress.toString() + ":"
-                    +AppUtils.UDP_UNI_CAST_PORT + " Data is :" + new String(dataToSend, StandardCharsets.UTF_8));
+            InetAddress IPAddress = InetAddress.getByName(EngineUtils.UDP_UNI_CAST_IP);
+            Log.i(getClass().getSimpleName(), "Sending Data to IP:PORT  " + IPAddress.toString() + ":"
+                    + EngineUtils.UDP_UNI_CAST_PORT + " Data is :" + new String(dataToSend, StandardCharsets.UTF_8));
+            if (null == clientSocket) {
+                clientSocket = new DatagramSocket();
+            }
+
             DatagramPacket send_packet = new DatagramPacket(dataToSend, dataToSend.length,
-                    IPAddress, AppUtils.UDP_UNI_CAST_PORT);
-            clientSendSocket.send(send_packet);
+                    IPAddress, EngineUtils.UDP_UNI_CAST_PORT);
+
+
+            clientSocket.send(send_packet);
+            ReceiveMessage();
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), " Exception " + e.toString());
         }
     }
 
 
+    public void receiveMessage(){
+            receiverThread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    // ReceiveMessage();
+                }
+            }, "MsgListeningThread");
+
+            receiverThread.start();
+
+    }
+
     private void ReceiveMessage() {
         try {
 
-            while (true) {
-                byte[] receiveData = new byte[AppUtils.MAX_MSG_LENGTH];
-                DatagramPacket receive_packet = new DatagramPacket(receiveData, receiveData.length);
-                Log.i(getClass().getSimpleName(), "Listening Port Number 5665");
+//            while (true) {
+            byte[] receiveData = new byte[EngineUtils.MAX_MSG_LENGTH];
+            DatagramPacket receive_packet = new DatagramPacket(receiveData, receiveData.length);
+            Log.i(getClass().getSimpleName(), "Listening Port Number " + EngineUtils.UDP_UNI_CAST_PORT);
 
-                clientReceiveSocket.receive(receive_packet);
-                final byte[] responseBytes = Arrays.copyOf(receive_packet.getData(), receive_packet.getLength());
+            clientSocket.receive(receive_packet);
+            final byte[] responseBytes = Arrays.copyOf(receive_packet.getData(), receive_packet.getLength());
+            String recdData = new String(responseBytes, StandardCharsets.UTF_8);
+            Log.i(getClass().getSimpleName(), "Receiving data from  " + clientReceiveSocket.getInetAddress() + " :"
+                    + " Payload is " + recdData);
 
-                ((Activity)mContext).runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        String recdData = new String(responseBytes, StandardCharsets.UTF_8);
-                        removeItemFromQueueAfterResponse(recdData);
-                    }
-                });
+            ((Activity) mContext).runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+
+
+                   // removeItemFromQueueAfterResponse(recdData);
+                }
+            });
 
                /* if (isTimeOut) {
                     Log.i(getClass().getSimpleName(),"Timed Out");
@@ -127,31 +153,51 @@ public class UDPClient extends CommEngine {
                     retry_count = 0;
                     mUiHandler.removeCallbacks(timerRun);
 
-                    mUDP_Response = AppUtils.byteArrayToHex(responseBytes);
+                    mUDP_Response = EngineUtils.byteArrayToHex(responseBytes);
                     Log.i(getClass().getSimpleName(), " UniCast response : " + mUDP_Response);
 
                     int error_code = ParseResponseHeader(responseBytes);
 
                     if (error_code == 0) {
-                        NotifyClients(AppUtils.RequestStatus.SUCCESS, AppUtils.ERROR_CODES.RFS_SUCCESS);
+                        NotifyClients(EngineUtils.RequestStatus.SUCCESS, EngineUtils.ERROR_CODES.RFS_SUCCESS);
                     } else {
-                        NotifyClients(AppUtils.RequestStatus.ERROR, err_code);
+                        NotifyClients(EngineUtils.RequestStatus.ERROR, err_code);
                     }
                 }*/
 
-            }
+//            }
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), " Exception " + e.toString());
             e.printStackTrace();
         }
     }
 
+    /**
+     *
+     * @param msg
+     */
     public void SendMessageToGateway(Message msg) {
         String finalDataToSend = gson.toJson(msg);
         mRequestDataList.add(msg);
 
         new SendDataToGateway().execute(finalDataToSend.getBytes());
     }
+
+    /**
+     *
+     * @param msg
+     */
+    public void SendMessageToGateway(String msg) {
+        final byte[] finalData = msg.getBytes();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                SendMessage(finalData);
+            }
+        }).start();
+       // new SendDataToGateway().execute(finalData);
+    }
+
 
 
     private class SendDataToGateway extends AsyncTask<byte[], Void, Void> {

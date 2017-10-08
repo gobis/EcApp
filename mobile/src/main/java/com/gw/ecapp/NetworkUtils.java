@@ -8,7 +8,7 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.text.TextUtils;
 
-import com.gw.ecapp.engine.udpEngine.AppUtils;
+import com.gw.ecapp.engine.udpEngine.EngineUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,7 +26,7 @@ public class NetworkUtils {
      */
     public static boolean filterAccessPointsForGateway(String name) {
         name = name.toUpperCase();
-        return name.startsWith(AppUtils.GATEWAY_PREFIX);
+        return name.startsWith(AppConfig.GATEWAY_PREFIX);
     }
 
 
@@ -49,9 +49,9 @@ public class NetworkUtils {
                     String serviceSetID = scanResults.get(i).SSID;
                     if (!isFilterByGateway || NetworkUtils.filterAccessPointsForGateway(serviceSetID)) {
                         HashMap<String, String> item = new HashMap<>();
-                        item.put(AppUtils.SSID, serviceSetID);
+                        item.put(EngineUtils.SSID, serviceSetID);
                         item.put("Column", scanResults.get(i).capabilities);
-                        item.put(AppUtils.WIFI_LEVEL, String.valueOf(level));
+                        item.put(EngineUtils.WIFI_LEVEL, String.valueOf(level));
                         item.put("WifiNameColor", "0");
                         item.put("WifiConnectionState", "0");
                         wifiArrayList.add(item);

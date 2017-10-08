@@ -18,7 +18,7 @@ import com.gw.ecapp.NetworkUtils;
 import com.gw.ecapp.R;
 import com.gw.ecapp.WifiConnection;
 import com.gw.ecapp.configuration.DeviceListActivity;
-import com.gw.ecapp.engine.udpEngine.AppUtils;
+import com.gw.ecapp.engine.udpEngine.EngineUtils;
 import com.gw.ecapp.startup.SpinnerAdapter.WifiSsidAdapter;
 
 import java.util.ArrayList;
@@ -88,7 +88,7 @@ public class WifiActivity extends AppCompatActivity implements WifiConnection.Co
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 HashMap<String,String> wifiData = mWifiListData.get(position);
-                mSelectedSSID = wifiData.get(AppUtils.SSID);
+                mSelectedSSID = wifiData.get(EngineUtils.SSID);
                 Toast.makeText(mCurrentContext," Selected SSID " + mSelectedSSID , Toast.LENGTH_SHORT).show();
             }
 

@@ -9,13 +9,11 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.CountDownTimer;
-import android.os.Handler;
 import android.util.Log;
 
-import com.gw.ecapp.engine.udpEngine.AppUtils;
+import com.gw.ecapp.engine.udpEngine.EngineUtils;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by iningosu on 9/3/2017.
@@ -188,7 +186,7 @@ public class WifiConnection {
      */
     private void startConnectionTimer(){
 
-        mConnTimer = new CountDownTimer(AppUtils.WIFI_CONN_WAIT_TIME,1000) {
+        mConnTimer = new CountDownTimer(EngineUtils.WIFI_CONN_WAIT_TIME,1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 Log.i(TAG,"seconds remaining: " + millisUntilFinished / 1000);

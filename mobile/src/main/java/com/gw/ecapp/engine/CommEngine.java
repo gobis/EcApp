@@ -48,4 +48,9 @@ public class CommEngine implements CommsInterface{
     public void sendData(Message msg) {
 
     }
+
+    @Override
+    public void ReceivedData(Message msg) {
+
+    }
 }
