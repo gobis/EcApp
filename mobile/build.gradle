@@ -34,10 +34,13 @@ dependencies {
     })
     wearApp project(':wear')
     compile 'com.google.android.gms:play-services-wearable:10.2.1'
-    compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'com.android.support:appcompat-v7:25.3.+'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     testCompile 'junit:junit:4.12'
 
     compile 'com.google.code.gson:gson:2.8.1'
     compile 'com.google.android.gms:play-services-vision:10.2.1'
+
+    // https://mvnrepository.com/artifact/com.j256.ormlite/ormlite-android
+    compile group: 'com.j256.ormlite', name: 'ormlite-android', version: '4.45'
 }

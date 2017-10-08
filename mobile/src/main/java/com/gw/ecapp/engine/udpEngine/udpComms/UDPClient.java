@@ -195,7 +195,7 @@ public class UDPClient extends CommEngine {
                 SendMessage(finalData);
             }
         }).start();
-       // new SendDataToGateway().execute(finalData);
+
     }
 
 

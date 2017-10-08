@@ -1,10 +1,11 @@
 package com.gw.ecapp.configuration;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -20,6 +21,7 @@ import com.gw.ecapp.DialogManager;
 import com.gw.ecapp.NetworkUtils;
 import com.gw.ecapp.R;
 import com.gw.ecapp.WifiConnection;
+import com.gw.ecapp.devicecontrol.DeviceControlListActivity;
 import com.gw.ecapp.engine.udpEngine.EngineUtils;
 import com.gw.ecapp.engine.udpEngine.packetCreator.GetCpuMsgPacket;
 import com.gw.ecapp.engine.udpEngine.udpComms.UDPClient;
@@ -31,7 +33,7 @@ import java.util.HashMap;
  * Created by iningosu on 9/3/2017.
  */
 
-public class DeviceListActivity extends AppCompatActivity implements WifiConnection.ConnectionStatusInterface {
+public class DeviceListActivity extends Activity implements WifiConnection.ConnectionStatusInterface {
 
     private ListView mDeviceListView;
 
@@ -265,8 +267,14 @@ public class DeviceListActivity extends AppCompatActivity implements WifiConnect
     }
 
 
+    public void onScanClick(View view){
+        getWifiList();
+    }
+
     private void navigateToNextScreen(){
 
+
+       /*
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -274,10 +282,19 @@ public class DeviceListActivity extends AppCompatActivity implements WifiConnect
                 getDeviceInfo();
             }
         },3000);
+        */
 
 
-       /* Intent intent = new Intent(this, DeviceControlListActivity.class);
-        startActivity(intent);*/
+
+        // move gateway to station mode
+        StationModeHelper helper = new StationModeHelper();
+        helper.setDeviceInStationMode(DeviceListActivity.this);
+
+        // get cpu info , ip , mac address , wifiName etc
+
+        Intent intent = new Intent(this, DeviceControlListActivity.class);
+        startActivity(intent);
+
     }
 
 
@@ -351,6 +368,9 @@ public class DeviceListActivity extends AppCompatActivity implements WifiConnect
 
             }
         },1000);
+
+
+
     }
 
 

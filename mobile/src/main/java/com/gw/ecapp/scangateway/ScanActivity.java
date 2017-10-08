@@ -1,12 +1,12 @@
 package com.gw.ecapp.scangateway;
 
-import android.support.v7.app.AppCompatActivity;
+import android.app.Activity;
 import android.os.Bundle;
 
 import com.gw.ecapp.NetworkUtils;
 import com.gw.ecapp.R;
 
-public class ScanActivity extends AppCompatActivity {
+public class ScanActivity extends Activity {
 
     ScanGwPresenter mPresenter;
 

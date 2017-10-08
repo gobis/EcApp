@@ -1,8 +1,9 @@
 package com.gw.ecapp.devicecontrol;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+
 import android.view.View;
 
 import com.gw.ecapp.NetworkUtils;
@@ -12,7 +13,7 @@ import com.gw.ecapp.R;
  * Created by iningosu on 9/10/2017.
  */
 
-public class DeviceControlListActivity extends AppCompatActivity {
+public class DeviceControlListActivity extends Activity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -74,6 +75,8 @@ public class DeviceControlListActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
     }
+
+
 
 
 

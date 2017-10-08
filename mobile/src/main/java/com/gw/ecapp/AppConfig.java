@@ -8,6 +8,7 @@ public class AppConfig {
 
     public static  boolean DeviceFilter = true ;
 
+
     public static final String GATEWAY_PREFIX = "GKWAVE";
 
 

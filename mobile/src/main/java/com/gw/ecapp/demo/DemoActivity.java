@@ -1,9 +1,10 @@
 package com.gw.ecapp.demo;
 
+import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -18,7 +19,7 @@ import com.gw.ecapp.engine.udpEngine.udpComms.UDPClient;
  * Created by iningosu on 8/26/2017.
  */
 
-public class DemoActivity extends AppCompatActivity {
+public class DemoActivity extends Activity {
 
     UDPClient mEngine;
 

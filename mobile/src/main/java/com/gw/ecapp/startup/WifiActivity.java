@@ -1,10 +1,10 @@
 package com.gw.ecapp.startup;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -14,12 +14,14 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.gw.ecapp.AssociatedWifiHelper;
 import com.gw.ecapp.NetworkUtils;
 import com.gw.ecapp.R;
 import com.gw.ecapp.WifiConnection;
 import com.gw.ecapp.configuration.DeviceListActivity;
 import com.gw.ecapp.engine.udpEngine.EngineUtils;
 import com.gw.ecapp.startup.SpinnerAdapter.WifiSsidAdapter;
+import com.gw.ecapp.storage.AppPreferences;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,7 +30,7 @@ import java.util.HashMap;
  * Created by iningosu on 8/27/2017.
  */
 
-public class WifiActivity extends AppCompatActivity implements WifiConnection.ConnectionStatusInterface {
+public class WifiActivity extends Activity implements WifiConnection.ConnectionStatusInterface {
 
 
     RelativeLayout mMasterContainer;
@@ -249,6 +251,19 @@ public class WifiActivity extends AppCompatActivity implements WifiConnection.Co
 
 
     private void navigateToDeviceListPage(){
+
+        // print all the available device connected to current network
+
+        AssociatedWifiHelper helper = new AssociatedWifiHelper();
+        helper.getAssociatedWifi(WifiActivity.this);
+
+        // store ssid , password and router availability  in pref
+
+        AppPreferences.getInstance(WifiActivity.this).setRouterSSID(mSelectedSSID);
+        AppPreferences.getInstance(WifiActivity.this).setRouterPassword(mPassword);
+        AppPreferences.getInstance(WifiActivity.this).setRouter(true);
+
+
         Intent intent = new Intent(WifiActivity.this, DeviceListActivity.class);
         startActivity(intent);
     }
