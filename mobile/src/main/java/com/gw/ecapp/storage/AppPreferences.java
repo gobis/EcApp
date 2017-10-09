@@ -12,13 +12,12 @@ public class AppPreferences {
 
     public final String PREFS_NAME = "EcAppPref";
 
-    public final String DEVICE_INFO = "deviceInfo";
 
     public final String ROUTER_SSID = "ssid";
-
     public final String ROUTER_PASSWORD = "password";
-
     public final String ROUTER_AVAILABLE = "hasRouter";
+
+    public final String CONFIG_STATUS = "configFlag";
 
 
 
@@ -42,31 +41,6 @@ public class AppPreferences {
             mInstance = new AppPreferences(context);
         }
         return mInstance;
-    }
-
-    public static AppPreferences getInstance() {
-        return mInstance;
-    }
-
-    public String getDeviceInfo() {
-        return mAppPref.getString(DEVICE_INFO, "");
-    }
-
-    /**
-     * store all the device info
-     * @param deviceInfo
-     */
-    public void setDeviceInfo(String deviceInfo) {
-
-        String devices = getDeviceInfo();
-
-        if(!devices.contains(deviceInfo)) {
-            deviceInfo = deviceInfo + devices ;
-            Log.i("", "info to be persist " + deviceInfo );
-            mAppPref.edit().putString(DEVICE_INFO, deviceInfo).commit();
-        }else{
-            Log.i("",deviceInfo + " already stored");
-        }
     }
 
 
@@ -94,10 +68,13 @@ public class AppPreferences {
         mAppPref.edit().putBoolean(ROUTER_AVAILABLE, hasRouter).commit();
     }
 
-    // device
-    // tech : mac address , IP address , no.of channels
-    // user :  switch mapping
 
+    public void setConfigStatus(boolean configValue){
+        mAppPref.edit().putBoolean(CONFIG_STATUS, configValue).commit();
+    }
 
+    public boolean getConfigStatus(){
+       return mAppPref.getBoolean(CONFIG_STATUS,false);
+    }
 
-}
+ }

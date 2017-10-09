@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.gw.ecapp.AssociatedWifiHelper;
 import com.gw.ecapp.NetworkUtils;
 import com.gw.ecapp.R;
+import com.gw.ecapp.TestUtility;
 import com.gw.ecapp.WifiConnection;
 import com.gw.ecapp.configuration.DeviceListActivity;
 import com.gw.ecapp.engine.udpEngine.EngineUtils;
@@ -102,6 +103,8 @@ public class WifiActivity extends Activity implements WifiConnection.ConnectionS
 
         mWifiSsidAdapter = new WifiSsidAdapter(getApplicationContext());
         mWifiListSpinner.setAdapter(mWifiSsidAdapter);
+
+        test();
     }
 
     @Override
@@ -268,6 +271,11 @@ public class WifiActivity extends Activity implements WifiConnection.ConnectionS
         startActivity(intent);
     }
 
+
+    private void test(){
+        TestUtility testUtility = new TestUtility();
+        testUtility.TestDBInsert(WifiActivity.this);
+    }
 
 
 }
