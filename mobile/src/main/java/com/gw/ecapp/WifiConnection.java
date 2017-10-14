@@ -35,31 +35,34 @@ public class WifiConnection {
     String TAG = getClass().getSimpleName();
 
 
-    public static synchronized WifiConnection getInstance(ConnectionStatusInterface callback){
+    public static synchronized WifiConnection getInstance(ConnectionStatusInterface callback) {
 
-        if(INSTANCE ==  null){
+        if (INSTANCE == null) {
             INSTANCE = new WifiConnection();
         }
-        INSTANCE.mWifiConnCallBack =  callback;
-        return  INSTANCE;
+        INSTANCE.mWifiConnCallBack = callback;
+        return INSTANCE;
     }
 
 
-     private WifiConnection(){
+    private WifiConnection() {
 
-     }
-
-
-
-     public boolean isConnectionInProgress(){
-         return mIsConnInProgress ;
-     }
+    }
 
 
-    public void ConnectToServiceSetID(Context context, String serviceSetID, String pwd) {
+    public boolean isConnectionInProgress() {
+        return mIsConnInProgress;
+    }
+
+    /**
+     * responsible to connect to the provided network
+     * @param context
+     * @param serviceSetID ssid
+     * @param pwd password
+     * @param force connect to the network, though network config already available
+     */
+    public void ConnectToServiceSetID(Context context, String serviceSetID, String pwd , boolean force) {
         try {
-
-            removeNetworkIfMatches(context,serviceSetID);
 
             startConnectionTimer();
 
@@ -72,54 +75,83 @@ public class WifiConnection {
             wc.hiddenSSID = true;
             wc.status = WifiConfiguration.Status.ENABLED;
 
-//           int mNetID = NetworkCheck.checkPreviousConfiguration(this, wc);
+            int netId = checkPreviousConfiguration(context, wc);
 
-            int mNetID = wifi.addNetwork(wc);
+            if (force) {
+                Log.i(getClass().getSimpleName(), " Making connection forcefully , " +
+                        "will remove the network and adding it back with the given credential ");
 
-            if (mNetID == -1) {
-                mNetID = wifi.addNetwork(wc);
-            }
+                boolean status = removeNetworkIfMatches(context, serviceSetID);
 
-            if (mNetID != -1) {
-                wifi.disconnect();
-                wifi.enableNetwork(mNetID, true);
-                // wifi.saveConfiguration();
-                wifi.reconnect();
+                Log.i(getClass().getSimpleName(), " Status of network removal " + status);
 
-                Log.i(getClass().getSimpleName(), "Will establish connection soon with " + serviceSetID);
+                netId = wifi.addNetwork(wc);
+
+                if (netId != -1) {
+                    wifi.disconnect();
+                    wifi.enableNetwork(netId, true);
+                    // wifi.saveConfiguration();
+                    wifi.reconnect();
+
+                    Log.i(getClass().getSimpleName(), "Will establish connection soon with " + serviceSetID);
+
+                } else {
+                    Log.i(getClass().getSimpleName(), " Unable to create connection with " + serviceSetID);
+                }
 
             } else {
-                Log.i(getClass().getSimpleName(), " Unable to create connection with " + serviceSetID);
+                if (netId != -1) {
+                    Log.i(getClass().getSimpleName(), " Network available : making connection");
+                    // already we have configuration
+                    wifi.disconnect();
+                    wifi.enableNetwork(netId, true);
+                    wifi.reconnect();
+
+                } else {
+                    Log.i(getClass().getSimpleName(), " Network unavailable : creating new one ");
+                    // this config is not available, hence creating a new one
+                    netId = wifi.addNetwork(wc);
+
+                    if (netId != -1) {
+                        wifi.disconnect();
+                        wifi.enableNetwork(netId, true);
+                        // wifi.saveConfiguration();
+                        wifi.reconnect();
+
+                        Log.i(getClass().getSimpleName(), "Will establish connection soon with " + serviceSetID);
+
+                    } else {
+                        Log.i(getClass().getSimpleName(), " Unable to create connection with " + serviceSetID);
+                    }
+                }
             }
         } catch (Exception e) {
             Log.i(getClass().getSimpleName(), "Wifi connection  exception " + e.toString());
             handleExceptionWhileWifiConnection();
         }
-
     }
 
 
-    private void handleExceptionWhileWifiConnection(){
+    private void handleExceptionWhileWifiConnection() {
         stopReceivingWifiChanges();
         mWifiConnCallBack.ConnectionStatus(ConnStatus.UNKNOWN);
     }
 
 
-    public void startReceivingWifiChanges(Context context){
-        mContext = context ;
-        if(null != mContext) {
+    public void startReceivingWifiChanges(Context context) {
+        mContext = context;
+        if (null != mContext) {
             mContext.registerReceiver(this.myWifiReceiver,
                     new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
         }
     }
 
 
-    public  void stopReceivingWifiChanges(){
-        if(null != mContext) {
+    public void stopReceivingWifiChanges() {
+        if (null != mContext) {
             mContext.unregisterReceiver(myWifiReceiver);
         }
     }
-
 
 
     private final BroadcastReceiver myWifiReceiver = new BroadcastReceiver() {
@@ -130,21 +162,20 @@ public class WifiConnection {
                     (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
 
-
             // if active network type is wifi
             if (activeNetwork != null && activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
 
                 if (activeNetwork.getState() == NetworkInfo.State.CONNECTING) {
                     mWifiConnCallBack.ConnectionStatus(ConnStatus.CONNECTING);
-                }else if (activeNetwork.getState() == NetworkInfo.State.CONNECTED) {
+                } else if (activeNetwork.getState() == NetworkInfo.State.CONNECTED) {
                     mConnTimer.cancel();
                     mWifiConnCallBack.ConnectionStatus(ConnStatus.CONNECTED);
-                }else if (activeNetwork.getState() == NetworkInfo.State.DISCONNECTING) {
+                } else if (activeNetwork.getState() == NetworkInfo.State.DISCONNECTING) {
 
                 } else if (activeNetwork.getState() == NetworkInfo.State.DISCONNECTED) {
                     mWifiConnCallBack.ConnectionStatus(ConnStatus.DISCONNECTED);
 
-                }else if (activeNetwork.getState() == NetworkInfo.State.UNKNOWN) {
+                } else if (activeNetwork.getState() == NetworkInfo.State.UNKNOWN) {
 
                 }
 
@@ -160,36 +191,54 @@ public class WifiConnection {
 
     /**
      * remove the current network from list if matches
+     *
      * @param selectedSSID
      */
-    private void removeNetworkIfMatches(Context context, String selectedSSID){
+    private boolean removeNetworkIfMatches(Context context, String selectedSSID) {
 
-        WifiManager wifiManager = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
+        boolean removeNwStatus = false ;
+
+        WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         List<WifiConfiguration> list = wifiManager.getConfiguredNetworks();
 
-        String connectedSsid = NetworkUtils.getCurrentSsid(context);
-
-        if(null != connectedSsid) {
+        if (null != selectedSSID) {
             for (WifiConfiguration i : list) {
-                if (connectedSsid.equalsIgnoreCase(i.SSID)) {
+                if (selectedSSID.equalsIgnoreCase(i.SSID)) {
                     Log.i(TAG, "removeNetworkIfMatches removing network from the list ");
-                    wifiManager.removeNetwork(i.networkId);
+                    removeNwStatus =  wifiManager.removeNetwork(i.networkId);
                     wifiManager.saveConfiguration();
                 }
             }
         }
 
+        return  removeNwStatus ;
+
+    }
+
+
+    /**
+     * @param context
+     * @param wc
+     * @return
+     */
+    private int checkPreviousConfiguration(Context context, WifiConfiguration wc) {
+        WifiManager wifi = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        List<WifiConfiguration> configs = wifi.getConfiguredNetworks();
+        for (WifiConfiguration config : configs) {
+            if (config.SSID.equals(wc.SSID)) return config.networkId;
+        }
+        return wc.networkId;
     }
 
     /**
      * start the timer before making connection
      */
-    private void startConnectionTimer(){
+    private void startConnectionTimer() {
 
-        mConnTimer = new CountDownTimer(EngineUtils.WIFI_CONN_WAIT_TIME,1000) {
+        mConnTimer = new CountDownTimer(EngineUtils.WIFI_CONN_WAIT_TIME, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
-                Log.i(TAG,"seconds remaining: " + millisUntilFinished / 1000);
+                Log.i(TAG, "seconds remaining: " + millisUntilFinished / 1000);
             }
 
             @Override
@@ -204,7 +253,7 @@ public class WifiConnection {
     }
 
 
-    public enum ConnStatus{
+    public enum ConnStatus {
         CONNECTION_START,
         CONNECTING,
         CONNECTED,
@@ -213,12 +262,10 @@ public class WifiConnection {
         UNKNOWN
     }
 
-    public interface ConnectionStatusInterface{
+    public interface ConnectionStatusInterface {
         void ConnectionStatus(ConnStatus status);
 
     }
-
-
 
 
 }

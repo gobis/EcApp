@@ -13,44 +13,39 @@
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
 
     <application
-        android:name = "com.gw.ecapp.EcApp"
+        android:name=".EcApp"
         android:allowBackup="true"
         android:icon="@drawable/app_icon"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <meta-data
             android:name="com.google.android.gms.vision.DEPENDENCIES"
-            android:value="barcode"/>
-        <!--values are barcode , ocr , face -->
+            android:value="barcode" />
+        <!-- values are barcode , ocr , face -->
 
-        <activity android:name=".scangateway.ScanActivity">
-        </activity>
-
-        <activity android:name=".demo.DemoActivity"
+        <activity android:name=".scangateway.ScanActivity"></activity>
+        <activity
+            android:name=".demo.DemoActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".startup.WifiActivity"
             android:screenOrientation="portrait">
         </activity>
-
-
-        <activity android:name=".startup.WifiActivity"
+        <activity
+            android:name=".configuration.DeviceListActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".devicecontrol.DeviceControlListActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".startup.SplashScreen"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".configuration.DeviceListActivity"
-            android:screenOrientation="portrait">
-
-        </activity>
-
-        <activity android:name=".devicecontrol.DeviceControlListActivity"
-            android:screenOrientation="portrait">
-        </activity>
-
-
     </application>
 
 </manifest>

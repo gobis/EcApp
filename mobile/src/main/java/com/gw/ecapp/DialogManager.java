@@ -46,7 +46,6 @@ public class DialogManager {
         Button positive = (Button) mdDialog
                 .findViewById(R.id.btn_connect);
 
-
         tvTitle.setText(title);
         positive.setText(positiveButtonName);
 

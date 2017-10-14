@@ -233,7 +233,7 @@ public class DeviceListActivity extends Activity implements WifiConnection.Conne
     public void makeConnection(String deviceSsid, String devicepassword){
         showLoadingWifiConnection();
         mWifiConnection.startReceivingWifiChanges(getApplicationContext());
-        mWifiConnection.ConnectToServiceSetID(getApplicationContext(),deviceSsid,devicepassword);
+        mWifiConnection.ConnectToServiceSetID(getApplicationContext(),deviceSsid,devicepassword,false);
     }
 
 
@@ -297,18 +297,18 @@ public class DeviceListActivity extends Activity implements WifiConnection.Conne
 
     }
 
-
-    /**
+/*
+    *//**
      * responsible to get device info if mobile has connected successfully on the deivce
-     */
+     *//*
     private void getDeviceInfo(){
         UDPClient udpClient = UDPClient.getInstance(this);
         udpClient.SendMessageToGateway("{\"Cpuinfo\":}");
     }
 
-    /**
+    *//**
      *
-     */
+     *//*
     private void deviceInfoReceived(){
 
     }
@@ -337,12 +337,10 @@ public class DeviceListActivity extends Activity implements WifiConnection.Conne
 
                 Gson gson = new Gson();
                 String packet =  gson.toJson(cpu) ;
-              /*  String packet = */
+              *//*  String packet = *//*
 
-                /*mUdpClient.SendMessageToGateway("{\"Cpuinfo\":}");*/
+                *//*mUdpClient.SendMessageToGateway("{\"Cpuinfo\":}");*//*
                 mUdpClient.SendMessageToGateway(packet);
-
-
 
             }
         },1000);
@@ -368,10 +366,7 @@ public class DeviceListActivity extends Activity implements WifiConnection.Conne
 
             }
         },1000);
-
-
-
-    }
+    }*/
 
 
 

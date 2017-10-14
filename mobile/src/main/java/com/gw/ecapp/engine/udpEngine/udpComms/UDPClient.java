@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
 
+import com.google.android.gms.tasks.Task;
 import com.google.gson.Gson;
 import com.gw.ecapp.engine.CommEngine;
 import com.gw.ecapp.engine.udpEngine.EngineUtils;
@@ -18,6 +19,13 @@ import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Created by iningosu on 8/25/2017.
@@ -38,6 +46,8 @@ public class UDPClient extends CommEngine {
 
     Handler mUiHandler;
 
+    ExecutorService executor;
+
     public static UDPClient getInstance(Context context) {
         if (null == mUDP_instance) {
             synchronized (UDPClient.class) {
@@ -45,6 +55,7 @@ public class UDPClient extends CommEngine {
                 mUDP_instance.mContext = context;
                 mUDP_instance.gson = new Gson();
                 mUDP_instance.mRequestDataList = new ArrayList<>();
+                mUDP_instance.executor = Executors.newFixedThreadPool(3);
             }
         }
         return mUDP_instance;
@@ -229,6 +240,55 @@ public class UDPClient extends CommEngine {
         }
     }
 
+    /**
+     * Implementing executor service with 3 Sec time out
+     */
+
+    public void sendMessageToDevice(String message) {
+        Future<String> future = executor.submit(new SendReceive(message));
+        try {
+            System.out.println("Started..");
+            System.out.println(future.get(3, TimeUnit.SECONDS));
+            System.out.println(" Command given  " + future.get());
+
+            System.out.println("Finished!");
+        } catch (InterruptedException e) {
+            future.cancel(true);
+            System.out.println("InterruptedException!");
+        } catch (TimeoutException e) {
+            future.cancel(true);
+            System.out.println("TimeoutException !");
+        } catch (ExecutionException e) {
+            future.cancel(true);
+            System.out.println("ExecutionException!");
+        }
+    }
+
+    /**
+     * class responsible for sending and receiving data
+     */
+    private class SendReceive implements Callable<String> {
+
+        private String mCommand;
+
+        public SendReceive(String command){
+            mCommand = command ;
+        }
+
+        @Override
+        public String call() throws Exception {
+
+            SendMessage(mCommand.getBytes());
+
+            return  mCommand;
+
+        }
+    }
+
+
+    public void close(){
+        executor.shutdown();
+    }
 
 
 }

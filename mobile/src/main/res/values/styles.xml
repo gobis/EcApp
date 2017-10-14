@@ -16,7 +16,6 @@
         <item name="android:layout_margin">@dimen/margin_normal</item>
     </style>
 
-
-    <!-- use below style when user doesnt get any items -->
+      <!-- use below style when user doesnt get any items -->
 
 </resources>

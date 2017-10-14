@@ -137,7 +137,7 @@ public class WifiActivity extends Activity implements WifiConnection.ConnectionS
         mPassword = mWifiPwd.getEditableText().toString().trim();
         showLoadingWifiConnection();
         mWifiConnection.startReceivingWifiChanges(getApplicationContext());
-        mWifiConnection.ConnectToServiceSetID(getApplicationContext(),mSelectedSSID,mPassword);
+        mWifiConnection.ConnectToServiceSetID(getApplicationContext(),mSelectedSSID,mPassword,true);
         // get what is selected from spinner & pwd
 
     }

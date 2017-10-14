@@ -17,6 +17,9 @@ public class DeviceModel {
     public String deviceName;
 
     @DatabaseField
+    public String devicePassword;
+
+    @DatabaseField
     public String modelNumber;
     @DatabaseField
     public String channelCount;
@@ -48,6 +51,14 @@ public class DeviceModel {
 
     public void setDeviceName(String deviceName) {
         this.deviceName = deviceName;
+    }
+
+    public String getDevicePassword() {
+        return devicePassword;
+    }
+
+    public void setDevicePassword(String devicePassword) {
+        this.devicePassword = devicePassword;
     }
 
     public String getModelNumber() {
@@ -136,6 +147,7 @@ public class DeviceModel {
         return "DeviceModel{" +
                 "id='" + id + '\'' +
                 ", deviceName='" + deviceName + '\'' +
+                ", devicePassword='" + devicePassword + '\'' +
                 ", modelNumber='" + modelNumber + '\'' +
                 ", channelCount='" + channelCount + '\'' +
                 ", macId='" + macId + '\'' +

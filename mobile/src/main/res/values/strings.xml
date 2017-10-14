@@ -2,7 +2,6 @@
     <string name="app_name" translatable="false">"Ez Control"</string>
 
 
-
     <!--commonly used string-->
     <string name="send">Send</string>
     <string name="ip_hint">Enter your IP here</string>
@@ -26,5 +25,6 @@
 
 
     <string name="connect_to_device_wifi">Kindly provide password to %1$s to make connection</string>
+    <string name="title_activity_splash_screen">SplashScreen</string>
 
 </resources>
