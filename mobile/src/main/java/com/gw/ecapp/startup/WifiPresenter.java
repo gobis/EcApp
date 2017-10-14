@@ -21,7 +21,7 @@ public class WifiPresenter {
 
 
     public ArrayList<HashMap<String, String>> getWifiAccessPointsList(){
-        return  NetworkUtils.getWifiAccessPointsList(false,mContext);
+        return  NetworkUtils.getWifiAccessPointsList(NetworkUtils.NetworkFilter.FILTER_BY_WIFI,mContext);
     }
 
 

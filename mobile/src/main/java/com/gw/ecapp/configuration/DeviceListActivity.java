@@ -16,12 +16,15 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.gw.ecapp.AppConfig;
+import com.gw.ecapp.AppUtils;
 import com.gw.ecapp.DialogListener;
 import com.gw.ecapp.DialogManager;
 import com.gw.ecapp.NetworkUtils;
 import com.gw.ecapp.R;
 import com.gw.ecapp.WifiConnection;
+import com.gw.ecapp.demo.DemoActivity;
 import com.gw.ecapp.devicecontrol.DeviceControlListActivity;
+import com.gw.ecapp.engine.CommEngine;
 import com.gw.ecapp.engine.udpEngine.EngineUtils;
 import com.gw.ecapp.engine.udpEngine.packetCreator.GetCpuMsgPacket;
 import com.gw.ecapp.engine.udpEngine.udpComms.UDPClient;
@@ -71,14 +74,14 @@ public class DeviceListActivity extends Activity implements WifiConnection.Conne
         mOverlayContainer = (RelativeLayout) findViewById(R.id.overlay_container);
         mNoResultText = (TextView) findViewById(R.id.no_devices_found);
 
-      /*  mScanButton = (Button) findViewById(R.id.btn_scan);
+        mScanButton = (Button) findViewById(R.id.btn_scan);
 
         mScanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getWifiList();
             }
-        });*/
+        });
 
         mUiHandler = new Handler();
 
@@ -125,7 +128,7 @@ public class DeviceListActivity extends Activity implements WifiConnection.Conne
 
         showOverlayWhileFetchingWifi();
         mWifiList =  NetworkUtils.getWifiAccessPointsList(
-                AppConfig.DeviceFilter,DeviceListActivity.this);
+                NetworkUtils.NetworkFilter.FILTER_BY_DEVICE,DeviceListActivity.this);
         hideOverlayWhenWifiIsCompleted();
 
         mDeviceListAdapter.setData(mWifiList);
@@ -210,8 +213,8 @@ public class DeviceListActivity extends Activity implements WifiConnection.Conne
         currentSsid = currentSsid.replaceAll("\"","");
 
         if(mSelectedSSID.equalsIgnoreCase(currentSsid)){
-            navigateToNextScreen();
             Toast.makeText(mCurrentContext," Conneciton successful",Toast.LENGTH_SHORT).show();
+            navigateToNextScreen();
         }else {
             Toast.makeText(mCurrentContext,getString(R.string.connect_to_wrong_ssid),Toast.LENGTH_SHORT).show();
         }
@@ -266,109 +269,23 @@ public class DeviceListActivity extends Activity implements WifiConnection.Conne
         mLoadingText.setText("");
     }
 
-
-    public void onScanClick(View view){
-        getWifiList();
-    }
-
     private void navigateToNextScreen(){
 
-
-       /*
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                getDeviceInfo();
-            }
-        },3000);
-        */
-
-
-
         // move gateway to station mode
-        StationModeHelper helper = new StationModeHelper();
-        helper.setDeviceInStationMode(DeviceListActivity.this);
+      /*  StationModeHelper helper = new StationModeHelper();
+        helper.setDeviceInStationMode(DeviceListActivity.this);*/
 
-        // get cpu info , ip , mac address , wifiName etc
+        // get CPU info here // for testing
+        GetCpuMsgPacket cpuPacket = new GetCpuMsgPacket();
+        UDPClient mEngine = (UDPClient) CommEngine.getCommsEngine(DeviceListActivity.this, CommEngine.ENGINE_TYPE.UDP);
+        mEngine.sendMessageToDevice(AppUtils.getJsonFromObject(cpuPacket));
 
+
+
+     /*   // get cpu info , ip , mac address , wifiName etc
         Intent intent = new Intent(this, DeviceControlListActivity.class);
-        startActivity(intent);
-
+        startActivity(intent);*/
     }
-
-/*
-    *//**
-     * responsible to get device info if mobile has connected successfully on the deivce
-     *//*
-    private void getDeviceInfo(){
-        UDPClient udpClient = UDPClient.getInstance(this);
-        udpClient.SendMessageToGateway("{\"Cpuinfo\":}");
-    }
-
-    *//**
-     *
-     *//*
-    private void deviceInfoReceived(){
-
-    }
-
-
-    public void getIp(View v){
-        mUiHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mUdpClient.SendMessageToGateway("{\"Getip\":}");
-
-            }
-        },1000);
-
-
-    }
-
-    public void getCpuInfo(View v){
-
-
-        mUiHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-
-                GetCpuMsgPacket cpu = new GetCpuMsgPacket();
-
-                Gson gson = new Gson();
-                String packet =  gson.toJson(cpu) ;
-              *//*  String packet = *//*
-
-                *//*mUdpClient.SendMessageToGateway("{\"Cpuinfo\":}");*//*
-                mUdpClient.SendMessageToGateway(packet);
-
-            }
-        },1000);
-    }
-
-    public void on(View v){
-
-        mUiHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mUdpClient.SendMessageToGateway("{\"Relay1\":1}");
-
-            }
-        },1000);
-    }
-
-
-    public void off(View v){
-        mUiHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mUdpClient.SendMessageToGateway("{\"Relay1\":0}");
-
-            }
-        },1000);
-    }*/
-
-
 
 
 }

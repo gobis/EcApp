@@ -24,7 +24,6 @@ public class WifiConnection {
 
     public static WifiConnection INSTANCE;
 
-    private boolean mIsConnInProgress;
 
     Context mContext;
 
@@ -50,18 +49,15 @@ public class WifiConnection {
     }
 
 
-    public boolean isConnectionInProgress() {
-        return mIsConnInProgress;
-    }
-
     /**
      * responsible to connect to the provided network
+     *
      * @param context
      * @param serviceSetID ssid
-     * @param pwd password
-     * @param force connect to the network, though network config already available
+     * @param pwd          password
+     * @param force        connect to the network, though network config already available
      */
-    public void ConnectToServiceSetID(Context context, String serviceSetID, String pwd , boolean force) {
+    public void ConnectToServiceSetID(Context context, String serviceSetID, String pwd, boolean force) {
         try {
 
             startConnectionTimer();
@@ -117,9 +113,7 @@ public class WifiConnection {
                         wifi.enableNetwork(netId, true);
                         // wifi.saveConfiguration();
                         wifi.reconnect();
-
                         Log.i(getClass().getSimpleName(), "Will establish connection soon with " + serviceSetID);
-
                     } else {
                         Log.i(getClass().getSimpleName(), " Unable to create connection with " + serviceSetID);
                     }
@@ -196,24 +190,26 @@ public class WifiConnection {
      */
     private boolean removeNetworkIfMatches(Context context, String selectedSSID) {
 
-        boolean removeNwStatus = false ;
+        boolean removeNwStatus = false;
 
         WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         List<WifiConfiguration> list = wifiManager.getConfiguredNetworks();
 
-        selectedSSID = "\""+selectedSSID+"\"";
+        selectedSSID = "\"" + selectedSSID + "\"";
 
         if (null != selectedSSID) {
             for (WifiConfiguration i : list) {
                 if (selectedSSID.equalsIgnoreCase(i.SSID)) {
-                    Log.i(TAG, "removeNetworkIfMatches removing network from the list ");
-                    removeNwStatus =  wifiManager.removeNetwork(i.networkId);
-                    wifiManager.saveConfiguration();
+                    removeNwStatus = wifiManager.removeNetwork(i.networkId);
+                    boolean saveStatus = wifiManager.saveConfiguration();
+                    Log.i(TAG, "removeNetworkIfMatches removing network from the list Nw:: "
+                            + selectedSSID + "  Removal status :: " + removeNwStatus +
+                          " Saving config status " + saveStatus);
                 }
             }
         }
 
-        return  removeNwStatus ;
+        return removeNwStatus;
 
     }
 

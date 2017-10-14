@@ -70,7 +70,7 @@ public class DemoActivity extends Activity {
             String cmd = mCommand.getEditableText().toString();
 
             if (null != cmd && !cmd.isEmpty()) {
-                new SendDataToGateway().execute(cmd.getBytes());
+                mEngine.sendMessageToDevice(cmd);
             }
         }else{
             Toast.makeText(DemoActivity.this," Not valid IP",Toast.LENGTH_SHORT).show();
@@ -78,17 +78,6 @@ public class DemoActivity extends Activity {
     }
 
 
-
-
-    private class SendDataToGateway extends AsyncTask<byte[], Void, Void> {
-
-        @Override
-        protected Void doInBackground(byte[]... params) {
-            mEngine.SendMessage(params[0]);
-            return null;
-        }
-
-    }
 
     @Override
     protected void onPause() {

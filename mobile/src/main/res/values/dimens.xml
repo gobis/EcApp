@@ -22,4 +22,7 @@
     <dimen name="fab_margin">16dp</dimen>
 
 
+    <dimen name="device_name_font_size">16sp</dimen>
+
+
 </resources>

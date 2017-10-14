@@ -35,7 +35,7 @@ public class TestUtility {
         deviceModel = new DeviceModel();
 
         deviceModel.setDeviceName("Test1");
-        deviceModel.setChannelCount("4");
+        deviceModel.setChannelCount(4);
         deviceModel.setConfigureName("User Hall");
         deviceModel.setmLastConnectedIP("192.168.1.6");
         deviceModel.setmPreferredIP("192.168.1.10");

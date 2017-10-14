@@ -20,6 +20,7 @@ import com.gw.ecapp.R;
 import com.gw.ecapp.TestUtility;
 import com.gw.ecapp.WifiConnection;
 import com.gw.ecapp.configuration.DeviceListActivity;
+import com.gw.ecapp.devicecontrol.DeviceControlListActivity;
 import com.gw.ecapp.engine.udpEngine.EngineUtils;
 import com.gw.ecapp.startup.SpinnerAdapter.WifiSsidAdapter;
 import com.gw.ecapp.storage.AppPreferences;
@@ -129,7 +130,7 @@ public class WifiActivity extends Activity implements WifiConnection.ConnectionS
 
     public void onSkipClick(View v){
      // move it to next page
-
+        navigateToDeviceListPage(true);
     }
 
 
@@ -186,7 +187,7 @@ public class WifiActivity extends Activity implements WifiConnection.ConnectionS
         currentSsid = currentSsid.replaceAll("\"","");
 
         if(mSelectedSSID.equalsIgnoreCase(currentSsid)){
-            navigateToDeviceListPage();
+            navigateToDeviceListPage(false);
         }else {
             Toast.makeText(mCurrentContext,getString(R.string.connect_to_wrong_ssid),Toast.LENGTH_SHORT).show();
         }
@@ -253,21 +254,21 @@ public class WifiActivity extends Activity implements WifiConnection.ConnectionS
     }
 
 
-    private void navigateToDeviceListPage(){
+    private void navigateToDeviceListPage(boolean isSkipped) {
 
-        // print all the available device connected to current network
+        if (!isSkipped) {
+            // print all the available device connected to current network
+            AssociatedWifiHelper helper = new AssociatedWifiHelper();
+            helper.getAssociatedWifi(WifiActivity.this);
 
-        AssociatedWifiHelper helper = new AssociatedWifiHelper();
-        helper.getAssociatedWifi(WifiActivity.this);
+            // store ssid , password and router availability  in pref
+            AppPreferences.getInstance(WifiActivity.this).setRouterSSID(mSelectedSSID);
+            AppPreferences.getInstance(WifiActivity.this).setRouterPassword(mPassword);
+            AppPreferences.getInstance(WifiActivity.this).setRouter(true);
+        }
 
-        // store ssid , password and router availability  in pref
-
-        AppPreferences.getInstance(WifiActivity.this).setRouterSSID(mSelectedSSID);
-        AppPreferences.getInstance(WifiActivity.this).setRouterPassword(mPassword);
-        AppPreferences.getInstance(WifiActivity.this).setRouter(true);
-
-
-        Intent intent = new Intent(WifiActivity.this, DeviceListActivity.class);
+      //  Intent intent = new Intent(WifiActivity.this, DeviceListActivity.class);
+        Intent intent = new Intent(WifiActivity.this, DeviceControlListActivity.class);
         startActivity(intent);
     }
 

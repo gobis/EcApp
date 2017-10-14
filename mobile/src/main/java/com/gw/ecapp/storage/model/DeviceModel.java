@@ -21,8 +21,10 @@ public class DeviceModel {
 
     @DatabaseField
     public String modelNumber;
+
     @DatabaseField
-    public String channelCount;
+    public int channelCount;
+
     @DatabaseField
     public String macId;
     @DatabaseField
@@ -69,11 +71,11 @@ public class DeviceModel {
         this.modelNumber = modelNumber;
     }
 
-    public String getChannelCount() {
+    public int getChannelCount() {
         return channelCount;
     }
 
-    public void setChannelCount(String channelCount) {
+    public void setChannelCount(int channelCount) {
         this.channelCount = channelCount;
     }
 

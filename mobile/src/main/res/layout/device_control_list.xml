@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/device_recycle_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_above="@+id/add_new_device">
+    </android.support.v7.widget.RecyclerView>
+
+    <TextView
+        android:id="@+id/add_new_device"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/add_device"
+        android:gravity="center"
+        android:drawableTop="@drawable/add_device_icon"
+        android:paddingBottom="@dimen/padding_small"
+        android:paddingTop="@dimen/padding_small"
+        android:background="@color/white_four"
+        android:textColor="@color/cyan"
+        android:onClick="onAddNewDevice"
+        android:layout_alignParentBottom="true"/>
+
+</RelativeLayout>

@@ -5,6 +5,9 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.os.Build;
 
+import com.google.gson.Gson;
+import com.gw.ecapp.engine.udpEngine.packetCreator.Message;
+
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -50,6 +53,14 @@ public class AppUtils {
 
     public static boolean validateIp(final String ip) {
         return IP_PATTERN.matcher(ip).matches();
+    }
+
+
+
+    public static String getJsonFromObject(Message obj){
+        Gson gson = new Gson();
+        String json = gson.toJson(obj);
+        return json;
     }
 
 }

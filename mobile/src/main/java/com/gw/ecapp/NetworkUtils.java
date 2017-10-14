@@ -21,7 +21,7 @@ import java.util.List;
 public class NetworkUtils {
 
     /**
-     * This function filters for the Access point having prefix "RFS"
+     * This function filters for the Access point having prefix "GATEWAY"
      *
      */
     public static boolean filterAccessPointsForGateway(String name) {
@@ -32,7 +32,7 @@ public class NetworkUtils {
 
 
     public static ArrayList<HashMap<String, String>> getWifiAccessPointsList(
-            boolean isFilterByGateway, Context context) {
+            NetworkFilter filter, Context context) {
         ArrayList<HashMap<String, String>> wifiArrayList = new ArrayList<>();
         WifiManager mWifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         boolean scan = mWifiManager.startScan();
@@ -47,19 +47,51 @@ public class NetworkUtils {
                 if (scanResults.get(i).SSID != null) {
                     int level = WifiManager.calculateSignalLevel(scanResults.get(i).level, maxLevel);
                     String serviceSetID = scanResults.get(i).SSID;
-                    if (!isFilterByGateway || NetworkUtils.filterAccessPointsForGateway(serviceSetID)) {
-                        HashMap<String, String> item = new HashMap<>();
-                        item.put(EngineUtils.SSID, serviceSetID);
-                        item.put("Column", scanResults.get(i).capabilities);
-                        item.put(EngineUtils.WIFI_LEVEL, String.valueOf(level));
-                        item.put("WifiNameColor", "0");
-                        item.put("WifiConnectionState", "0");
-                        wifiArrayList.add(item);
-                    }
+                    HashMap<String, String> item = new HashMap<>();
+                    item.put(EngineUtils.SSID, serviceSetID);
+                    item.put("Column", scanResults.get(i).capabilities);
+                    item.put(EngineUtils.WIFI_LEVEL, String.valueOf(level));
+                    item.put("WifiNameColor", "0");
+                    item.put("WifiConnectionState", "0");
+                    wifiArrayList.add(item);
                 }
             }
         }
-        return wifiArrayList;
+        return filterWifiByCriteria(wifiArrayList,filter);
+    }
+
+
+    public static ArrayList<HashMap<String, String>> filterWifiByCriteria(
+            ArrayList<HashMap<String, String>> list , NetworkFilter filter ){
+
+        ArrayList<HashMap<String, String>> filteredList = new ArrayList<>();
+
+        if(filter.equals(NetworkFilter.NO_FILTER)){
+            return  list;
+        }else {
+
+            for (HashMap<String, String> item:list) {
+
+                if(filter.equals(NetworkFilter.FILTER_BY_DEVICE)){
+
+                    if(NetworkUtils.filterAccessPointsForGateway(
+                            item.get(EngineUtils.SSID))){
+
+                        filteredList.add(item);
+                    }
+                }else{
+                    if(!NetworkUtils.filterAccessPointsForGateway(
+                            item.get(EngineUtils.SSID).toUpperCase())){
+
+                        filteredList.add(item);
+                    }
+
+                }
+
+            }
+            return  filteredList;
+        }
+
     }
 
 
@@ -86,6 +118,12 @@ public class NetworkUtils {
     public static void enableWifiConnection(Context context){
         WifiManager wifi = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         wifi.setWifiEnabled(true);
+    }
+
+    public enum NetworkFilter{
+        NO_FILTER,
+        FILTER_BY_DEVICE,
+        FILTER_BY_WIFI
     }
 
 }

@@ -7,7 +7,7 @@
 
 
     <TextView
-        android:id="@+id/two_ch_device_name"
+        android:id="@+id/one_ch_device_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/device_name"
@@ -15,7 +15,7 @@
         android:padding="@dimen/padding_normal"/>
 
     <ImageView
-        android:id="@+id/ch_2_edit"
+        android:id="@+id/ch_1_edit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/edit"
@@ -26,17 +26,17 @@
         />
 
     <View
-        android:id="@+id/ch2_divider_line"
-        android:layout_below="@+id/two_ch_device_name"
+        android:id="@+id/ch_1_divider_line"
+        android:layout_below="@+id/one_ch_device_name"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/white_two"
-        android:layout_marginBottom="@dimen/margin_tiny"
         />
 
+
     <LinearLayout
-        android:id="@+id/ch_2_control_1_container"
-        android:layout_below="@+id/ch2_divider_line"
+        android:id="@+id/ch_1_control_1_container"
+        android:layout_below="@+id/ch_1_divider_line"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
@@ -44,14 +44,14 @@
         android:weightSum="10">
 
         <ImageView
-            android:id="@+id/ch2_control_1_image"
+            android:id="@+id/ch1_control_1_image"
             android:layout_width="0dip"
             android:layout_height="match_parent"
             android:layout_weight="2"
             android:src="@drawable/appliances_ph_med" />
 
         <TextView
-            android:id="@+id/ch2_control_1_name"
+            android:id="@+id/ch1_control_1_name"
             android:layout_width="0dip"
             android:layout_height="match_parent"
             android:layout_weight="6"
@@ -61,42 +61,7 @@
             android:text="@string/device_name" />
 
         <Switch
-            android:id="@+id/ch_2_control_1_switch"
-            android:layout_width="0dip"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:layout_marginRight="@dimen/margin_normal"/>
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:id="@+id/ch_2_control_2_container"
-        android:layout_below="@+id/ch_2_control_1_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:weightSum="10">
-
-        <ImageView
-            android:id="@+id/ch2_control_2_image"
-            android:layout_width="0dip"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:src="@drawable/appliances_ph_med" />
-
-        <TextView
-            android:id="@+id/ch2_control_2_name"
-            android:layout_width="0dip"
-            android:layout_height="match_parent"
-            android:layout_weight="6"
-            android:gravity="left|center_vertical"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:text="@string/device_name" />
-
-        <Switch
-            android:id="@+id/ch_2_control_2_switch"
+            android:id="@+id/ch1_control_1_switch_1"
             android:layout_width="0dip"
             android:layout_height="match_parent"
             android:layout_weight="2"

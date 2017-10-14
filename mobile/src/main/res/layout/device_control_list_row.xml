@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <include
+        android:id="@+id/master_four_ch_container"
+        layout="@layout/device_four_ch"/>
+    <include
+        android:id="@+id/master_two_ch_container"
+        layout="@layout/device_two_ch"/>
+    <include
+        android:id="@+id/master_one_ch_container"
+        layout="@layout/device_one_ch"/>
+
+</LinearLayout>

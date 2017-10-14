@@ -4,22 +4,47 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.Toast;
 
 import com.gw.ecapp.NetworkUtils;
 import com.gw.ecapp.R;
+import com.gw.ecapp.storage.model.ApplianceModel;
+import com.gw.ecapp.storage.model.DeviceModel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by iningosu on 9/10/2017.
+ *
+ * This is landing page when all the devices are configured
+ *
+ *
  */
 
 public class DeviceControlListActivity extends Activity {
 
+    private RecyclerView mDeviceRecyclerView;
+    private DeviceControlListAdapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.device_control_list);
 
-        setContentView(R.layout.device_two_ch);
+        mDeviceRecyclerView = (RecyclerView)findViewById(R.id.device_recycle_view);
+
+        // use a linear layout manager
+        mLayoutManager = new LinearLayoutManager(this);
+        mDeviceRecyclerView.setLayoutManager(mLayoutManager);
+
+        // specify an adapter (see also next example)
+        mAdapter = new DeviceControlListAdapter(this);
+        mDeviceRecyclerView.setAdapter(mAdapter);
 
     }
 
@@ -31,34 +56,58 @@ public class DeviceControlListActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        onDataLoaded();
     }
 
 
-    public void onBtn1(View v) {
+    private void onDataLoaded(){
+        // testing
+        List<DeviceModel> deviceList = new ArrayList<>();
 
-        boolean on = false;
-        if (v.getTag(R.id.button4) == null) {
-            on = true;
-        }else{
-            on =   !Boolean.parseBoolean(v.getTag(R.id.button4).toString());
-        }
-        v.setBackground(getDrawable(on?R.drawable.switch_on_icon:R.drawable.switch_off_icon));
-        v.setTag(R.id.button4, on);
+        DeviceModel deviceModel = new DeviceModel();
+        deviceModel.setChannelCount(1);
+        deviceModel.setDeviceName("BedRoom 1");
 
+        ApplianceModel applianceModel = new ApplianceModel();
+        applianceModel.setDeviceName("Fan");
+        ArrayList<ApplianceModel> list = new ArrayList<>();
+        list.add(applianceModel);
+
+        deviceModel.setConnectedDevices(list);
+
+
+        DeviceModel deviceModel2 = new DeviceModel();
+        deviceModel2.setChannelCount(4);
+        deviceModel2.setDeviceName("Hall");
+
+        ApplianceModel applianceModel1 = new ApplianceModel();
+        applianceModel1.setDeviceName("Fan");
+
+        ApplianceModel applianceModel2 = new ApplianceModel();
+        applianceModel2.setDeviceName("TV");
+
+        ApplianceModel applianceModel3 = new ApplianceModel();
+        applianceModel3.setDeviceName("Geezer");
+
+        ApplianceModel applianceModel4 = new ApplianceModel();
+        applianceModel4.setDeviceName("AC");
+
+        ArrayList<ApplianceModel> list2 = new ArrayList<>();
+        list2.add(applianceModel);
+        list2.add(applianceModel2);
+        list2.add(applianceModel3);
+        list2.add(applianceModel4);
+
+        deviceModel2.setConnectedDevices(list2);
+
+
+        deviceList.add(deviceModel);
+        deviceList.add(deviceModel2);
+
+
+        mAdapter.setData(deviceList);
+        mAdapter.notifyDataSetChanged();
     }
-
-    public void onBtn2(View v){
-        boolean on = false;
-        if (v.getTag(R.id.button4) == null) {
-            on = true;
-        }else{
-            on =   !Boolean.parseBoolean(v.getTag(R.id.button4).toString());
-        }
-        v.setBackground(getDrawable(on?R.drawable.switch_on_icon:R.drawable.switch_off_icon));
-        v.setTag(R.id.button4, on);
-
-    }
-
 
 
     @Override
@@ -78,8 +127,9 @@ public class DeviceControlListActivity extends Activity {
 
 
 
-
-
+    public void onAddNewDevice(View v){
+        Toast.makeText(DeviceControlListActivity.this," Add new Device",Toast.LENGTH_SHORT).show();
+    }
 
 
 }

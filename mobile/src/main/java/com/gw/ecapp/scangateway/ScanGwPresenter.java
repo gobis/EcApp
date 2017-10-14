@@ -24,7 +24,7 @@ public class ScanGwPresenter {
 
 
     public ArrayList<HashMap<String, String>> getWifiAccessPointsList(){
-        return  NetworkUtils.getWifiAccessPointsList(false,mContext);
+        return  NetworkUtils.getWifiAccessPointsList(NetworkUtils.NetworkFilter.NO_FILTER,mContext);
     }
 
 

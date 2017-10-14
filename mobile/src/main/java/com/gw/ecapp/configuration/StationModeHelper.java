@@ -37,7 +37,7 @@ public class StationModeHelper {
             String stationModePacketData = gson.toJson(packet);
 
             Log.i(TAG," station mode packet data is " + stationModePacketData);
-            mEngine.SendMessageToGateway(stationModePacketData);
+            mEngine.sendMessageToDevice(stationModePacketData);
           //   mEngine.SendMessage();
 
 

@@ -42,7 +42,7 @@ public class ScanActivity extends Activity {
 
     private void startScanForGateway(){
         // start the progress bar
-        NetworkUtils.getWifiAccessPointsList(true,ScanActivity.this);
+        NetworkUtils.getWifiAccessPointsList(NetworkUtils.NetworkFilter.NO_FILTER,ScanActivity.this);
 
     }
 

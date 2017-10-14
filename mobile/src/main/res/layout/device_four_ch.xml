@@ -2,77 +2,174 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/color_leaf">
+    android:background="@color/color_leaf"
+    android:layout_marginTop="@dimen/margin_tiny">
+
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/four_ch_device_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/button4"
-        android:layout_below="@+id/button4"
-        android:layout_marginTop="21dp"
-        android:text="TextView" />
+        android:text="@string/device_name"
+        android:textSize="@dimen/device_name_font_size"
+        android:padding="@dimen/padding_normal"/>
 
-    <Button
-        android:id="@+id/button4"
+    <ImageView
+        android:id="@+id/ch4_edit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Button"
-        android:layout_alignParentTop="true"
-        android:background="@drawable/switch_off_icon"/>
-
-    <Button
-        android:id="@+id/button7"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Button"
-        android:layout_alignBaseline="@+id/button4"
-        android:layout_alignBottom="@+id/button4"
-        android:layout_toEndOf="@+id/button4"
-        android:background="@drawable/switch_off_icon" />
-
-    <Button
-        android:id="@+id/button8"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/button7"
-        android:layout_toEndOf="@+id/button7"
-        android:background="@drawable/switch_off_icon"
+        android:src="@drawable/edit"
+        android:layout_alignParentEnd="true"
+        android:paddingRight="@dimen/padding_normal"
+        android:paddingTop="@dimen/padding_normal"
+        android:paddingLeft="@dimen/padding_normal"
         />
 
-    <Button
-        android:id="@+id/button9"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/button8"
-        android:layout_marginStart="10dp"
-        android:layout_toEndOf="@+id/button8"
-        android:background="@drawable/switch_off_icon"
-        android:text="Button" />
+    <View
+        android:id="@+id/ch2_divider_line"
+        android:layout_below="@+id/four_ch_device_name"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/white_two"
+        android:layout_marginBottom="@dimen/margin_tiny"
+        />
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/ch4_control_1_container"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="TextView"
-        android:layout_alignStart="@+id/button8"
-        android:layout_alignTop="@+id/textView4" />
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:weightSum="10"
+        android:layout_below="@+id/ch2_divider_line">
 
-    <TextView
-        android:id="@+id/textView4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/button7"
-        android:layout_alignTop="@+id/textView3"
-        android:layout_marginStart="13dp"
-        android:text="TextView" />
+        <ImageView
+            android:id="@+id/ch4_control_1_image"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:src="@drawable/appliances_ph_med" />
 
-    <TextView
-        android:id="@+id/textView5"
-        android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/ch4_control_1_name"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="6"
+            android:gravity="left|center_vertical"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="@string/device_name" />
+
+        <Switch
+            android:id="@+id/ch4_control_1_switch"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:layout_marginRight="@dimen/margin_normal"/>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/ch4_control_2_container"
+        android:layout_below="@+id/ch4_control_1_container"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/button9"
-        android:layout_alignTop="@+id/textView2"
-        android:layout_marginStart="11dp"
-        android:text="TextView" />
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:weightSum="10">
+
+        <ImageView
+            android:id="@+id/ch4_control_2_image"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:src="@drawable/appliances_ph_med" />
+
+        <TextView
+            android:id="@+id/ch4_control_2_name"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="6"
+            android:gravity="left|center_vertical"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="@string/device_name" />
+
+        <Switch
+            android:id="@+id/ch4_control_2_switch"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:layout_marginRight="@dimen/margin_normal"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ch4_control_3_container"
+        android:layout_below="@+id/ch4_control_2_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:weightSum="10">
+
+        <ImageView
+            android:id="@+id/ch4_control_3_image"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:src="@drawable/appliances_ph_med" />
+
+        <TextView
+            android:id="@+id/ch4_control_3_name"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="6"
+            android:gravity="left|center_vertical"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="@string/device_name" />
+
+        <Switch
+            android:id="@+id/ch4_control_3_switch"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:layout_marginRight="@dimen/margin_normal"/>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/ch4_control_4_container"
+        android:layout_below="@+id/ch4_control_3_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:weightSum="10">
+
+        <ImageView
+            android:id="@+id/ch4_control_4_image"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:src="@drawable/appliances_ph_med" />
+
+        <TextView
+            android:id="@+id/ch4_control_4_name"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="6"
+            android:ellipsize="end"
+            android:gravity="left|center_vertical"
+            android:maxLines="1"
+            android:text="@string/device_name" />
+
+        <Switch
+            android:id="@+id/ch4_control_4_switch"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:layout_marginRight="@dimen/margin_normal"/>
+    </LinearLayout>
+
 </RelativeLayout>
