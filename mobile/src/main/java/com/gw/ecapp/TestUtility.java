@@ -57,10 +57,10 @@ public class TestUtility {
 
                         ApplianceModel applianceModel2 = new ApplianceModel();
                         applianceModel2.setDeviceName("Fan");
-                        applianceModel.setDeviceMacId(deviceModel.getMacId());
+                        applianceModel2.setDeviceMacId(deviceModel.getMacId());
                         applianceModel2.setRelayNumber("2");
 
-                        insertAppliance(context,applianceModel);
+                        insertAppliance(context,applianceModel2);
                     }
                 }, new Consumer<Throwable>() {
                     @Override

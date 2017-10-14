@@ -8,7 +8,7 @@ import com.j256.ormlite.field.DatabaseField;
 
 public class ApplianceModel {
 
-    @DatabaseField(id = true )
+    @DatabaseField(generatedId = true , columnName = "id")
     public int id;
 
     @DatabaseField
@@ -16,7 +16,6 @@ public class ApplianceModel {
 
     @DatabaseField
     public String deviceName;
-
 
     @DatabaseField
     public String relayNumber;

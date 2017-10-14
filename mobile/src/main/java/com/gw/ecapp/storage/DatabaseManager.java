@@ -97,7 +97,7 @@ public class DatabaseManager {
                     List<DeviceModel> deviceList = deviceDao.queryForAll();
 
 
-                    Dao<ApplianceModel, String> applianceDao = mDbHelper.getDaoAppliance();
+                    Dao<ApplianceModel, Integer> applianceDao = mDbHelper.getDaoAppliance();
                     List<ApplianceModel> applianceList = applianceDao.queryForAll();
 
                     for ( DeviceModel deviceModel:deviceList ) {
@@ -203,7 +203,7 @@ public class DatabaseManager {
         return Single.create(new SingleOnSubscribe<Boolean>() {
             @Override
             public void subscribe(@NonNull SingleEmitter<Boolean> emitter) throws Exception {
-                Dao<ApplianceModel, String> applianceDao = mDbHelper.getDaoAppliance();
+                Dao<ApplianceModel, Integer> applianceDao = mDbHelper.getDaoAppliance();
                 try {
                     CreateOrUpdateStatus status = applianceDao.createOrUpdate(applianceModel);
                     if (!emitter.isDisposed()) {

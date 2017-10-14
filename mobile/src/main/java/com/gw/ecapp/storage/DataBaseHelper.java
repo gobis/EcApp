@@ -21,12 +21,13 @@ class DataBaseHelper extends OrmLiteSqliteOpenHelper {
     /**
      * The Constant DATABASE_VERSION.
      */
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
-    private static final String DATABASE_NAME = "ecappdb";
+    private static final String DATABASE_NAME = "ecdb";
 
     private Dao<DeviceModel, String> daoDevice = null;
-    private Dao<ApplianceModel, String> daoAppliance = null;
+    private Dao<ApplianceModel, Integer> daoAppliance = null;
+
     /**
      * Instantiates a new data base helper.
      *
@@ -52,16 +53,15 @@ class DataBaseHelper extends OrmLiteSqliteOpenHelper {
     public void onCreate(SQLiteDatabase sqLitDb,
                          ConnectionSource connectionSource) {
         try {
+
             TableUtils.createTableIfNotExists(connectionSource,
                     ApplianceModel.class);
-
             TableUtils.createTableIfNotExists(connectionSource,
                     DeviceModel.class);
-
-            Log.i(TAG,"Tables are created");
+            Log.i(TAG, "Tables are created");
         } catch (java.sql.SQLException e) {
+            Log.i(TAG, "error creation on table ");
             e.printStackTrace();
-            Log.i(TAG,"error creation on table ");
         }
     }
 
@@ -71,7 +71,7 @@ class DataBaseHelper extends OrmLiteSqliteOpenHelper {
 
         Log.d(DataBaseHelper.class.getName(), "Upgrading DB from version: " + oldVersion + " to version: " + newVersion);
         if (oldVersion == 1) {
-           // handle your db upgrade here
+            // handle your db upgrade here
         }
     }
 
@@ -89,7 +89,7 @@ class DataBaseHelper extends OrmLiteSqliteOpenHelper {
     }
 
 
-    public Dao<ApplianceModel, String> getDaoAppliance() {
+    public Dao<ApplianceModel, Integer> getDaoAppliance() {
         if (daoAppliance == null) {
             try {
                 daoAppliance = getDao(ApplianceModel.class);
