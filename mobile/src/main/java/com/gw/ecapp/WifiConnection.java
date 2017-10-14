@@ -201,6 +201,8 @@ public class WifiConnection {
         WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         List<WifiConfiguration> list = wifiManager.getConfiguredNetworks();
 
+        selectedSSID = "\""+selectedSSID+"\"";
+
         if (null != selectedSSID) {
             for (WifiConfiguration i : list) {
                 if (selectedSSID.equalsIgnoreCase(i.SSID)) {
