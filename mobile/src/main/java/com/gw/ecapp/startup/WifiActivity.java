@@ -105,7 +105,7 @@ public class WifiActivity extends Activity implements WifiConnection.ConnectionS
         mWifiSsidAdapter = new WifiSsidAdapter(getApplicationContext());
         mWifiListSpinner.setAdapter(mWifiSsidAdapter);
 
-        test();
+       // test();
     }
 
     @Override
@@ -267,8 +267,8 @@ public class WifiActivity extends Activity implements WifiConnection.ConnectionS
             AppPreferences.getInstance(WifiActivity.this).setRouter(true);
         }
 
-      //  Intent intent = new Intent(WifiActivity.this, DeviceListActivity.class);
-        Intent intent = new Intent(WifiActivity.this, DeviceControlListActivity.class);
+       Intent intent = new Intent(WifiActivity.this, DeviceListActivity.class);
+       // Intent intent = new Intent(WifiActivity.this, DeviceControlListActivity.class);
         startActivity(intent);
     }
 

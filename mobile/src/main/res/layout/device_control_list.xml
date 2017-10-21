@@ -26,4 +26,7 @@
         android:onClick="onAddNewDevice"
         android:layout_alignParentBottom="true"/>
 
+    <include
+        layout="@layout/overlay_layout" />
+
 </RelativeLayout>

@@ -53,9 +53,6 @@ class DataBaseHelper extends OrmLiteSqliteOpenHelper {
     public void onCreate(SQLiteDatabase sqLitDb,
                          ConnectionSource connectionSource) {
         try {
-
-            TableUtils.createTableIfNotExists(connectionSource,
-                    ApplianceModel.class);
             TableUtils.createTableIfNotExists(connectionSource,
                     DeviceModel.class);
             Log.i(TAG, "Tables are created");

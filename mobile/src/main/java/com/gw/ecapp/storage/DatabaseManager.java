@@ -87,6 +87,32 @@ public class DatabaseManager {
     }
 
 
+    public Single<Boolean> bulkInsertOrUpdateDevice(final List<DeviceModel> deviceModels) {
+        return Single.create(new SingleOnSubscribe<Boolean>() {
+            @Override
+            public void subscribe(@NonNull SingleEmitter<Boolean> emitter) throws Exception {
+                Dao<DeviceModel, String> deviceDao = mDbHelper.getDaoDevice();
+                try {
+                    CreateOrUpdateStatus status = null;
+
+                    for (DeviceModel deviceModel : deviceModels) {
+                        status = deviceDao.createOrUpdate(deviceModel);
+                    }
+
+                    if (!emitter.isDisposed()) {
+                        emitter.onSuccess(status.isCreated() || status.isUpdated());
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    if (!emitter.isDisposed()) {
+                        emitter.onError(e);
+                    }
+                }
+            }
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+    }
+
+
     public Single<List<DeviceModel>> getDeviceList() {
         return Single.create(new SingleOnSubscribe<List<DeviceModel>>() {
             @Override
@@ -97,7 +123,7 @@ public class DatabaseManager {
                     List<DeviceModel> deviceList = deviceDao.queryForAll();
 
 
-                    Dao<ApplianceModel, Integer> applianceDao = mDbHelper.getDaoAppliance();
+                  /*  Dao<ApplianceModel, Integer> applianceDao = mDbHelper.getDaoAppliance();
                     List<ApplianceModel> applianceList = applianceDao.queryForAll();
 
                     for ( DeviceModel deviceModel:deviceList ) {
@@ -114,7 +140,9 @@ public class DatabaseManager {
                         }
 
                         deviceModel.setConnectedDevices(applianceModelList);
-                    }
+                    }*/
+
+
 
                     if (!emitter.isDisposed()) {
                         emitter.onSuccess(deviceList);
@@ -206,6 +234,30 @@ public class DatabaseManager {
                 Dao<ApplianceModel, Integer> applianceDao = mDbHelper.getDaoAppliance();
                 try {
                     CreateOrUpdateStatus status = applianceDao.createOrUpdate(applianceModel);
+                    if (!emitter.isDisposed()) {
+                        emitter.onSuccess(status.isCreated() || status.isUpdated());
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    if (!emitter.isDisposed()) {
+                        emitter.onError(e);
+                    }
+                }
+            }
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Single<Boolean> bulkInsertOrUpdateAppliance(final List<ApplianceModel> applianceModels) {
+        return Single.create(new SingleOnSubscribe<Boolean>() {
+            @Override
+            public void subscribe(@NonNull SingleEmitter<Boolean> emitter) throws Exception {
+                Dao<ApplianceModel, Integer> applianceDao = mDbHelper.getDaoAppliance();
+                try {
+                    CreateOrUpdateStatus status = null;
+                    for (ApplianceModel applianceModel:applianceModels) {
+                        status = applianceDao.createOrUpdate(applianceModel);
+                    }
+
                     if (!emitter.isDisposed()) {
                         emitter.onSuccess(status.isCreated() || status.isUpdated());
                     }

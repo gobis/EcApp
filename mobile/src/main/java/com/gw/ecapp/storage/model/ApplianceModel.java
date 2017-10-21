@@ -2,10 +2,13 @@ package com.gw.ecapp.storage.model;
 
 import com.j256.ormlite.field.DatabaseField;
 
+import org.parceler.Parcel;
+
 /**
  * Created by iningosu on 10/9/2017.
  */
 
+@Parcel
 public class ApplianceModel {
 
     @DatabaseField(generatedId = true , columnName = "id")

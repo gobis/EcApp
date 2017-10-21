@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -26,11 +27,26 @@ import com.gw.ecapp.demo.DemoActivity;
 import com.gw.ecapp.devicecontrol.DeviceControlListActivity;
 import com.gw.ecapp.engine.CommEngine;
 import com.gw.ecapp.engine.udpEngine.EngineUtils;
+import com.gw.ecapp.engine.udpEngine.events.MessageArrivedEvent;
 import com.gw.ecapp.engine.udpEngine.packetCreator.GetCpuMsgPacket;
+import com.gw.ecapp.engine.udpEngine.parser.CpuInfoResponse;
 import com.gw.ecapp.engine.udpEngine.udpComms.UDPClient;
+import com.gw.ecapp.storage.DatabaseManager;
+import com.gw.ecapp.storage.model.ApplianceModel;
+import com.gw.ecapp.storage.model.DeviceModel;
+
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Consumer;
+
 
 /**
  * Created by iningosu on 9/3/2017.
@@ -48,13 +64,12 @@ public class DeviceListActivity extends Activity implements WifiConnection.Conne
     RelativeLayout mOverlayContainer;
     TextView mNoResultText;
 
+    private String mSelectedSSID;
     private String mSelectedDevicePassword;
 
     private Context mCurrentContext;
 
     private WifiConnection mWifiConnection;
-
-    private String mSelectedSSID;
 
     TextView mLoadingText;
 
@@ -63,6 +78,8 @@ public class DeviceListActivity extends Activity implements WifiConnection.Conne
     Handler mUiHandler;
 
     UDPClient mUdpClient ;
+
+    private String TAG = getClass().getSimpleName();
 
 
     @Override
@@ -113,6 +130,7 @@ public class DeviceListActivity extends Activity implements WifiConnection.Conne
 
     @Override
     protected void onStart() {
+        EventBus.getDefault().register(this);
         super.onStart();
         getWifiList();
     }
@@ -158,6 +176,7 @@ public class DeviceListActivity extends Activity implements WifiConnection.Conne
     @Override
     protected void onStop() {
         super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -214,7 +233,7 @@ public class DeviceListActivity extends Activity implements WifiConnection.Conne
 
         if(mSelectedSSID.equalsIgnoreCase(currentSsid)){
             Toast.makeText(mCurrentContext," Conneciton successful",Toast.LENGTH_SHORT).show();
-            navigateToNextScreen();
+            onSuccessfulConnection();
         }else {
             Toast.makeText(mCurrentContext,getString(R.string.connect_to_wrong_ssid),Toast.LENGTH_SHORT).show();
         }
@@ -269,22 +288,98 @@ public class DeviceListActivity extends Activity implements WifiConnection.Conne
         mLoadingText.setText("");
     }
 
-    private void navigateToNextScreen(){
 
-        // move gateway to station mode
-      /*  StationModeHelper helper = new StationModeHelper();
-        helper.setDeviceInStationMode(DeviceListActivity.this);*/
 
-        // get CPU info here // for testing
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventMainThread(MessageArrivedEvent msgArriveEvent) {
+        Log.i(TAG,"on Event called :: onEventMainThread info " + msgArriveEvent.message.toString());
+        persistDeviceInfo((CpuInfoResponse) msgArriveEvent.message);
+    }
+
+    private void onSuccessfulConnection() {
+        // get cpu info
         GetCpuMsgPacket cpuPacket = new GetCpuMsgPacket();
         UDPClient mEngine = (UDPClient) CommEngine.getCommsEngine(DeviceListActivity.this, CommEngine.ENGINE_TYPE.UDP);
         mEngine.sendMessageToDevice(AppUtils.getJsonFromObject(cpuPacket));
+    }
 
 
+    private void persistDeviceInfo(final CpuInfoResponse cpuInfo) {
+        // write the information to data base
 
-     /*   // get cpu info , ip , mac address , wifiName etc
+        final int channelCount = 4;
+
+
+        List<DeviceModel> deviceModelList = new ArrayList<DeviceModel>();
+
+        for (int i = 0; i < channelCount; i++) {
+
+            DeviceModel deviceModel = new DeviceModel();
+
+            deviceModel.setDeviceName(cpuInfo.getDeviceName());
+            deviceModel.setChannelCount(channelCount);
+            deviceModel.setConfigureName("User Testing Hall");
+            deviceModel.setMacId(cpuInfo.getMacAddress());
+            deviceModel.setApplianceName("Relay " + String.valueOf(i+1));
+            deviceModel.setRelayNumber(String.valueOf(i+1));
+            deviceModel.setDeviceSsid(mSelectedSSID);
+            deviceModel.setDevicePassword(mSelectedDevicePassword);
+            deviceModelList.add(deviceModel);
+        }
+
+
+        DatabaseManager dbManager = DatabaseManager.getInstance(DeviceListActivity.this);
+        dbManager.bulkInsertOrUpdateDevice(deviceModelList)
+                .subscribe(new Consumer<Boolean>() {
+                    @Override
+                    public void accept(@NonNull Boolean aBoolean) throws Exception {
+                        Log.i(TAG, " insertion/ update status " + aBoolean);
+                        navigateToNextScreen();
+
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(@NonNull Throwable throwable) throws Exception {
+                        Log.i(TAG, "Exception in inserting models " + throwable.getMessage());
+                    }
+                });
+
+    }
+
+
+    private void insertAppliances(final Context context , List<ApplianceModel> applianceModels){
+
+        DatabaseManager dbManager = DatabaseManager.getInstance(context);
+
+        dbManager.bulkInsertOrUpdateAppliance(applianceModels)
+                .subscribe(new Consumer<Boolean>() {
+                    @Override
+                    public void accept(@NonNull Boolean aBoolean) throws Exception {
+                        Log.i(TAG, " insertion/ update appliance status " + aBoolean);
+
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(@NonNull Throwable throwable) throws Exception {
+                        Log.i(TAG, "Exception in inserting models " + throwable.getMessage());
+                    }
+                });
+
+    }
+
+
+    private void navigateToNextScreen(){
+        Log.i(TAG, "Navigating to next page");
+
+        // move gateway to station mode
+       /* StationModeHelper helper = new StationModeHelper();
+        helper.setDeviceInStationMode(DeviceListActivity.this);*/
+
+        // get cpu info , ip , mac address , wifiName etc
         Intent intent = new Intent(this, DeviceControlListActivity.class);
-        startActivity(intent);*/
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finish();
     }
 
 

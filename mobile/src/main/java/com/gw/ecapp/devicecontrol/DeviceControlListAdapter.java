@@ -6,13 +6,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 
 import com.gw.ecapp.R;
+import com.gw.ecapp.devicecontrol.events.ApplianceControlEvent;
 import com.gw.ecapp.storage.model.ApplianceModel;
 import com.gw.ecapp.storage.model.DeviceModel;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -179,7 +183,12 @@ public class DeviceControlListAdapter extends RecyclerView.Adapter<DeviceControl
 
     @Override
     public int getItemCount() {
-        return mDeviceList.size();
+        int count = 0 ;
+
+        if(null != mDeviceList){
+            count = mDeviceList.size();
+        }
+        return count;
     }
 
 
@@ -195,6 +204,23 @@ public class DeviceControlListAdapter extends RecyclerView.Adapter<DeviceControl
             ApplianceModel applianceModel = connectedDevices.get(0);
             holder.mOneChControlName.setText(applianceModel.getDeviceName());
         }
+
+        holder.mOneChControlSwitch.setTag(deviceModel);
+        holder.mOneChControlSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                if(isChecked){
+                    Log.i(TAG,"Relay one is ON");
+
+                }else{
+                    Log.i(TAG,"Relay one is OFF");
+                }
+
+                Log.i(TAG,"Device info " + buttonView.getTag().toString());
+
+            }
+        });
 
     }
 
@@ -215,6 +241,43 @@ public class DeviceControlListAdapter extends RecyclerView.Adapter<DeviceControl
         }catch (Exception e){
             Log.e(TAG," Exception "+e);
         }
+
+
+        holder.mTwoChControlOneSwitch.setTag(deviceModel);
+        holder.mTwoChControlOneSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    Log.i(TAG,"Relay one is ON");
+
+                }else{
+                    Log.i(TAG,"Relay one is OFF");
+                }
+
+                Log.i(TAG,"Device info " + buttonView.getTag().toString());
+
+
+            }
+        });
+
+        holder.mTwoChControlTwoSwitch.setTag(deviceModel);
+        holder.mTwoChControlTwoSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                if(isChecked){
+                    Log.i(TAG,"Relay two is ON");
+
+                }else{
+                    Log.i(TAG,"Relay two is OFF");
+                }
+
+                Log.i(TAG,"Device info " + buttonView.getTag().toString());
+
+
+            }
+        });
+
 
     }
 
@@ -242,6 +305,94 @@ public class DeviceControlListAdapter extends RecyclerView.Adapter<DeviceControl
             Log.e(TAG," Exception "+e);
         }
 
+
+
+        holder.mFourChControlOneSwitch.setTag(deviceModel);
+        holder.mFourChControlOneSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                DeviceModel deviceModel =  (DeviceModel)buttonView.getTag();
+                if(isChecked){
+                    Log.i(TAG,"Relay one is ON");
+
+                }else{
+                    Log.i(TAG,"Relay one is OFF");
+                }
+
+                Log.i(TAG,"Device info " + buttonView.getTag().toString());
+
+                String val = String.valueOf(isChecked ? 1 : 0);
+                EventBus.getDefault().post(new ApplianceControlEvent("{\"Relay1\":"+val+"}",deviceModel));
+
+            }
+        });
+
+        holder.mFourChControlTwoSwitch.setTag(deviceModel);
+        holder.mFourChControlTwoSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                DeviceModel deviceModel =  (DeviceModel)buttonView.getTag();
+                if(isChecked){
+                    Log.i(TAG,"Relay two is ON");
+
+                }else{
+                    Log.i(TAG,"Relay two is OFF");
+                }
+
+                Log.i(TAG,"Device info " + buttonView.getTag().toString());
+
+                String val = String.valueOf(isChecked ? 1 : 0);
+                EventBus.getDefault().post(new ApplianceControlEvent("{\"Relay2\":"+val+"}",deviceModel));
+
+
+            }
+        });
+
+
+        holder.mFourChControlThreeSwitch.setTag(deviceModel);
+        holder.mFourChControlThreeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                DeviceModel deviceModel =  (DeviceModel)buttonView.getTag();
+                if(isChecked){
+                    Log.i(TAG,"Relay three is ON");
+
+                }else{
+                    Log.i(TAG,"Relay three is OFF");
+                }
+
+                Log.i(TAG,"Device info " + buttonView.getTag().toString());
+
+                String val = String.valueOf(isChecked ? 1 : 0);
+                EventBus.getDefault().post(new ApplianceControlEvent("{\"Relay3\":"+val+"}",deviceModel));
+
+            }
+        });
+
+        holder.mFourChControlFourSwitch.setTag(deviceModel);
+        holder.mFourChControlFourSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                DeviceModel deviceModel =  (DeviceModel)buttonView.getTag();
+                if(isChecked){
+                    Log.i(TAG,"Relay four is ON");
+
+                }else{
+                    Log.i(TAG,"Relay four is OFF");
+                }
+
+                Log.i(TAG,"Device info " + buttonView.getTag().toString());
+                String val = String.valueOf(isChecked ? 1 : 0);
+                EventBus.getDefault().post(new ApplianceControlEvent("{\"Relay4\":"+val+"}",deviceModel));
+
+
+            }
+        });
+
     }
+
 
 }

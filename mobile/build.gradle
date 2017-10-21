@@ -47,6 +47,11 @@ dependencies {
     compile 'com.facebook.stetho:stetho:1.5.0'
     compile 'com.android.support:design:25.3.1'
     compile 'com.android.support:recyclerview-v7:25.3.1'
+    compile 'org.parceler:parceler-api:1.1.9'
+    annotationProcessor 'org.parceler:parceler:1.1.9'
+    compile 'org.greenrobot:eventbus:3.0.0'
+    //compile group: 'de.greenrobot', name: 'eventbus', version: '2.4.0'
     testCompile 'junit:junit:4.12'
+
 
 }

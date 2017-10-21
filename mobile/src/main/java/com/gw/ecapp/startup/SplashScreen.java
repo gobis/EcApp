@@ -11,6 +11,8 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.gw.ecapp.R;
+import com.gw.ecapp.devicecontrol.DeviceControlListActivity;
+import com.gw.ecapp.storage.AppPreferences;
 
 public class SplashScreen extends Activity {
 
@@ -119,8 +121,14 @@ public class SplashScreen extends Activity {
      * responsible to navigate to next page
      */
     private void navigateToNextPage(){
-        Intent intent = new Intent(this,WifiActivity.class);
-        startActivity(intent);
+
+        if(AppPreferences.getInstance(SplashScreen.this).getConfigStatus()){
+            Intent intent = new Intent(this,DeviceControlListActivity.class);
+            startActivity(intent);
+        }else{
+            Intent intent = new Intent(this,WifiActivity.class);
+            startActivity(intent);
+        }
     }
 
 

@@ -2,12 +2,15 @@ package com.gw.ecapp.storage.model;
 
 import com.j256.ormlite.field.DatabaseField;
 
+import org.parceler.Parcel;
+
 import java.util.ArrayList;
 
 /**
  * Created by iningosu on 10/9/2017.
  */
 
+@Parcel
 public class DeviceModel {
 
     @DatabaseField(generatedId = true)
@@ -15,6 +18,9 @@ public class DeviceModel {
 
     @DatabaseField
     public String deviceName;
+
+    @DatabaseField
+    public String deviceSsid;
 
     @DatabaseField
     public String devicePassword;
@@ -35,6 +41,12 @@ public class DeviceModel {
     // Name given by the end user
     @DatabaseField
     public String configureName;
+
+    @DatabaseField
+    public String applianceName;
+
+    @DatabaseField
+    public String relayNumber;
 
     public ArrayList<ApplianceModel> connectedDevices;
 
@@ -143,6 +155,30 @@ public class DeviceModel {
         this.EXTRA_COL2 = EXTRA_COL2;
     }
 
+    public String getApplianceName() {
+        return applianceName;
+    }
+
+    public void setApplianceName(String applianceName) {
+        this.applianceName = applianceName;
+    }
+
+    public String getRelayNumber() {
+        return relayNumber;
+    }
+
+    public void setRelayNumber(String relayNumber) {
+        this.relayNumber = relayNumber;
+    }
+
+
+    public String getDeviceSsid() {
+        return deviceSsid;
+    }
+
+    public void setDeviceSsid(String deviceSsid) {
+        this.deviceSsid = deviceSsid;
+    }
 
     @Override
     public String toString() {
@@ -156,6 +192,8 @@ public class DeviceModel {
                 ", mPreferredIP='" + mPreferredIP + '\'' +
                 ", mLastConnectedIP='" + mLastConnectedIP + '\'' +
                 ", configureName='" + configureName + '\'' +
+                ", applianceName='" + applianceName + '\'' +
+                ", relayNumber='" + relayNumber + '\'' +
                 ", EXTRA_COL1='" + EXTRA_COL1 + '\'' +
                 ", EXTRA_COL2='" + EXTRA_COL2 + '\'' +
                 '}';

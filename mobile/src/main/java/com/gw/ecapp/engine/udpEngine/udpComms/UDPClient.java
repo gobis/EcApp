@@ -8,9 +8,16 @@ import android.util.Log;
 
 import com.google.android.gms.tasks.Task;
 import com.google.gson.Gson;
+import com.gw.ecapp.AppUtils;
 import com.gw.ecapp.engine.CommEngine;
 import com.gw.ecapp.engine.udpEngine.EngineUtils;
+import com.gw.ecapp.engine.udpEngine.events.MessageArrivedEvent;
+import com.gw.ecapp.engine.udpEngine.packetCreator.GetCpuMsgPacket;
 import com.gw.ecapp.engine.udpEngine.packetCreator.Message;
+import com.gw.ecapp.engine.udpEngine.parser.CpuInfoResponse;
+
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -19,6 +26,7 @@ import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.StringTokenizer;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -26,6 +34,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+
 
 /**
  * Created by iningosu on 8/25/2017.
@@ -95,17 +104,29 @@ public class UDPClient extends CommEngine {
 
             socket.receive(receive_packet);
             final byte[] responseBytes = Arrays.copyOf(receive_packet.getData(), receive_packet.getLength());
-            String recdData = new String(responseBytes, StandardCharsets.UTF_8);
+            final String recdData = new String(responseBytes, StandardCharsets.UTF_8);
             Log.i(getClass().getSimpleName(), "Receiving data from  " + socket.getInetAddress() + " :"
                     + " Payload is " + recdData);
 
             ((Activity) mContext).runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    // removeItemFromQueueAfterResponse(recdData);
+                    try {
+                        Gson gson = new Gson();
+                        StringTokenizer tokenizer = new StringTokenizer(recdData,"}");
+                        String firstToken = tokenizer.nextToken();
+
+                        if (tokenizer.hasMoreElements()) {
+                            String finalPacket = tokenizer.nextToken() + "}";
+                            CpuInfoResponse cpuResponse = gson.fromJson(finalPacket, CpuInfoResponse.class);
+
+                            EventBus.getDefault().post(new MessageArrivedEvent(cpuResponse));
+                        }
+                    }catch (Exception e){
+                        Log.e(getClass().getSimpleName(), " Exception " + e.toString());
+                    }
                 }
             });
-
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), " Exception " + e.toString());
             e.printStackTrace();
