@@ -87,6 +87,7 @@ public class UDPClient extends CommEngine {
 
             DatagramSocket clientSocket = new DatagramSocket();
             clientSocket.setSoTimeout(3000);
+
             clientSocket.send(send_packet);
             ReceiveMessage(clientSocket);
         } catch (Exception e) {

@@ -1,14 +1,17 @@
 package com.gw.ecapp;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
+import android.net.Network;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.util.Log;
 
 import com.gw.ecapp.engine.udpEngine.EngineUtils;
@@ -155,39 +158,55 @@ public class WifiConnection {
         public void onReceive(Context context, Intent intent) {
 
             ConnectivityManager connectivityManager =
-                    (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
+                    (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+          //  NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
 
-            // if active network type is wifi
-            if (activeNetwork != null && activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
-                Log.i(TAG, " Network current status  " + activeNetwork.getState());
+            Network[] allNetwork = connectivityManager.getAllNetworks();
 
-                if (activeNetwork.getState() == NetworkInfo.State.CONNECTING) {
-                    mWifiConnCallBack.ConnectionStatus(ConnStatus.CONNECTING);
-                } else if (activeNetwork.getState() == NetworkInfo.State.CONNECTED) {
-                    if(null != mConnTimer) {
-                        mConnTimer.cancel();
+            Log.i(TAG," Network count " + allNetwork.length);
+
+            for(int i = 0 ; i< allNetwork.length ; i++){
+
+                NetworkInfo networkInfo = connectivityManager.getNetworkInfo(allNetwork[i]);
+                Log.i(TAG," Network Type " +networkInfo.getTypeName() + "  Network state " + networkInfo.getState()
+                        + " " +networkInfo.getTypeName());
+
+
+                // if active network type is wifi
+                if (networkInfo != null && networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
+                    Log.i(TAG, " Network current status  " + networkInfo.getState());
+
+                    if (networkInfo.getState() == NetworkInfo.State.CONNECTING) {
+                        mWifiConnCallBack.ConnectionStatus(ConnStatus.CONNECTING);
+                    } else if (networkInfo.getState() == NetworkInfo.State.CONNECTED) {
+                        if(null != mConnTimer) {
+                            mConnTimer.cancel();
+                        }
+                        mWifiConnCallBack.ConnectionStatus(ConnStatus.CONNECTED);
+                    } else if (networkInfo.getState() == NetworkInfo.State.DISCONNECTING) {
+
+                    } else if (networkInfo.getState() == NetworkInfo.State.DISCONNECTED) {
+                        mWifiConnCallBack.ConnectionStatus(ConnStatus.DISCONNECTED);
+
+                    } else if (networkInfo.getState() == NetworkInfo.State.UNKNOWN) {
+
                     }
-                    mWifiConnCallBack.ConnectionStatus(ConnStatus.CONNECTED);
-                } else if (activeNetwork.getState() == NetworkInfo.State.DISCONNECTING) {
 
-                } else if (activeNetwork.getState() == NetworkInfo.State.DISCONNECTED) {
-                    mWifiConnCallBack.ConnectionStatus(ConnStatus.DISCONNECTED);
-
-                } else if (activeNetwork.getState() == NetworkInfo.State.UNKNOWN) {
-
-                }
-
-            } else {
-
-                if(activeNetwork == null) {
-                    Log.i(TAG, " Network  activeNetwork is null  " );
-                }else{
+                } else  if(networkInfo != null && networkInfo.getType() == ConnectivityManager.TYPE_MOBILE) {
                     Log.i(TAG, "  network type is DATA" );
+                    if(allNetwork.length == 1) {
+                        resetWifiReceivers();
+                    }
+                }else{
+
+                    if(networkInfo == null) {
+                        Log.i(TAG, " Network  activeNetwork is null  " );
+                    }else{
+                        Log.i(TAG, "  network type is DATA" );
+                    }
                 }
-
-
             }
+
         }
     };
 
@@ -256,6 +275,25 @@ public class WifiConnection {
         };
 
         mConnTimer.start();
+
+    }
+
+
+    private void resetWifiReceivers(){
+        Log.i(TAG, "resetWifiReceivers called: ");
+        if ( mContext instanceof Activity){
+            Log.i(TAG, "resetWifiReceivers called:1  ");
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Log.i(TAG, "stop and start receiving wifi config ");
+                    stopReceivingWifiChanges();
+                    startReceivingWifiChanges(mContext);
+                }
+            },2000);
+
+        }
 
     }
 
