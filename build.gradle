@@ -23,6 +23,12 @@ task clean(type: Delete) {
 }
 
 
+def versionMajor = 1
+def versionMinor = 0
+def versionPatch = 0
+
+def versionNumber = versionMajor + '.' + versionMinor + '.' + versionPatch;
+
 // Define versions in a single place
 ext {
     // Sdk and tools
@@ -43,4 +49,7 @@ ext {
 
     constraintLayoutVersion = '1.0.1'
     butterKnifeVersion = '8.8.1'
+
+
+
 }

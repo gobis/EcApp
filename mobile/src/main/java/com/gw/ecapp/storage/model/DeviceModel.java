@@ -56,8 +56,13 @@ public class DeviceModel {
     @DatabaseField
     public String EXTRA_COL2;
 
+    public int getId() {
+        return id;
+    }
 
-
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getDeviceName() {
         return deviceName;
@@ -99,19 +104,19 @@ public class DeviceModel {
         this.macId = macId;
     }
 
-    public String getmPreferredIP() {
+    public String getPreferredIP() {
         return mPreferredIP;
     }
 
-    public void setmPreferredIP(String mPreferredIP) {
+    public void setPreferredIP(String mPreferredIP) {
         this.mPreferredIP = mPreferredIP;
     }
 
-    public String getmLastConnectedIP() {
+    public String getLastConnectedIP() {
         return mLastConnectedIP;
     }
 
-    public void setmLastConnectedIP(String mLastConnectedIP) {
+    public void setLastConnectedIP(String mLastConnectedIP) {
         this.mLastConnectedIP = mLastConnectedIP;
     }
 
@@ -179,6 +184,43 @@ public class DeviceModel {
     public void setDeviceSsid(String deviceSsid) {
         this.deviceSsid = deviceSsid;
     }
+
+
+    public DeviceModel getDeepCopy() {
+        DeviceModel deviceModel = new DeviceModel();
+
+        deviceModel.setMacId(this.getMacId());
+        deviceModel.setConfigureName(this.getConfigureName());
+        deviceModel.setDeviceId(this.getDeviceId());
+        deviceModel.setDeviceName(this.getDeviceName());
+        deviceModel.setApplianceName(this.getApplianceName());
+        deviceModel.setDeviceSsid(this.getDeviceSsid());
+        deviceModel.setDevicePassword(this.getDevicePassword());
+        deviceModel.setChannelCount(this.getChannelCount());
+        deviceModel.setEXTRA_COL1(this.getEXTRA_COL1());
+        deviceModel.setEXTRA_COL2(this.getEXTRA_COL2());
+        deviceModel.setRelayNumber(this.getRelayNumber());
+        deviceModel.setPreferredIP(this.getPreferredIP());
+        deviceModel.setLastConnectedIP(this.getLastConnectedIP());
+
+        int connectedDeviceCount = this.getConnectedDevices().size();
+
+        ArrayList<ApplianceModel> applianceModels = new ArrayList<>();
+
+        for (int i = 0; i < connectedDeviceCount; i++) {
+            ApplianceModel applianceModel = new ApplianceModel();
+            applianceModel.setDeviceName(this.getConnectedDevices().get(i).getDeviceName());
+            applianceModel.setRelayNumber(this.getConnectedDevices().get(i).getRelayNumber());
+            applianceModel.setDeviceMacId(this.getConnectedDevices().get(i).getDeviceMacId());
+            applianceModel.setId(this.getConnectedDevices().get(i).getId());
+            applianceModels.add(applianceModel);
+        }
+
+        deviceModel.setConnectedDevices(applianceModels);
+
+        return deviceModel;
+    }
+
 
     @Override
     public String toString() {

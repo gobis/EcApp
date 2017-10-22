@@ -3,14 +3,15 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+
     <include
         android:id="@+id/master_four_ch_container"
-        layout="@layout/device_four_ch"/>
+        layout="@layout/device_four_ch_edit"/>
     <include
         android:id="@+id/master_two_ch_container"
-        layout="@layout/device_two_ch"/>
+        layout="@layout/device_two_ch_edit"/>
     <include
         android:id="@+id/master_one_ch_container"
-        layout="@layout/device_one_ch"/>
+        layout="@layout/device_one_ch_edit"/>
 
 </LinearLayout>

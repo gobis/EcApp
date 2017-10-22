@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.gw.ecapp.R;
 import com.gw.ecapp.devicecontrol.events.ApplianceControlEvent;
+import com.gw.ecapp.devicecontrol.events.DeviceEditEvent;
 import com.gw.ecapp.storage.model.ApplianceModel;
 import com.gw.ecapp.storage.model.DeviceModel;
 
@@ -308,6 +309,15 @@ public class DeviceControlListAdapter extends RecyclerView.Adapter<DeviceControl
             Log.e(TAG," Exception "+e);
         }
 
+         holder.mFourChEdit.setTag(deviceModel);
+         holder.mFourChEdit.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View v) {
+                 DeviceModel deviceModel =  (DeviceModel)v.getTag();
+                 deviceModel.setChannelCount(4);
+                 EventBus.getDefault().post(new DeviceEditEvent(deviceModel));
+             }
+         });
 
 
         holder.mFourChControlOneSwitch.setTag(deviceModel);

@@ -37,8 +37,8 @@ public class TestUtility {
         deviceModel.setDeviceName("Test1");
         deviceModel.setChannelCount(4);
         deviceModel.setConfigureName("User Hall");
-        deviceModel.setmLastConnectedIP("192.168.1.6");
-        deviceModel.setmPreferredIP("192.168.1.10");
+        deviceModel.setLastConnectedIP("192.168.1.6");
+        deviceModel.setPreferredIP("192.168.1.10");
         deviceModel.setMacId("40-od-re-34-d3");
 
 

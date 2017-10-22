@@ -39,6 +39,9 @@
             android:name=".devicecontrol.DeviceControlListActivity"
             android:screenOrientation="portrait"></activity>
         <activity
+            android:name=".devicecontrol.edit.DeviceEditActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
             android:name=".startup.SplashScreen"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -46,6 +49,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+
+
+
     </application>
 
 </manifest>

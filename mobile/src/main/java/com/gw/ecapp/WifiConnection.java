@@ -135,6 +135,7 @@ public class WifiConnection {
     public void startReceivingWifiChanges(Context context) {
         mContext = context;
         if (null != mContext) {
+            Log.i(TAG, " Registering to receive  network status ");
             mContext.registerReceiver(this.myWifiReceiver,
                     new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
         }
@@ -143,6 +144,7 @@ public class WifiConnection {
 
     public void stopReceivingWifiChanges() {
         if (null != mContext) {
+            Log.i(TAG, "Un Registering to receive  network status ");
             mContext.unregisterReceiver(myWifiReceiver);
         }
     }
@@ -150,7 +152,7 @@ public class WifiConnection {
 
     private final BroadcastReceiver myWifiReceiver = new BroadcastReceiver() {
         @Override
-        public void onReceive(Context arg0, Intent arg1) {
+        public void onReceive(Context context, Intent intent) {
 
             ConnectivityManager connectivityManager =
                     (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -158,11 +160,14 @@ public class WifiConnection {
 
             // if active network type is wifi
             if (activeNetwork != null && activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
+                Log.i(TAG, " Network current status  " + activeNetwork.getState());
 
                 if (activeNetwork.getState() == NetworkInfo.State.CONNECTING) {
                     mWifiConnCallBack.ConnectionStatus(ConnStatus.CONNECTING);
                 } else if (activeNetwork.getState() == NetworkInfo.State.CONNECTED) {
-                    mConnTimer.cancel();
+                    if(null != mConnTimer) {
+                        mConnTimer.cancel();
+                    }
                     mWifiConnCallBack.ConnectionStatus(ConnStatus.CONNECTED);
                 } else if (activeNetwork.getState() == NetworkInfo.State.DISCONNECTING) {
 
@@ -175,10 +180,14 @@ public class WifiConnection {
 
             } else {
 
+                if(activeNetwork == null) {
+                    Log.i(TAG, " Network  activeNetwork is null  " );
+                }else{
+                    Log.i(TAG, "  network type is DATA" );
+                }
+
 
             }
-
-
         }
     };
 

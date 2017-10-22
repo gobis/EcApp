@@ -23,6 +23,7 @@ import com.gw.ecapp.WifiConnection;
 import com.gw.ecapp.configuration.DeviceListActivity;
 import com.gw.ecapp.devicecontrol.edit.DeviceEditActivity;
 import com.gw.ecapp.devicecontrol.events.ApplianceControlEvent;
+import com.gw.ecapp.devicecontrol.events.DeviceEditEvent;
 import com.gw.ecapp.engine.CommEngine;
 import com.gw.ecapp.engine.udpEngine.events.MessageArrivedEvent;
 import com.gw.ecapp.engine.udpEngine.parser.CpuInfoResponse;
@@ -70,6 +71,7 @@ public class DeviceControlListActivity extends Activity  implements WifiConnecti
 
     private ApplianceControlEvent mControlEvent;
 
+    private int EDIT_ACTIVITY_RESULT  = 765;
 
     private String TAG = getClass().getSimpleName();
 
@@ -98,10 +100,7 @@ public class DeviceControlListActivity extends Activity  implements WifiConnecti
         mWifiConnection = WifiConnection.getInstance(this);
         mCurrentContext = DeviceControlListActivity.this;
 
-
         AppPreferences.getInstance(DeviceControlListActivity.this).setConfigStatus(true);
-
-
     }
 
     @Override
@@ -146,6 +145,11 @@ public class DeviceControlListActivity extends Activity  implements WifiConnecti
         Log.i(TAG, "on Event called :: onEventMainThread info " + msgArriveEvent.message.toString());
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventMainThread(DeviceEditEvent editEvent) {
+        Log.i(TAG, "on Event called :: onEventMainThread info " + editEvent.getDeviceModel().toString());
+        updateDeviceConfig(editEvent.getDeviceModel());
+    }
 
     public void onAddNewDevice(View v) {
         Toast.makeText(DeviceControlListActivity.this, " Add new Device", Toast.LENGTH_SHORT).show();
@@ -155,7 +159,6 @@ public class DeviceControlListActivity extends Activity  implements WifiConnecti
 
 
     private void populateDataFromDb() {
-
 
         DatabaseManager dbManager = DatabaseManager.getInstance(DeviceControlListActivity.this);
         dbManager.getDeviceList()
@@ -340,9 +343,22 @@ public class DeviceControlListActivity extends Activity  implements WifiConnecti
     }
 
 
-    private void updateDeviceConfig(){
+    private void updateDeviceConfig(DeviceModel deviceModel){
         Intent intent = new Intent(DeviceControlListActivity.this, DeviceEditActivity.class);
-        startActivity(intent);
+        intent.putExtra(AppConstant.Extras.Device, Parcels.wrap(deviceModel));
+        startActivityForResult(intent,EDIT_ACTIVITY_RESULT);
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == EDIT_ACTIVITY_RESULT) {
+                Log.i(TAG, " Config Saved ");
+            }
+        }
+    }
+
 
 }

@@ -252,10 +252,10 @@ public class DeviceListActivity extends Activity implements WifiConnection.Conne
     /**
      * responsible to handle connection time out when user unable to connect to network
      */
-    public void makeConnection(String deviceSsid, String devicepassword){
+    public void makeConnection(final String deviceSsid, final String devicePassword){
         showLoadingWifiConnection();
-        mWifiConnection.startReceivingWifiChanges(getApplicationContext());
-        mWifiConnection.ConnectToServiceSetID(getApplicationContext(),deviceSsid,devicepassword,false);
+        mWifiConnection.startReceivingWifiChanges(this);
+        mWifiConnection.ConnectToServiceSetID(getApplicationContext(),deviceSsid,devicePassword,false);
     }
 
 
@@ -274,7 +274,6 @@ public class DeviceListActivity extends Activity implements WifiConnection.Conne
     public void onSuccessfulWifiConnection(){
         // get ssid and pwd , and make connection
         mOverlayContainer.setVisibility(View.GONE);
-
     }
 
     private void showProgressWhileScanWifi(){
