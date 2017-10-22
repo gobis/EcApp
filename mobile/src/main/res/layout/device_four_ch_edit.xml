@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/color_leaf"
+    android:layout_marginTop="@dimen/margin_tiny">
+
+
+    <EditText
+        android:id="@+id/four_ch_device_name_edit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/device_name"
+        android:textSize="@dimen/device_name_font_size"
+        android:background="@drawable/edit_text_rounded_corner"
+        android:layout_marginTop="@dimen/margin_small"
+        android:layout_marginBottom="@dimen/margin_small"
+        android:layout_marginLeft="@dimen/margin_small"
+        android:padding="@dimen/padding_normal"/>
+
+    <Button
+        android:id="@+id/four_ch_device_save"
+        android:background="@drawable/button_effect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@+id/four_ch_device_name_edit"
+        android:layout_alignBottom="@+id/four_ch_device_name_edit"
+        android:layout_marginRight="@dimen/margin_small"
+        android:gravity="center"
+        android:text="@string/save"
+        android:textColor="@color/white"
+        android:onClick="onConfigSave"/>
+
+    <View
+        android:id="@+id/ch2_divider_line"
+        android:layout_below="@+id/four_ch_device_name_edit"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/white_two"
+        android:layout_marginBottom="@dimen/margin_tiny"
+        />
+
+    <LinearLayout
+        android:id="@+id/ch4_control_1_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:weightSum="10"
+        android:layout_marginTop="@dimen/margin_small"
+        android:layout_marginBottom="@dimen/margin_small"
+        android:layout_below="@+id/ch2_divider_line">
+
+        <ImageView
+            android:id="@+id/ch4_control_1_image"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:src="@drawable/appliances_ph_med" />
+
+        <EditText
+            android:id="@+id/ch4_control_1_name_edit"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="7"
+            android:gravity="left|center_vertical"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:background="@drawable/edit_text_rounded_corner"
+            android:paddingLeft="@dimen/padding_small"
+            android:text="@string/device_name" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/ch4_control_2_container"
+        android:layout_below="@+id/ch4_control_1_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:layout_marginTop="@dimen/margin_small"
+        android:layout_marginBottom="@dimen/margin_small"
+        android:weightSum="10">
+
+        <ImageView
+            android:id="@+id/ch4_control_2_image"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:src="@drawable/appliances_ph_med" />
+
+        <EditText
+            android:id="@+id/ch4_control_2_name_edit"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="7"
+            android:gravity="left|center_vertical"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:background="@drawable/edit_text_rounded_corner"
+            android:paddingLeft="@dimen/padding_small"
+            android:text="@string/device_name" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ch4_control_3_container"
+        android:layout_below="@+id/ch4_control_2_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:layout_marginTop="@dimen/margin_small"
+        android:layout_marginBottom="@dimen/margin_small"
+        android:weightSum="10">
+
+        <ImageView
+            android:id="@+id/ch4_control_3_image"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:src="@drawable/appliances_ph_med" />
+
+        <EditText
+            android:id="@+id/ch4_control_3_name_edit"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="7"
+            android:gravity="left|center_vertical"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:background="@drawable/edit_text_rounded_corner"
+            android:paddingLeft="@dimen/padding_small"
+            android:text="@string/device_name" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/ch4_control_4_container"
+        android:layout_below="@+id/ch4_control_3_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:layout_marginTop="@dimen/margin_small"
+        android:layout_marginBottom="@dimen/margin_small"
+        android:weightSum="10">
+
+        <ImageView
+            android:id="@+id/ch4_control_4_image"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:src="@drawable/appliances_ph_med" />
+
+        <EditText
+            android:id="@+id/ch4_control_4_name_edit"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="7"
+            android:ellipsize="end"
+            android:gravity="left|center_vertical"
+            android:maxLines="1"
+            android:background="@drawable/edit_text_rounded_corner"
+            android:paddingLeft="@dimen/padding_small"
+            android:text="@string/device_name" />
+    </LinearLayout>
+
+</RelativeLayout>

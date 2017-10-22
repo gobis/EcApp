@@ -21,6 +21,7 @@ import com.gw.ecapp.NetworkUtils;
 import com.gw.ecapp.R;
 import com.gw.ecapp.WifiConnection;
 import com.gw.ecapp.configuration.DeviceListActivity;
+import com.gw.ecapp.devicecontrol.edit.DeviceEditActivity;
 import com.gw.ecapp.devicecontrol.events.ApplianceControlEvent;
 import com.gw.ecapp.engine.CommEngine;
 import com.gw.ecapp.engine.udpEngine.events.MessageArrivedEvent;
@@ -100,8 +101,6 @@ public class DeviceControlListActivity extends Activity  implements WifiConnecti
 
         AppPreferences.getInstance(DeviceControlListActivity.this).setConfigStatus(true);
 
-
-        // DeviceModel deviceModel = Parcels.unwrap(getIntent().getParcelableExtra(AppConstant.Extras.Device));
 
     }
 
@@ -338,6 +337,12 @@ public class DeviceControlListActivity extends Activity  implements WifiConnecti
         // get cpu info
         UDPClient mEngine = (UDPClient) CommEngine.getCommsEngine(DeviceControlListActivity.this, CommEngine.ENGINE_TYPE.UDP);
         mEngine.sendMessageToDevice(controlEvent.mMessage);
+    }
+
+
+    private void updateDeviceConfig(){
+        Intent intent = new Intent(DeviceControlListActivity.this, DeviceEditActivity.class);
+        startActivity(intent);
     }
 
 }

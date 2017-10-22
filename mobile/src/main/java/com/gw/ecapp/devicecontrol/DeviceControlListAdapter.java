@@ -41,6 +41,9 @@ public class DeviceControlListAdapter extends RecyclerView.Adapter<DeviceControl
         mDeviceList = deviceList;
     }
 
+    public List<DeviceModel>  getDeviceList() {
+        return mDeviceList ;
+    }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         // have to define all the views for 1,2 & 4 channel

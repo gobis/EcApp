@@ -15,6 +15,7 @@
 
     <string name="wait_for_scan_result">Please wait, Scanning for Wifi...</string>
     <string name="connection_loading_text">Please wait, While making connection...</string>
+    <string name="wait_for_executing_command">Please wait, while executing command</string>
 
 
     <string name="connect_to_wrong_ssid">Wifi is not connected to selected router, Try again...</string>
@@ -23,13 +24,13 @@
 
     <string name="no_devices_found">No Devices found, Try again</string>
 
-
     <string name="connect_to_device_wifi">Kindly provide password to %1$s to make connection</string>
     <string name="title_activity_splash_screen">SplashScreen</string>
 
 
     <string name="device_name">Device Name</string>
     <string name="add_device">Add Device</string>
+    <string name="save">Save</string>
 
 
 </resources>

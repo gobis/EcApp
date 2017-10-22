@@ -42,4 +42,5 @@ ext {
     rxJavaInteropVersion = '0.10.0'
 
     constraintLayoutVersion = '1.0.1'
+    butterKnifeVersion = '8.8.1'
 }
