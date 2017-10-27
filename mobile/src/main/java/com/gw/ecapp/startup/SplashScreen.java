@@ -35,7 +35,8 @@ public class SplashScreen extends Activity {
                 Manifest.permission.ACCESS_COARSE_LOCATION,
                 Manifest.permission.READ_CONTACTS,
                 Manifest.permission.CHANGE_WIFI_MULTICAST_STATE,
-                Manifest.permission.WAKE_LOCK
+                Manifest.permission.WAKE_LOCK,
+                Manifest.permission.CAMERA
         };
 
 

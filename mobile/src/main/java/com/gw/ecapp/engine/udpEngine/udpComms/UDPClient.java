@@ -2,7 +2,11 @@ package com.gw.ecapp.engine.udpEngine.udpComms;
 
 import android.app.Activity;
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
 
@@ -46,13 +50,15 @@ public class UDPClient extends CommEngine {
     private static UDPClient mUDP_instance;
     private Context mContext;
 
-    private Gson gson ;
+    private Gson gson;
 
     private ArrayList<Message> mRequestDataList;
 
     Handler mUiHandler;
 
     ExecutorService executor;
+
+    private Network mWifiNetwork;
 
     public static UDPClient getInstance(Context context) {
         if (null == mUDP_instance) {
@@ -78,7 +84,7 @@ public class UDPClient extends CommEngine {
 
     public void SendMessage(byte[] dataToSend) {
         try {
-            Log.i(getClass().getSimpleName(),"Thread Name : " + Thread.currentThread().getName());
+            Log.i(getClass().getSimpleName(), "Thread Name : " + Thread.currentThread().getName());
             InetAddress IPAddress = InetAddress.getByName(EngineUtils.UDP_UNI_CAST_IP);
             Log.i(getClass().getSimpleName(), "Sending Data to IP:PORT  " + IPAddress.toString() + ":"
                     + EngineUtils.UDP_UNI_CAST_PORT + " Data is :" + new String(dataToSend, StandardCharsets.UTF_8));
@@ -86,6 +92,14 @@ public class UDPClient extends CommEngine {
                     IPAddress, EngineUtils.UDP_UNI_CAST_PORT);
 
             DatagramSocket clientSocket = new DatagramSocket();
+
+            checkForNetworkConnection();
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                Log.i(getClass().getSimpleName(), " Binding to Wifi Network " );
+                mWifiNetwork.bindSocket(clientSocket);
+            }
+
             clientSocket.setSoTimeout(3000);
 
             clientSocket.send(send_packet);
@@ -96,12 +110,11 @@ public class UDPClient extends CommEngine {
     }
 
 
-
     private void ReceiveMessage(DatagramSocket socket) {
         try {
             byte[] receiveData = new byte[EngineUtils.MAX_MSG_LENGTH];
             DatagramPacket receive_packet = new DatagramPacket(receiveData, receiveData.length);
-            Log.i(getClass().getSimpleName(), "Listening Port Number " +socket.getLocalPort());
+            Log.i(getClass().getSimpleName(), "Listening Port Number " + socket.getLocalPort());
 
             socket.receive(receive_packet);
             final byte[] responseBytes = Arrays.copyOf(receive_packet.getData(), receive_packet.getLength());
@@ -114,7 +127,7 @@ public class UDPClient extends CommEngine {
                 public void run() {
                     try {
                         Gson gson = new Gson();
-                        StringTokenizer tokenizer = new StringTokenizer(recdData,"}");
+                        StringTokenizer tokenizer = new StringTokenizer(recdData, "}");
                         String firstToken = tokenizer.nextToken();
 
                         if (tokenizer.hasMoreElements()) {
@@ -123,7 +136,7 @@ public class UDPClient extends CommEngine {
 
                             EventBus.getDefault().post(new MessageArrivedEvent(cpuResponse));
                         }
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         Log.e(getClass().getSimpleName(), " Exception " + e.toString());
                     }
                 }
@@ -131,12 +144,11 @@ public class UDPClient extends CommEngine {
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), " Exception " + e.toString());
             e.printStackTrace();
-        }finally {
-            Log.i(getClass().getSimpleName(),"Receiving Thread Name : " + Thread.currentThread().getName());
+        } finally {
+            Log.i(getClass().getSimpleName(), "Receiving Thread Name : " + Thread.currentThread().getName());
             socket.close();
         }
     }
-
 
 
     private void removeItemFromQueueAfterResponse(String response) {
@@ -156,14 +168,14 @@ public class UDPClient extends CommEngine {
 
     public void sendMessageToDevice(final String message) {
 
-       Runnable r = new Runnable() {
-           @Override
-           public void run() {
-               Future<String> future = executor.submit(new SendReceive(message));
-           }
-       };
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                Future<String> future = executor.submit(new SendReceive(message));
+            }
+        };
 
-       mUiHandler.post(r);
+        mUiHandler.post(r);
     }
 
     /**
@@ -173,8 +185,8 @@ public class UDPClient extends CommEngine {
 
         private String mCommand;
 
-        public SendReceive(String command){
-            mCommand = command ;
+        public SendReceive(String command) {
+            mCommand = command;
         }
 
         @Override
@@ -182,13 +194,25 @@ public class UDPClient extends CommEngine {
 
             SendMessage(mCommand.getBytes());
 
-            return  mCommand;
+            return mCommand;
 
         }
     }
 
 
-    public void close(){
+    public void checkForNetworkConnection() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) mContext.getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        Network[] networks = connectivityManager.getAllNetworks();
+        for (Network network : networks) {
+            NetworkInfo networkInfo = connectivityManager.getNetworkInfo(network);
+            if (networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
+                mWifiNetwork = network; // Grabbing the Network object for later usage
+            }
+        }
+    }
+
+
+    public void close() {
         executor.shutdown();
     }
 

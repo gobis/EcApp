@@ -193,10 +193,8 @@ public class WifiConnection {
                     }
 
                 } else  if(networkInfo != null && networkInfo.getType() == ConnectivityManager.TYPE_MOBILE) {
-                    Log.i(TAG, "  network type is DATA" );
-                    if(allNetwork.length == 1) {
-                        resetWifiReceivers();
-                    }
+                    Log.i(TAG, "  network type is DATA");
+                    resetWifiReceivers();
                 }else{
 
                     if(networkInfo == null) {

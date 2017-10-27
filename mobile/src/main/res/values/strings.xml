@@ -12,6 +12,7 @@
     <string name="connect">Connect</string>
     <string name="skip">Skip</string>
     <string name="scan_wifi">Scan</string>
+    <string name="ok">Ok</string>
 
     <string name="wait_for_scan_result">Please wait, Scanning for Wifi...</string>
     <string name="connection_loading_text">Please wait, While making connection...</string>
@@ -23,6 +24,7 @@
     <string name="unable_connect_to_given_wifi">Unable to connect to %1$s , Try again</string>
 
     <string name="no_devices_found">No Devices found, Try again</string>
+    <string name="select_password_entry_mode">How you want to enter the password</string>
 
     <string name="connect_to_device_wifi">Kindly provide password to %1$s to make connection</string>
     <string name="title_activity_splash_screen">SplashScreen</string>
@@ -32,5 +34,8 @@
     <string name="add_device">Add Device</string>
     <string name="save">Save</string>
 
+    <string name = "manual_entry">Enter password manually</string>
+    <string name = "scan_password">Scan for password</string>
+    <string name = "check_qrcode">You are scanning wrong QR code </string>
 
 </resources>

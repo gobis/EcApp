@@ -49,6 +49,7 @@ ext {
 
     constraintLayoutVersion = '1.0.1'
     butterKnifeVersion = '8.8.1'
+    zxingVersion = '1.9'
 
 
 

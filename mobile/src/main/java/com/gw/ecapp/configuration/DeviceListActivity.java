@@ -17,12 +17,14 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.gw.ecapp.AppConfig;
+import com.gw.ecapp.AppConstant;
 import com.gw.ecapp.AppUtils;
 import com.gw.ecapp.DialogListener;
 import com.gw.ecapp.DialogManager;
 import com.gw.ecapp.NetworkUtils;
 import com.gw.ecapp.R;
 import com.gw.ecapp.WifiConnection;
+import com.gw.ecapp.configuration.qrscan.QrCodeScanActivity;
 import com.gw.ecapp.demo.DemoActivity;
 import com.gw.ecapp.devicecontrol.DeviceControlListActivity;
 import com.gw.ecapp.engine.CommEngine;
@@ -81,6 +83,8 @@ public class DeviceListActivity extends Activity implements WifiConnection.Conne
 
     private String TAG = getClass().getSimpleName();
 
+    private int SCAN_PASSWORD =  331 ;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -122,7 +126,13 @@ public class DeviceListActivity extends Activity implements WifiConnection.Conne
         mDeviceListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                showPasswordDialog(mWifiList.get(position).get(EngineUtils.SSID));
+                mSelectedSSID = mWifiList.get(position).get(EngineUtils.SSID);
+
+                if(AppConfig.PWD_MAN_ENTRY) {
+                    showPasswordEntryTypeDialog();
+                }else{
+                    startScanActivityForPassword();
+                }
             }
         });
 
@@ -184,8 +194,23 @@ public class DeviceListActivity extends Activity implements WifiConnection.Conne
         super.onDestroy();
     }
 
+
+    private void showPasswordEntryTypeDialog(){
+        DialogManager.showPasswordEntryDialog(
+                DeviceListActivity.this, getString(R.string.ok), new DialogListener() {
+                    @Override
+                    public void positiveButtonClick(String entryType) {
+                        if(entryType.equals(AppConstant.ENTER_PWD_MAN)){
+                            showPasswordDialog(mSelectedSSID);
+                        }else{
+                            startScanActivityForPassword();
+                        }
+                    }
+                });
+    }
+
     private void showPasswordDialog(final String selectedDevice) {
-        mSelectedSSID = selectedDevice;
+
         DialogManager.showGenericConfirmDialogForOneButtons(
                 DeviceListActivity.this,
                 getString(R.string.connect_to_device_wifi, selectedDevice), getString(R.string.connect), new DialogListener() {
@@ -197,6 +222,7 @@ public class DeviceListActivity extends Activity implements WifiConnection.Conne
                     }
                 });
     }
+
 
 
     @Override
@@ -379,6 +405,29 @@ public class DeviceListActivity extends Activity implements WifiConnection.Conne
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
         finish();
+    }
+
+    /**
+     * start activity for getting password
+     */
+    private void startScanActivityForPassword(){
+        Intent intent = new Intent(DeviceListActivity.this , QrCodeScanActivity.class);
+        intent.putExtra(AppConstant.Extras.DEVICE_SSID,mSelectedSSID);
+        startActivityForResult(intent,SCAN_PASSWORD);
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == SCAN_PASSWORD) {
+                String devicePassword = data.getStringExtra(AppConstant.Extras.DEVICE_PWD);
+                Log.i(TAG, " password scanned successfully : password is " + devicePassword);
+                makeConnection(mSelectedSSID,devicePassword);
+            }
+        }
     }
 
 

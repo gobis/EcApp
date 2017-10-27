@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/connect_to_device_wifi"
-        android:paddingLeft="@dimen/margin_large"
+        android:paddingLeft="@dimen/margin_small"
         android:layout_marginLeft="@dimen/margin_normal"
         android:layout_marginRight="@dimen/margin_normal"
         android:textSize="18sp"/>
@@ -32,7 +32,7 @@
         android:ellipsize="end"
         android:ems="10"
         android:focusable="true"
-        android:hint="Enter router password"
+        android:hint="Enter password"
         android:inputType="textPassword"
         android:maxHeight="60dp"
         android:maxLines="1"

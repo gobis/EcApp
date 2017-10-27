@@ -9,6 +9,8 @@ public class AppConstant {
     public static class Extras {
 
         public static String Device = "Device";
+        public static String DEVICE_SSID = "DeviceSsid";
+        public static String DEVICE_PWD = "DevicePassword";
 
     }
 
@@ -20,4 +22,7 @@ public class AppConstant {
         public static String APPLIANCE_NAME_ID = "applianceName";
 
     }
+
+    public static String ENTER_PWD_MAN= "manual";
+    public static String ENTER_PWD_SCAN= "scan";
 }
