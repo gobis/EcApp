@@ -7,9 +7,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -17,8 +22,11 @@ import android.widget.Toast;
 
 import com.gw.ecapp.AppConstant;
 import com.gw.ecapp.AppUtils;
+import com.gw.ecapp.DialogListener;
+import com.gw.ecapp.DialogManager;
 import com.gw.ecapp.NetworkUtils;
 import com.gw.ecapp.R;
+import com.gw.ecapp.TwoButtonDialogListener;
 import com.gw.ecapp.WifiConnection;
 import com.gw.ecapp.configuration.DeviceListActivity;
 import com.gw.ecapp.devicecontrol.edit.DeviceEditActivity;
@@ -54,7 +62,7 @@ import io.reactivex.schedulers.Schedulers;
  * This is landing page when all the devices are configured
  */
 
-public class DeviceControlListActivity extends Activity  implements WifiConnection.ConnectionStatusInterface {
+public class DeviceControlListActivity extends AppCompatActivity implements WifiConnection.ConnectionStatusInterface {
 
     private RecyclerView mDeviceRecyclerView;
     private DeviceControlListAdapter mAdapter;
@@ -73,7 +81,15 @@ public class DeviceControlListActivity extends Activity  implements WifiConnecti
 
     private int EDIT_ACTIVITY_RESULT  = 765;
 
+    private ActionBar mAppBar;
+
+
     private String TAG = getClass().getSimpleName();
+
+
+
+
+    private AppUtils.ConnMode mCurrentConnMode;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -101,6 +117,13 @@ public class DeviceControlListActivity extends Activity  implements WifiConnecti
         mCurrentContext = DeviceControlListActivity.this;
 
         AppPreferences.getInstance(DeviceControlListActivity.this).setConfigStatus(true);
+
+        mAppBar = getSupportActionBar();
+        mAppBar.setTitle(getString(R.string.devices));
+
+
+        mCurrentConnMode =  getCurrentConnectionMode();
+
     }
 
     @Override
@@ -116,6 +139,49 @@ public class DeviceControlListActivity extends Activity  implements WifiConnecti
         super.onResume();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.device_control_menu, menu);
+        return true;
+    }
+
+    /**
+     * On selecting action bar icons
+     * */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // action with ID action_refresh was selected
+            case R.id.action_station_mode:
+                //  show popup with wifi-router info , where user going to connect
+                // if yes, connect all the devices with router info
+                // else, show the first page
+                if(AppPreferences.getInstance(DeviceControlListActivity.this).hasRouter()){
+                    showStationModeDialog();
+                }else{
+                    showWifiDialog();
+                }
+
+                break;
+            // action with ID action_settings was selected
+            case R.id.action_settings:
+                Toast.makeText(this, "Settings selected", Toast.LENGTH_SHORT)
+                        .show();
+                break;
+
+            case R.id.action_help:
+                Toast.makeText(this, "Help selected", Toast.LENGTH_SHORT)
+                        .show();
+                break;
+            default:
+                break;
+        }
+
+        return true;
+    }
+
+
 
     @Override
     protected void onPause() {
@@ -126,6 +192,11 @@ public class DeviceControlListActivity extends Activity  implements WifiConnecti
     protected void onStop() {
         EventBus.getDefault().unregister(this);
         super.onStop();
+    }
+
+    @Override
+    public void onBackPressed() {
+        DeviceControlListActivity.this.moveTaskToBack(true);
     }
 
     @Override
@@ -157,7 +228,9 @@ public class DeviceControlListActivity extends Activity  implements WifiConnecti
         startActivity(intent);
     }
 
-
+    /**
+     * populate data from database
+     */
     private void populateDataFromDb() {
 
         DatabaseManager dbManager = DatabaseManager.getInstance(DeviceControlListActivity.this);
@@ -171,7 +244,7 @@ public class DeviceControlListActivity extends Activity  implements WifiConnecti
                         List<DeviceModel> deviceModelList = new ArrayList<DeviceModel>();
 
                         for (DeviceModel deviceModel : deviceModels) {
-                            Log.i(TAG, deviceModel.getMacId() + "    " + deviceModel.toString());
+                            Log.i(TAG, deviceModel.getMacId() + "  " + deviceModel.toString());
 
                             if (deviceModelList.size() == 0) {
                                 deviceModelList.add(deviceModel);
@@ -358,7 +431,99 @@ public class DeviceControlListActivity extends Activity  implements WifiConnecti
                 Log.i(TAG, " Config Saved ");
             }
         }
+
     }
 
+    /**
+     * user has provided router name and password already
+     * now, he wants to connect all devices using this credentials
+     * display credentials before connecting it
+     * this is not only for cross verification, also serves the purpose of password change
+     */
+    private void showStationModeDialog(){
+
+        final String ssid = AppPreferences.getInstance(DeviceControlListActivity.this).getRouterSSID();
+        final String password = AppPreferences.getInstance(DeviceControlListActivity.this).getRouterPassword();
+
+        DialogManager.showGenericConfirmDialogForTwoButtons(
+                DeviceControlListActivity.this,
+                getString(R.string.station_mode_confirm_msg , ssid , password),
+                getString(R.string.yes), getString(R.string.change_password), new TwoButtonDialogListener() {
+
+                    @Override
+                    public void positiveButtonClicked() {
+                        // start setting station mode
+
+                        // connect to device one by one and send the station mode command
+                        Toast.makeText(DeviceControlListActivity.this,
+                                "Moving to station mode", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void negativeButtonClicked() {
+                        // user password has changed , take user to wifi page
+
+
+
+                    }
+                });
+
+    }
+
+    /**
+     * show this dialog if user doesn't have wifi router and want to connect with new router
+     *
+     */
+    private void showWifiDialog(){
+
+        DialogManager.showGenericConfirmDialogForTwoButtons(
+                DeviceControlListActivity.this,
+                getString(R.string.no_router_info), getString(R.string.yes), getString(R.string.no), new TwoButtonDialogListener() {
+
+                    @Override
+                    public void positiveButtonClicked() {
+                        // take user to first page
+
+                    }
+
+                    @Override
+                    public void negativeButtonClicked() {
+                        // user don't want to provide info , continue as AP mode
+
+                    }
+                });
+
+    }
+
+
+    /**
+     *
+     */
+    private void StationModeForAllDevicesCompleted(){
+
+
+    }
+
+
+
+    /**
+     *
+     */
+    private void startSniffingNetwork(){
+
+
+
+    }
+
+
+    // this function will tell you in
+    private AppUtils.ConnMode getCurrentConnectionMode(){
+        AppUtils.ConnMode connMode = AppUtils.ConnMode.AP_MODE;
+
+       List<DeviceModel> deviceModelList = mAdapter.getDeviceList();
+
+
+        return connMode;
+    }
 
 }

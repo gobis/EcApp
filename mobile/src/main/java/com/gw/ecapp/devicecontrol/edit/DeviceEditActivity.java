@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -33,7 +35,7 @@ import io.reactivex.functions.Consumer;
  * Created by iningosu on 10/22/2017.
  */
 
-public class DeviceEditActivity extends Activity {
+public class DeviceEditActivity extends AppCompatActivity {
 
 
     private String TAG = getClass().getSimpleName();
@@ -112,6 +114,7 @@ public class DeviceEditActivity extends Activity {
 
 
     private DeviceModel mSelectedDeviceModel;
+    private ActionBar mAppBar ;
 
 
     @Override
@@ -126,6 +129,11 @@ public class DeviceEditActivity extends Activity {
         }catch (Exception e){
             Log.e(TAG,"Exception Occured " + e.toString());
         }
+
+
+        mAppBar = getSupportActionBar();
+        mAppBar.setTitle(getString(R.string.edit_device));
+
     }
 
     @Override

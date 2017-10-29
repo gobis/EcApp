@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -54,7 +56,7 @@ import io.reactivex.functions.Consumer;
  * Created by iningosu on 9/3/2017.
  */
 
-public class DeviceListActivity extends Activity implements WifiConnection.ConnectionStatusInterface {
+public class DeviceListActivity extends AppCompatActivity implements WifiConnection.ConnectionStatusInterface {
 
     private ListView mDeviceListView;
 
@@ -84,6 +86,8 @@ public class DeviceListActivity extends Activity implements WifiConnection.Conne
     private String TAG = getClass().getSimpleName();
 
     private int SCAN_PASSWORD =  331 ;
+
+    private ActionBar mAppBar;
 
 
     @Override
@@ -136,18 +140,24 @@ public class DeviceListActivity extends Activity implements WifiConnection.Conne
             }
         });
 
+        mAppBar = getSupportActionBar();
+        mAppBar.setTitle(getString(R.string.devices));
+
+
     }
 
     @Override
     protected void onStart() {
         EventBus.getDefault().register(this);
         super.onStart();
+        Log.i(TAG,"onStart called");
         getWifiList();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        Log.i(TAG,"onResume called");
     }
 
 
@@ -181,11 +191,13 @@ public class DeviceListActivity extends Activity implements WifiConnection.Conne
     @Override
     protected void onPause() {
         super.onPause();
+        Log.i(TAG,"onPause called");
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+        Log.i(TAG,"onStop called");
         EventBus.getDefault().unregister(this);
     }
 

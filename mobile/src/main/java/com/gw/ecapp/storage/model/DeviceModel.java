@@ -32,6 +32,9 @@ public class DeviceModel {
     public int channelCount;
 
     @DatabaseField
+    public int connMode;
+
+    @DatabaseField
     public String macId;
     @DatabaseField
     public String mPreferredIP;
@@ -185,6 +188,13 @@ public class DeviceModel {
         this.deviceSsid = deviceSsid;
     }
 
+    public int getConnMode() {
+        return connMode;
+    }
+
+    public void setConnMode(int connMode) {
+        this.connMode = connMode;
+    }
 
     public DeviceModel getDeepCopy() {
         DeviceModel deviceModel = new DeviceModel();

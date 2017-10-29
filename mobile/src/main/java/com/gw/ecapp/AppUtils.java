@@ -19,6 +19,16 @@ public class AppUtils {
 
     public static String ORIGIN = "mobile";
 
+
+    // which mode you want to connect the device
+    // control mode => configured in AP mode, and you are trying to control the devices
+    // config mode => app is in AP mode , changing everything to station mode
+    public static  enum ConnMode{
+        AP_MODE,
+        CONFIG_MODE,
+        STATION_MODE
+    }
+
     private boolean isAppIsInBackground(Context context) {
         boolean isInBackground = true;
         ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
@@ -62,5 +72,9 @@ public class AppUtils {
         String json = gson.toJson(obj);
         return json;
     }
+
+
+
+
 
 }

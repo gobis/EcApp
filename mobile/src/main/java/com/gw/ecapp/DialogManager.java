@@ -23,24 +23,24 @@ public class DialogManager {
                                                                    String title, String positiveButtonName,
                                                                    final DialogListener dialogListener) {
 
-        final Dialog mdDialog;
-        mdDialog = new Dialog(context);
-        mdDialog.setCancelable(false);
-        mdDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        mdDialog.setContentView(R.layout.device_pwd_dialog_layout);
-        mdDialog.setCanceledOnTouchOutside(true);
-        Window window = mdDialog.getWindow();
+        final Dialog mDialog;
+        mDialog = new Dialog(context);
+        mDialog.setCancelable(false);
+        mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        mDialog.setContentView(R.layout.device_pwd_dialog_layout);
+        mDialog.setCanceledOnTouchOutside(true);
+        Window window = mDialog.getWindow();
         WindowManager.LayoutParams wlp = window.getAttributes();
 
         wlp.gravity = Gravity.CENTER;
         wlp.width = WindowManager.LayoutParams.MATCH_PARENT;
         window.setAttributes(wlp);
 
-        TextView tvTitle = (TextView) mdDialog
+        TextView tvTitle = (TextView) mDialog
                 .findViewById(R.id.wifi_name_conn_text);
-        final EditText pwdDevice = (EditText) mdDialog
+        final EditText pwdDevice = (EditText) mDialog
                 .findViewById(R.id.wifi_pwd);
-        Button positive = (Button) mdDialog
+        Button positive = (Button) mDialog
                 .findViewById(R.id.btn_connect);
 
         tvTitle.setText(title);
@@ -50,37 +50,37 @@ public class DialogManager {
             @Override
             public void onClick(View v) {
                 String pwd = pwdDevice.getEditableText().toString();
-                mdDialog.dismiss();
+                mDialog.dismiss();
                 dialogListener.positiveButtonClick(pwd);
             }
         });
 
         if (!((Activity) context).isFinishing())
-            mdDialog.show();
+            mDialog.show();
     }
 
 
     public static final void showPasswordEntryDialog(Context context, String positiveButtonName,
                                                                    final DialogListener dialogListener) {
 
-        final Dialog mdDialog;
-        mdDialog = new Dialog(context);
-        mdDialog.setCancelable(false);
-        mdDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        mdDialog.setContentView(R.layout.select_pwd_entry_mode);
-        mdDialog.setCanceledOnTouchOutside(true);
-        Window window = mdDialog.getWindow();
+        final Dialog mDialog;
+        mDialog = new Dialog(context);
+        mDialog.setCancelable(false);
+        mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        mDialog.setContentView(R.layout.select_pwd_entry_mode);
+        mDialog.setCanceledOnTouchOutside(true);
+        Window window = mDialog.getWindow();
         WindowManager.LayoutParams wlp = window.getAttributes();
 
         wlp.gravity = Gravity.CENTER;
         wlp.width = WindowManager.LayoutParams.MATCH_PARENT;
         window.setAttributes(wlp);
 
-        final RadioButton radio_man = (RadioButton) mdDialog
+        final RadioButton radio_man = (RadioButton) mDialog
                 .findViewById(R.id.enter_password);
-        final RadioButton radio_scan = (RadioButton) mdDialog
+        final RadioButton radio_scan = (RadioButton) mDialog
                 .findViewById(R.id.scan_password);
-        Button positive = (Button) mdDialog
+        Button positive = (Button) mDialog
                 .findViewById(R.id.btn_ok);
 
         positive.setText(positiveButtonName);
@@ -88,7 +88,7 @@ public class DialogManager {
         positive.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mdDialog.dismiss();
+                mDialog.dismiss();
 
                 String pwd_entry_type;
                 if (radio_scan.isChecked()) {
@@ -101,7 +101,64 @@ public class DialogManager {
             }
         });
         if (!((Activity) context).isFinishing())
-            mdDialog.show();
+            mDialog.show();
     }
+
+
+    public static final void showGenericConfirmDialogForTwoButtons(
+            Context context,String title,
+            String positiveButtonName,String negativeButtonName ,
+            final TwoButtonDialogListener dialogListener) {
+
+        final Dialog mDialog;
+        mDialog = new Dialog(context);
+        mDialog.setCancelable(false);
+        mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        mDialog.setContentView(R.layout.two_button_dialog_layout);
+        mDialog.setCanceledOnTouchOutside(true);
+        Window window = mDialog.getWindow();
+        WindowManager.LayoutParams wlp = window.getAttributes();
+
+        wlp.gravity = Gravity.CENTER;
+        wlp.width = WindowManager.LayoutParams.MATCH_PARENT;
+        window.setAttributes(wlp);
+
+        TextView tvTitle = (TextView) mDialog
+                .findViewById(R.id.two_btn_dialog_title);
+
+        Button positive = (Button) mDialog
+                .findViewById(R.id.btn_positive);
+
+        Button negative = (Button) mDialog
+                .findViewById(R.id.btn_negative);
+
+        tvTitle.setText(title);
+        positive.setText(positiveButtonName);
+
+
+        positive.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogListener.positiveButtonClicked();
+                mDialog.dismiss();
+            }
+        });
+
+
+        negative.setText(negativeButtonName);
+
+        negative.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogListener.negativeButtonClicked();
+                mDialog.dismiss();
+            }
+        });
+
+        if (!((Activity) context).isFinishing())
+            mDialog.show();
+    }
+
+
 
 }

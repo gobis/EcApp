@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/margin_normal"
+    android:layout_marginTop="@dimen/margin_normal">
+
+
+    <TextView
+        android:id="@+id/two_btn_dialog_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/connect_to_device_wifi"
+        android:paddingLeft="@dimen/margin_small"
+        android:layout_marginLeft="@dimen/margin_normal"
+        android:layout_marginRight="@dimen/margin_normal"
+        android:layout_marginBottom="@dimen/margin_normal"
+        android:textSize="18sp"/>
+
+    <LinearLayout
+        android:layout_below="@+id/two_btn_dialog_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="2">
+
+    <Button
+        android:id="@+id/btn_negative"
+        android:layout_width="0dip"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_large"
+        android:layout_marginLeft="@dimen/margin_normal"
+        android:layout_marginRight="@dimen/margin_normal"
+        android:background="@drawable/login_button_shape"
+        android:maxHeight="50dp"
+        android:padding="12dp"
+        android:text="@string/connect"
+        android:textColor="@android:color/white"
+        android:textSize="18sp" />
+
+    <Button
+        android:id="@+id/btn_positive"
+        android:layout_width="0dip"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_large"
+        android:layout_marginLeft="@dimen/margin_normal"
+        android:layout_marginRight="@dimen/margin_normal"
+        android:background="@drawable/login_button_shape"
+        android:maxHeight="50dp"
+        android:padding="12dp"
+        android:text="@string/connect"
+        android:textColor="@android:color/white"
+        android:textSize="18sp" />
+    </LinearLayout>
+
+</RelativeLayout>
