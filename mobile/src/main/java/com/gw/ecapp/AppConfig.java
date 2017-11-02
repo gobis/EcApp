@@ -19,7 +19,10 @@ public class AppConfig {
 
     public static int QRCORE_TRY_INTERVAL  =  2000 ; // 2 Sec
 
+    public static boolean IS_CLOUD_SUPPORTED = false ;
 
+    public static final int NETWORK_SNIFF_INTERVAL = 500;  // 0.5 Sec
+    public static final int NETWORK_SNIFF_PARALLELISM = 5;  // parallelism is 5
 
 
 }
