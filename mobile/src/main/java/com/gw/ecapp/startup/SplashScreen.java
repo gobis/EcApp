@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.Toast;
 
+import com.gw.ecapp.AppConstant;
 import com.gw.ecapp.R;
 import com.gw.ecapp.devicecontrol.DeviceControlListActivity;
 import com.gw.ecapp.storage.AppPreferences;
@@ -125,6 +126,7 @@ public class SplashScreen extends Activity {
 
         if(AppPreferences.getInstance(SplashScreen.this).getConfigStatus()){
             Intent intent = new Intent(this,DeviceControlListActivity.class);
+            intent.putExtra(AppConstant.Extras.SCAN_LAN,true);
             startActivity(intent);
         }else{
             Intent intent = new Intent(this,WifiActivity.class);

@@ -40,6 +40,7 @@ import com.gw.ecapp.storage.AppPreferences;
 import com.gw.ecapp.storage.DatabaseManager;
 import com.gw.ecapp.storage.model.ApplianceModel;
 import com.gw.ecapp.storage.model.DeviceModel;
+import com.gw.ecapp.utility.AssociatedWifiHelper;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -50,6 +51,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
@@ -62,7 +64,9 @@ import io.reactivex.schedulers.Schedulers;
  * This is landing page when all the devices are configured
  */
 
-public class DeviceControlListActivity extends AppCompatActivity implements WifiConnection.ConnectionStatusInterface {
+public class DeviceControlListActivity extends AppCompatActivity
+        implements WifiConnection.ConnectionStatusInterface ,
+        AssociatedWifiHelper.NetworkSniffStatus {
 
     private RecyclerView mDeviceRecyclerView;
     private DeviceControlListAdapter mAdapter;
@@ -85,9 +89,6 @@ public class DeviceControlListActivity extends AppCompatActivity implements Wifi
 
 
     private String TAG = getClass().getSimpleName();
-
-
-
 
     private AppUtils.ConnMode mCurrentConnMode;
 
@@ -121,8 +122,14 @@ public class DeviceControlListActivity extends AppCompatActivity implements Wifi
         mAppBar = getSupportActionBar();
         mAppBar.setTitle(getString(R.string.devices));
 
-
         mCurrentConnMode =  getCurrentConnectionMode();
+
+        Intent intent = getIntent();
+        boolean scanLocalNetwork =  intent.getBooleanExtra(AppConstant.Extras.SCAN_LAN,false);
+
+        if(scanLocalNetwork){
+            startScanLocalNetwork();
+        }
 
     }
 
@@ -173,6 +180,10 @@ public class DeviceControlListActivity extends AppCompatActivity implements Wifi
             case R.id.action_help:
                 Toast.makeText(this, "Help selected", Toast.LENGTH_SHORT)
                         .show();
+                break;
+
+            case R.id.action_scan_device:
+                startScanLocalNetwork();
                 break;
             default:
                 break;
@@ -496,25 +507,28 @@ public class DeviceControlListActivity extends AppCompatActivity implements Wifi
     }
 
 
-    /**
-     *
-     */
-    private void StationModeForAllDevicesCompleted(){
+    private void startScanLocalNetwork(){
+        AssociatedWifiHelper helper = new AssociatedWifiHelper(DeviceControlListActivity.this);
+        ArrayList<String> list = new ArrayList<>();
+        list.add("00-23-ae-d4-65-98");
+        helper.setMacIds(list);
+    }
 
+    @Override
+    public void sniffStarted() {
+     // show loading UI
+      Log.i(TAG," Network sniff started");
 
     }
 
-
-
-    /**
-     *
-     */
-    private void startSniffingNetwork(){
+    @Override
+    public void sniffCompleted(ConcurrentHashMap<String,String> macMap) {
+        // hide loading UI
+        // Log.i(TAG," Network sniff completed");
 
 
 
     }
-
 
     // this function will tell you in
     private AppUtils.ConnMode getCurrentConnectionMode(){
@@ -525,5 +539,8 @@ public class DeviceControlListActivity extends AppCompatActivity implements Wifi
 
         return connMode;
     }
+
+
+
 
 }

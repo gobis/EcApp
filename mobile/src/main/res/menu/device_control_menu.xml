@@ -22,6 +22,11 @@
             android:title="@string/connect_station_mode"
             app:showAsAction="never" />
 
+        <item
+            android:id="@+id/action_scan_device"
+            android:title="@string/scan_device"
+            app:showAsAction="never" />
+
     </group>
 
 </menu>

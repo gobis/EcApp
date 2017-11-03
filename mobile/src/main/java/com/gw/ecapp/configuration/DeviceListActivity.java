@@ -415,6 +415,7 @@ public class DeviceListActivity extends AppCompatActivity implements WifiConnect
         // get cpu info , ip , mac address , wifiName etc
         Intent intent = new Intent(this, DeviceControlListActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra(AppConstant.Extras.SCAN_LAN,false);
         startActivity(intent);
         finish();
     }

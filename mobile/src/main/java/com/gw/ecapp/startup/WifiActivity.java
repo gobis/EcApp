@@ -14,6 +14,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.gw.ecapp.NsdHelper;
 import com.gw.ecapp.utility.AssociatedWifiHelper;
 import com.gw.ecapp.NetworkUtils;
 import com.gw.ecapp.R;
@@ -104,7 +105,7 @@ public class WifiActivity extends AppCompatActivity implements WifiConnection.Co
         mWifiSsidAdapter = new WifiSsidAdapter(getApplicationContext());
         mWifiListSpinner.setAdapter(mWifiSsidAdapter);
 
-       // test();
+        test();
     }
 
     @Override
@@ -256,10 +257,6 @@ public class WifiActivity extends AppCompatActivity implements WifiConnection.Co
     private void navigateToDeviceListPage(boolean isSkipped) {
 
         if (!isSkipped) {
-            // print all the available device connected to current network
-            AssociatedWifiHelper helper = new AssociatedWifiHelper();
-            helper.getAssociatedWifi(WifiActivity.this);
-
             // store ssid , password and router availability  in pref
             AppPreferences.getInstance(WifiActivity.this).setRouterSSID(mSelectedSSID);
             AppPreferences.getInstance(WifiActivity.this).setRouterPassword(mPassword);
@@ -272,9 +269,27 @@ public class WifiActivity extends AppCompatActivity implements WifiConnection.Co
     }
 
 
+
+    NsdHelper mNsdHelper;
+
     private void test(){
-        TestUtility testUtility = new TestUtility();
-        testUtility.TestDBInsert(WifiActivity.this);
+       /* TestUtility testUtility = new TestUtility();
+        testUtility.TestDBInsert(WifiActivity.this);*/
+        // print all the available device connected to current network
+
+        ArrayList<String> macIdList = new ArrayList<>();
+        macIdList.add("4C-66-41-2C-11-A0");
+        AssociatedWifiHelper helper = new AssociatedWifiHelper(WifiActivity.this);
+        helper.setMacIds(macIdList);
+
+       /* mNsdHelper = new NsdHelper(this);
+        mNsdHelper.initializeNsd();
+
+        mNsdHelper.registerService(7677);
+        mNsdHelper.discoverServices();*/
+
+
+
     }
 
 

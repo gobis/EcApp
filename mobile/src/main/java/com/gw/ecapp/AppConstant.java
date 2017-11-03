@@ -11,6 +11,7 @@ public class AppConstant {
         public static String Device = "Device";
         public static String DEVICE_SSID = "DeviceSsid";
         public static String DEVICE_PWD = "DevicePassword";
+        public static String SCAN_LAN = "ScanLan";
 
     }
 

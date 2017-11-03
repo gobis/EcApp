@@ -127,4 +127,9 @@ public class NetworkUtils {
         FILTER_BY_WIFI
     }
 
+
+    public static  String intToIP(int paramInt) {
+        return (paramInt & 0xFF) + "." + (paramInt >> 8 & 0xFF) + "." + (paramInt >> 16 & 0xFF) + "." + (paramInt >> 24 & 0xFF);
+    }
+
 }
