@@ -6,6 +6,8 @@ package com.gw.ecapp;
 
 public class AppConstant {
 
+    public static String DB_NAME = "ecapp_db";
+
     public static class Extras {
 
         public static String Device = "Device";

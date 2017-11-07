@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.gw.ecapp">
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -22,7 +23,7 @@
         android:theme="@style/AppTheme">
         <meta-data
             android:name="com.google.android.gms.vision.DEPENDENCIES"
-            android:value="barcode" />
+            android:value="barcode"/>
         <!-- values are barcode , ocr , face -->
 
         <activity android:name=".scangateway.ScanActivity"></activity>

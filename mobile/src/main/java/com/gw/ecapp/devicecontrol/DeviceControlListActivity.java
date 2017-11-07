@@ -65,7 +65,7 @@ import io.reactivex.schedulers.Schedulers;
  */
 
 public class DeviceControlListActivity extends AppCompatActivity
-        implements WifiConnection.ConnectionStatusInterface ,
+        implements WifiConnection.ConnectionStatusInterface,
         AssociatedWifiHelper.NetworkSniffStatus {
 
     private RecyclerView mDeviceRecyclerView;
@@ -79,11 +79,11 @@ public class DeviceControlListActivity extends AppCompatActivity
     RelativeLayout mOverlayContainer;
     TextView mNoResultText;
 
-    private String mSelectedSSID ;
+    private String mSelectedSSID;
 
     private ApplianceControlEvent mControlEvent;
 
-    private int EDIT_ACTIVITY_RESULT  = 765;
+    private int EDIT_ACTIVITY_RESULT = 765;
 
     private ActionBar mAppBar;
 
@@ -122,12 +122,12 @@ public class DeviceControlListActivity extends AppCompatActivity
         mAppBar = getSupportActionBar();
         mAppBar.setTitle(getString(R.string.devices));
 
-        mCurrentConnMode =  getCurrentConnectionMode();
+        mCurrentConnMode = getCurrentConnectionMode();
 
         Intent intent = getIntent();
-        boolean scanLocalNetwork =  intent.getBooleanExtra(AppConstant.Extras.SCAN_LAN,false);
+        boolean scanLocalNetwork = intent.getBooleanExtra(AppConstant.Extras.SCAN_LAN, false);
 
-        if(scanLocalNetwork){
+        if (scanLocalNetwork) {
             startScanLocalNetwork();
         }
 
@@ -155,7 +155,7 @@ public class DeviceControlListActivity extends AppCompatActivity
 
     /**
      * On selecting action bar icons
-     * */
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -164,9 +164,9 @@ public class DeviceControlListActivity extends AppCompatActivity
                 //  show popup with wifi-router info , where user going to connect
                 // if yes, connect all the devices with router info
                 // else, show the first page
-                if(AppPreferences.getInstance(DeviceControlListActivity.this).hasRouter()){
+                if (AppPreferences.getInstance(DeviceControlListActivity.this).hasRouter()) {
                     showStationModeDialog();
-                }else{
+                } else {
                     showWifiDialog();
                 }
 
@@ -191,7 +191,6 @@ public class DeviceControlListActivity extends AppCompatActivity
 
         return true;
     }
-
 
 
     @Override
@@ -303,7 +302,7 @@ public class DeviceControlListActivity extends AppCompatActivity
 
 
     private void executeOperation(ApplianceControlEvent controlEvent) {
-        mControlEvent = controlEvent ;
+        mControlEvent = controlEvent;
 
         if (AppPreferences.getInstance(DeviceControlListActivity.this).hasRouter()) {
             // System is already configured in station mode
@@ -317,15 +316,15 @@ public class DeviceControlListActivity extends AppCompatActivity
             String controlSsid = deviceModel.getDeviceSsid();
             String controlPassword = deviceModel.getDevicePassword();
 
-             String currentSsid = NetworkUtils.getCurrentSsid(DeviceControlListActivity.this);
+            String currentSsid = NetworkUtils.getCurrentSsid(DeviceControlListActivity.this);
             // remove double quoute from leading and trail
-             currentSsid = currentSsid.replaceAll("\"","");
-            if(currentSsid.equalsIgnoreCase(controlSsid)){
+            currentSsid = currentSsid.replaceAll("\"", "");
+            if (currentSsid.equalsIgnoreCase(controlSsid)) {
                 sendCommand(controlEvent);
 
-            }else{
+            } else {
                 // connect to different network and start sending commands
-                makeConnection(controlSsid,controlPassword);
+                makeConnection(controlSsid, controlPassword);
 
             }
         }
@@ -335,7 +334,7 @@ public class DeviceControlListActivity extends AppCompatActivity
     @Override
     public void ConnectionStatus(WifiConnection.ConnStatus status) {
 
-        switch (status){
+        switch (status) {
             case CONNECTING:
                 break;
             case CONNECTED:
@@ -355,20 +354,20 @@ public class DeviceControlListActivity extends AppCompatActivity
     }
 
 
-    private void checkWifiConnection(){
+    private void checkWifiConnection() {
 
         onSuccessfulWifiConnection();
         // get currently connected ssid
         String currentSsid = NetworkUtils.getCurrentSsid(mCurrentContext);
 
         // remove double quoute from leading and trail
-        currentSsid = currentSsid.replaceAll("\"","");
+        currentSsid = currentSsid.replaceAll("\"", "");
 
-        if(mSelectedSSID.equalsIgnoreCase(currentSsid)){
-            Toast.makeText(mCurrentContext," Connection successful",Toast.LENGTH_SHORT).show();
+        if (mSelectedSSID.equalsIgnoreCase(currentSsid)) {
+            Toast.makeText(mCurrentContext, " Connection successful", Toast.LENGTH_SHORT).show();
             onSuccessfulWifiConnection();
-        }else {
-            Toast.makeText(mCurrentContext,getString(R.string.connect_to_wrong_ssid),Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(mCurrentContext, getString(R.string.connect_to_wrong_ssid), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -376,61 +375,61 @@ public class DeviceControlListActivity extends AppCompatActivity
     /**
      * responsible to handle connection time out when user unable to connect to network
      */
-    private void connectionTimeOut(){
+    private void connectionTimeOut() {
         onSuccessfulWifiConnection();
-        Toast.makeText(mCurrentContext,getString(R.string.unable_connect_to_given_wifi,mSelectedSSID), Toast.LENGTH_SHORT).show();
+        Toast.makeText(mCurrentContext, getString(R.string.unable_connect_to_given_wifi, mSelectedSSID), Toast.LENGTH_SHORT).show();
 
     }
 
     /**
      * responsible to handle connection time out when user unable to connect to network
      */
-    public void makeConnection(String deviceSsid, String devicePassword){
+    public void makeConnection(String deviceSsid, String devicePassword) {
         mSelectedSSID = deviceSsid;
         showLoadingWifiConnection();
         mWifiConnection.startReceivingWifiChanges(getApplicationContext());
-        mWifiConnection.ConnectToServiceSetID(getApplicationContext(),deviceSsid,devicePassword,false);
+        mWifiConnection.ConnectToServiceSetID(getApplicationContext(), deviceSsid, devicePassword, false);
     }
 
 
-    private void connectionUnknownStatus(){
+    private void connectionUnknownStatus() {
         hideOverLay();
-        Toast.makeText(mCurrentContext,getString(R.string.unable_connect_to_given_wifi,mSelectedSSID), Toast.LENGTH_SHORT).show();
+        Toast.makeText(mCurrentContext, getString(R.string.unable_connect_to_given_wifi, mSelectedSSID), Toast.LENGTH_SHORT).show();
     }
 
-    public void showLoadingWifiConnection(){
+    public void showLoadingWifiConnection() {
         // get ssid and pwd , and make connection
         showOverlay();
         mLoadingText.setText(getString(R.string.connection_loading_text));
     }
 
 
-    public void onSuccessfulWifiConnection(){
+    public void onSuccessfulWifiConnection() {
         // get ssid and pwd , and make connection
         hideOverLay();
         executeOperation(mControlEvent);
     }
 
-    private void hideOverLay(){
+    private void hideOverLay() {
         mOverlayContainer.setVisibility(View.GONE);
     }
 
-    private  void showOverlay(){
+    private void showOverlay() {
         mOverlayContainer.setVisibility(View.VISIBLE);
     }
 
 
-    private void sendCommand(final ApplianceControlEvent controlEvent){
+    private void sendCommand(final ApplianceControlEvent controlEvent) {
         // get cpu info
         UDPClient mEngine = (UDPClient) CommEngine.getCommsEngine(DeviceControlListActivity.this, CommEngine.ENGINE_TYPE.UDP);
         mEngine.sendMessageToDevice(controlEvent.mMessage);
     }
 
 
-    private void updateDeviceConfig(DeviceModel deviceModel){
+    private void updateDeviceConfig(DeviceModel deviceModel) {
         Intent intent = new Intent(DeviceControlListActivity.this, DeviceEditActivity.class);
         intent.putExtra(AppConstant.Extras.Device, Parcels.wrap(deviceModel));
-        startActivityForResult(intent,EDIT_ACTIVITY_RESULT);
+        startActivityForResult(intent, EDIT_ACTIVITY_RESULT);
     }
 
     @Override
@@ -451,14 +450,14 @@ public class DeviceControlListActivity extends AppCompatActivity
      * display credentials before connecting it
      * this is not only for cross verification, also serves the purpose of password change
      */
-    private void showStationModeDialog(){
+    private void showStationModeDialog() {
 
         final String ssid = AppPreferences.getInstance(DeviceControlListActivity.this).getRouterSSID();
         final String password = AppPreferences.getInstance(DeviceControlListActivity.this).getRouterPassword();
 
         DialogManager.showGenericConfirmDialogForTwoButtons(
                 DeviceControlListActivity.this,
-                getString(R.string.station_mode_confirm_msg , ssid , password),
+                getString(R.string.station_mode_confirm_msg, ssid, password),
                 getString(R.string.yes), getString(R.string.change_password), new TwoButtonDialogListener() {
 
                     @Override
@@ -475,7 +474,6 @@ public class DeviceControlListActivity extends AppCompatActivity
                         // user password has changed , take user to wifi page
 
 
-
                     }
                 });
 
@@ -483,9 +481,8 @@ public class DeviceControlListActivity extends AppCompatActivity
 
     /**
      * show this dialog if user doesn't have wifi router and want to connect with new router
-     *
      */
-    private void showWifiDialog(){
+    private void showWifiDialog() {
 
         DialogManager.showGenericConfirmDialogForTwoButtons(
                 DeviceControlListActivity.this,
@@ -507,7 +504,7 @@ public class DeviceControlListActivity extends AppCompatActivity
     }
 
 
-    private void startScanLocalNetwork(){
+    private void startScanLocalNetwork() {
         AssociatedWifiHelper helper = new AssociatedWifiHelper(DeviceControlListActivity.this);
         ArrayList<String> list = new ArrayList<>();
         list.add("00-23-ae-d4-65-98");
@@ -516,31 +513,28 @@ public class DeviceControlListActivity extends AppCompatActivity
 
     @Override
     public void sniffStarted() {
-     // show loading UI
-      Log.i(TAG," Network sniff started");
+        // show loading UI
+        Log.i(TAG, " Network sniff started");
 
     }
 
     @Override
-    public void sniffCompleted(ConcurrentHashMap<String,String> macMap) {
+    public void sniffCompleted(ConcurrentHashMap<String, String> macMap) {
         // hide loading UI
         // Log.i(TAG," Network sniff completed");
-
 
 
     }
 
     // this function will tell you in
-    private AppUtils.ConnMode getCurrentConnectionMode(){
+    private AppUtils.ConnMode getCurrentConnectionMode() {
         AppUtils.ConnMode connMode = AppUtils.ConnMode.AP_MODE;
 
-       List<DeviceModel> deviceModelList = mAdapter.getDeviceList();
+        List<DeviceModel> deviceModelList = mAdapter.getDeviceList();
 
 
         return connMode;
     }
-
-
 
 
 }
