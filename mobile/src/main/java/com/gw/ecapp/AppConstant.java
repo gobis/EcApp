@@ -26,4 +26,14 @@ public class AppConstant {
 
     public static String ENTER_PWD_MAN= "manual";
     public static String ENTER_PWD_SCAN= "scan";
+
+    public static int AP_MODE = 0 ;
+    public static int STATION_MODE = 1 ;
+    public static int UNKNOWN_MODE = 2 ;
+
+    // Commands name
+    public static String STATION_COMMAND_NAME = "st_command";
+    public static String CPU_INFO_COMMAND_NAME = "cpuinfo";
+    public static String DEVICE_STATUS_COMMAND_NAME = "device_status";
+
 }

@@ -1,12 +1,12 @@
 package com.gw.ecapp.devicecontrol;
 
 import android.app.Activity;
-import android.bluetooth.BluetoothClass;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
+import android.support.v4.util.ArraySet;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,7 +22,6 @@ import android.widget.Toast;
 
 import com.gw.ecapp.AppConstant;
 import com.gw.ecapp.AppUtils;
-import com.gw.ecapp.DialogListener;
 import com.gw.ecapp.DialogManager;
 import com.gw.ecapp.NetworkUtils;
 import com.gw.ecapp.R;
@@ -34,7 +33,6 @@ import com.gw.ecapp.devicecontrol.events.ApplianceControlEvent;
 import com.gw.ecapp.devicecontrol.events.DeviceEditEvent;
 import com.gw.ecapp.engine.CommEngine;
 import com.gw.ecapp.engine.udpEngine.events.MessageArrivedEvent;
-import com.gw.ecapp.engine.udpEngine.parser.CpuInfoResponse;
 import com.gw.ecapp.engine.udpEngine.udpComms.UDPClient;
 import com.gw.ecapp.storage.AppPreferences;
 import com.gw.ecapp.storage.DatabaseManager;
@@ -48,9 +46,8 @@ import org.greenrobot.eventbus.ThreadMode;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -75,17 +72,19 @@ public class DeviceControlListActivity extends AppCompatActivity
     private WifiConnection mWifiConnection;
     private Context mCurrentContext;
 
-    TextView mLoadingText;
-    RelativeLayout mOverlayContainer;
-    TextView mNoResultText;
+    private TextView mLoadingText;
+    private RelativeLayout mOverlayContainer;
+    private TextView mNoResultText;
 
     private String mSelectedSSID ;
 
     private ApplianceControlEvent mControlEvent;
 
-    private int EDIT_ACTIVITY_RESULT  = 765;
+    private DeviceControlListPresenter mControlListPresenter;
 
+    private int EDIT_ACTIVITY_RESULT  = 765;
     private ActionBar mAppBar;
+
 
 
     private String TAG = getClass().getSimpleName();
@@ -123,6 +122,8 @@ public class DeviceControlListActivity extends AppCompatActivity
         mAppBar.setTitle(getString(R.string.devices));
 
         mCurrentConnMode =  getCurrentConnectionMode();
+
+        mControlListPresenter = new DeviceControlListPresenter();
 
         Intent intent = getIntent();
         boolean scanLocalNetwork =  intent.getBooleanExtra(AppConstant.Extras.SCAN_LAN,false);
@@ -508,10 +509,8 @@ public class DeviceControlListActivity extends AppCompatActivity
 
 
     private void startScanLocalNetwork(){
-        AssociatedWifiHelper helper = new AssociatedWifiHelper(DeviceControlListActivity.this);
-        ArrayList<String> list = new ArrayList<>();
-        list.add("00-23-ae-d4-65-98");
-        helper.setMacIds(list);
+        macAddressList();
+
     }
 
     @Override
@@ -525,8 +524,13 @@ public class DeviceControlListActivity extends AppCompatActivity
     public void sniffCompleted(ConcurrentHashMap<String,String> macMap) {
         // hide loading UI
         // Log.i(TAG," Network sniff completed");
+        // map key is IP value is mac address
+        List<DeviceModel> deviceModelList = mAdapter.getDeviceList();
 
+        deviceModelList = mControlListPresenter.getDevicesAfterSniff(deviceModelList,macMap);
 
+        mAdapter.setData(deviceModelList);
+        mAdapter.notifyDataSetChanged();
 
     }
 
@@ -541,6 +545,40 @@ public class DeviceControlListActivity extends AppCompatActivity
     }
 
 
+    private List<String> macAddressList(){
+        List<String> macAddressList = new ArrayList<>();
+
+        DatabaseManager dbManager = DatabaseManager.getInstance(DeviceControlListActivity.this);
+        dbManager.getDeviceList()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Consumer<List<DeviceModel>>() {
+                    @Override
+                    public void accept(@NonNull List<DeviceModel> deviceModels) throws Exception {
+                        Set<String> macSet = new ArraySet<String>();
+                        for (DeviceModel deviceModel:deviceModels) {
+                            macSet.add(deviceModel.getMacId());
+                        }
+
+                        List<String> macList = new ArrayList<String>(macSet);
+                        scanNetwork(macList);
+
+                    }
+                },new Consumer<Throwable>() {
+                    @Override
+                    public void accept(@NonNull Throwable throwable) throws Exception {
+
+
+                    }
+                });
+
+        return macAddressList;
+    }
+
+    private void scanNetwork(List<String> macList){
+        AssociatedWifiHelper helper = new AssociatedWifiHelper(DeviceControlListActivity.this);
+        helper.setMacIds(macList);
+    }
 
 
 }

@@ -9,6 +9,7 @@ import com.google.gson.Gson;
 import com.gw.ecapp.engine.udpEngine.packetCreator.Message;
 
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
@@ -73,7 +74,31 @@ public class AppUtils {
         return json;
     }
 
+    public static String getJsonFromObject(Object obj){
+        Gson gson = new Gson();
+        String json = gson.toJson(obj);
+        return json;
+    }
 
+
+    /**
+     *  utility function gets key from value
+     * @param map
+     * @param value
+     * @param <T>
+     * @param <E>
+     * @return
+     */
+    public static <T, E> T getKeyByValue(Map<T, E> map, E value) {
+        for (Map.Entry<T, E> entry : map.entrySet()) {
+
+            if (value.equals(entry.getValue())) {
+                return entry.getKey();
+            }
+        }
+        return null;
+
+    }
 
 
 

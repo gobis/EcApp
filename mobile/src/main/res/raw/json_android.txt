@@ -48,8 +48,12 @@ we send
 {"Relay": 1..4 , "RelayStatus":0/1}
 --------------------------------------
 
-
 To get status of the relay
 we send
 {"State":}
+
 we got msg
+
+// to get the state
+
+{"macId": "45-AD-4A-23-57" , "RelayStatus":[1,0,0,0]}

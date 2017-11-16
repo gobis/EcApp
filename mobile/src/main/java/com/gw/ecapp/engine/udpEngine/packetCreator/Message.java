@@ -25,10 +25,14 @@ public class Message {
     @SerializedName("timestamp")
     private transient  long mTimeStampInMillis;
 
-    public Message(){
+    @SerializedName("command")
+    private String mCommand;
+
+    public Message(String command){
         mMessageId = UUID.randomUUID().toString();
         mTimeStampInMillis = Calendar.getInstance().getTimeInMillis();
         mOrigin = AppUtils.ORIGIN;
+        mCommand = command ;
     }
 
     public Message(String messageId , long timestamp) {

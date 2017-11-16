@@ -1,6 +1,7 @@
 package com.gw.ecapp.engine.udpEngine.packetCreator;
 
 import com.google.gson.annotations.SerializedName;
+import com.gw.ecapp.AppConstant;
 
 /**
  * Created by iningosu on 8/25/2017.
@@ -12,7 +13,7 @@ public class  GetCpuMsgPacket extends Message {
     private String mCpuInfo;
 
     public GetCpuMsgPacket(){
-        super();
+        super(AppConstant.CPU_INFO_COMMAND_NAME);
         mCpuInfo = "1";
     }
 

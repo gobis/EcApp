@@ -1,6 +1,7 @@
 package com.gw.ecapp.devicecontrol;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.gw.ecapp.AppConstant;
 import com.gw.ecapp.R;
 import com.gw.ecapp.devicecontrol.events.ApplianceControlEvent;
 import com.gw.ecapp.devicecontrol.events.DeviceEditEvent;
@@ -202,6 +204,12 @@ public class DeviceControlListAdapter extends RecyclerView.Adapter<DeviceControl
         holder.mMasterTwoChContainer.setVisibility(View.GONE);
         holder.mMasterOneChContainer.setVisibility(View.VISIBLE);
 
+        if(deviceModel.getConnMode() == AppConstant.AP_MODE) {
+            holder.mMasterOneChContainer.setBackgroundColor(ContextCompat.getColor(mContext, R.color.brownish_grey));
+        }else {
+            holder.mMasterOneChContainer.setBackgroundColor(ContextCompat.getColor(mContext, R.color.color_leaf));
+        }
+
         ArrayList<ApplianceModel> connectedDevices = deviceModel.getConnectedDevices();
         holder.mOneChDeviceName.setText(deviceModel.getDeviceName());
         if(connectedDevices.size() > 0 ){
@@ -232,6 +240,13 @@ public class DeviceControlListAdapter extends RecyclerView.Adapter<DeviceControl
         holder.mMasterFourChContainer.setVisibility(View.GONE);
         holder.mMasterTwoChContainer.setVisibility(View.VISIBLE);
         holder.mMasterOneChContainer.setVisibility(View.GONE);
+
+        if(deviceModel.getConnMode() == AppConstant.AP_MODE) {
+        holder.mMasterTwoChContainer.setBackgroundColor(ContextCompat.getColor(mContext, R.color.brownish_grey));
+        }else {
+            holder.mMasterTwoChContainer.setBackgroundColor(ContextCompat.getColor(mContext, R.color.color_leaf));
+        }
+
 
         holder.mTwoChDeviceName.setText(deviceModel.getDeviceName());
         ArrayList<ApplianceModel> connectedDevices = deviceModel.getConnectedDevices();
@@ -281,14 +296,18 @@ public class DeviceControlListAdapter extends RecyclerView.Adapter<DeviceControl
 
             }
         });
-
-
     }
 
     private void showFourChannelControl(MyViewHolder holder ,DeviceModel deviceModel) {
         holder.mMasterFourChContainer.setVisibility(View.VISIBLE);
         holder.mMasterTwoChContainer.setVisibility(View.GONE);
         holder.mMasterOneChContainer.setVisibility(View.GONE);
+
+        if(deviceModel.getConnMode() == AppConstant.AP_MODE) {
+            holder.mMasterFourChContainer.setBackgroundColor(ContextCompat.getColor(mContext, R.color.brownish_grey));
+        }else {
+            holder.mMasterFourChContainer.setBackgroundColor(ContextCompat.getColor(mContext, R.color.color_leaf));
+        }
 
         holder.mFourChDeviceName.setText(deviceModel.getDeviceName());
         ArrayList<ApplianceModel> connectedDevices = deviceModel.getConnectedDevices();
@@ -357,8 +376,6 @@ public class DeviceControlListAdapter extends RecyclerView.Adapter<DeviceControl
 
                 String val = String.valueOf(isChecked ? 1 : 0);
                 EventBus.getDefault().post(new ApplianceControlEvent("{\"Relay2\":"+val+"}",deviceModel));
-
-
             }
         });
 

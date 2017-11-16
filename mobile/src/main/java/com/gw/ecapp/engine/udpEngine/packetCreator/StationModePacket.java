@@ -1,12 +1,13 @@
 package com.gw.ecapp.engine.udpEngine.packetCreator;
 
 import com.google.gson.annotations.SerializedName;
+import com.gw.ecapp.AppConstant;
 
 /**
  * Created by Gobi on 08/10/17.
  */
 
-public class StationModePacket {
+public class StationModePacket extends Message{
 
     @SerializedName("DeviceName")
     public String mDeviceName;
@@ -16,6 +17,11 @@ public class StationModePacket {
 
     @SerializedName("password")
     public String mPassword;
+
+
+    public StationModePacket(){
+        super(AppConstant.STATION_COMMAND_NAME);
+    }
 
 
     public void setDeviceName(String deviceName){

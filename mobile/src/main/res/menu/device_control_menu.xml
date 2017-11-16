@@ -16,12 +16,6 @@
             android:title="@string/help"
             app:showAsAction="never" />
 
-        <!-- Search / will display always -->
-        <item
-            android:id="@+id/action_station_mode"
-            android:title="@string/connect_station_mode"
-            app:showAsAction="never" />
-
         <item
             android:id="@+id/action_scan_device"
             android:title="@string/scan_device"

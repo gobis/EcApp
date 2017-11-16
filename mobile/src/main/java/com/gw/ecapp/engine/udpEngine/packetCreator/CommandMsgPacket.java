@@ -1,6 +1,7 @@
 package com.gw.ecapp.engine.udpEngine.packetCreator;
 
 import com.google.gson.annotations.SerializedName;
+import com.gw.ecapp.AppConstant;
 
 /**
  * Created by iningosu on 8/25/2017.
@@ -15,7 +16,7 @@ public class CommandMsgPacket extends Message {
     public String mRelayStatus;
 
     public CommandMsgPacket(){
-
+          super(AppConstant.DEVICE_STATUS_COMMAND_NAME);
     }
 
 

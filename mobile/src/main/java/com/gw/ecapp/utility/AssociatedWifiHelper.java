@@ -53,6 +53,7 @@ public class AssociatedWifiHelper {
 
     private int mDeviceCount;
 
+    // IP as Key and MAC address as value here
     private ConcurrentHashMap<String, String> macAddressMap;
 
     public static final String NoMac = "00:00:00:00:00:00";
@@ -73,11 +74,8 @@ public class AssociatedWifiHelper {
      */
     public void setMacIds(List<String> macIds) {
         mMacIdList = macIds;
-
         Log.i(TAG, "Mac Id list" + macIds.toString());
-
         mDeviceCount = 0;
-
         startSniffingNetwork();
     }
 

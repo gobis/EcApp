@@ -163,29 +163,7 @@ public class DatabaseManager {
                     Dao<DeviceModel, String> deviceDao = mDbHelper.getDaoDevice();
                     List<DeviceModel> deviceList = deviceDao.queryForAll();
 
-
-                  /*  Dao<ApplianceModel, Integer> applianceDao = mDbHelper.getDaoAppliance();
-                    List<ApplianceModel> applianceList = applianceDao.queryForAll();
-
-                    for ( DeviceModel deviceModel:deviceList ) {
-
-                        String macId = deviceModel.getMacId();
-
-                        ArrayList<ApplianceModel> applianceModelList = new ArrayList<ApplianceModel>();
-
-                        for (ApplianceModel applianceModel:applianceList) {
-
-                            if(macId.equalsIgnoreCase(applianceModel.getDeviceMacId())){
-                                applianceModelList.add(applianceModel);
-                            }
-                        }
-
-                        deviceModel.setConnectedDevices(applianceModelList);
-                    }*/
-
-
-
-                    if (!emitter.isDisposed()) {
+                   if (!emitter.isDisposed()) {
                         emitter.onSuccess(deviceList);
                     }
 

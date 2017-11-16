@@ -13,6 +13,7 @@ import java.util.ArrayList;
 @Parcel
 public class DeviceModel {
 
+
     @DatabaseField(generatedId = true)
     public int id;
 
@@ -33,6 +34,9 @@ public class DeviceModel {
 
     @DatabaseField
     public int connMode;
+
+    // this is transient, no need to persist
+    public boolean isFoundInNwSniff;
 
     @DatabaseField
     public String macId;

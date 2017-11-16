@@ -1,12 +1,16 @@
 package com.gw.ecapp.devicecontrol.edit;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -15,11 +19,21 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.gw.ecapp.AppConstant;
+import com.gw.ecapp.DialogManager;
 import com.gw.ecapp.R;
+import com.gw.ecapp.TwoButtonDialogListener;
+import com.gw.ecapp.devicecontrol.DeviceControlListActivity;
+import com.gw.ecapp.engine.udpEngine.events.MessageArrivedEvent;
+import com.gw.ecapp.engine.udpEngine.parser.CpuInfoResponse;
+import com.gw.ecapp.storage.AppPreferences;
 import com.gw.ecapp.storage.DatabaseManager;
 import com.gw.ecapp.storage.model.ApplianceModel;
 import com.gw.ecapp.storage.model.DeviceModel;
+import com.gw.ecapp.utility.StationModeModel;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
@@ -116,6 +130,10 @@ public class DeviceEditActivity extends AppCompatActivity {
     private DeviceModel mSelectedDeviceModel;
     private ActionBar mAppBar ;
 
+    private DeviceEditPresenter mPresenter;
+
+    private Context mCurrentContext;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -127,18 +145,21 @@ public class DeviceEditActivity extends AppCompatActivity {
         try {
             showRequiredContainer(mSelectedDeviceModel);
         }catch (Exception e){
-            Log.e(TAG,"Exception Occured " + e.toString());
+            Log.e(TAG,"Exception occured " + e.toString());
         }
 
-
+        mCurrentContext = DeviceEditActivity.this;
         mAppBar = getSupportActionBar();
         mAppBar.setTitle(getString(R.string.edit_device));
+
+        mPresenter = new DeviceEditPresenter(this);
 
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -202,6 +223,47 @@ public class DeviceEditActivity extends AppCompatActivity {
 
     }
 
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.device_edit_menu, menu);
+        return true;
+    }
+
+    /**
+     * On selecting action bar icons
+     * */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // action with ID action_refresh was selected
+            case R.id.action_station_mode:
+                //  show popup with wifi-router info , where user going to connect
+                // if yes, connect all the devices with router info
+                // else, show the first page
+                if(AppPreferences.getInstance(DeviceEditActivity.this).hasRouter()){
+                    showStationModeDialog();
+                }else{
+                    showWifiDialog();
+                }
+
+                break;
+            default:
+                break;
+        }
+
+        return true;
+    }
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventMainThread(MessageArrivedEvent msgArriveEvent) {
+        Log.i(TAG,"on Event called :: onEventMainThread info " + msgArriveEvent.message.toString());
+    }
+
+
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -210,6 +272,7 @@ public class DeviceEditActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -323,6 +386,91 @@ public class DeviceEditActivity extends AppCompatActivity {
         Intent intent = new Intent();
         setResult(RESULT_OK,intent);
         finish();
+    }
+
+
+    /**
+     * user has provided router name and password already
+     * now, he wants to connect all devices using this credentials
+     * display credentials before connecting it
+     * this is not only for cross verification, also serves the purpose of password change
+     */
+    private void showStationModeDialog(){
+
+        final String ssid = AppPreferences.getInstance(mCurrentContext).getRouterSSID();
+        final String password = AppPreferences.getInstance(mCurrentContext).getRouterPassword();
+
+        DialogManager.showGenericConfirmDialogForTwoButtons(
+                mCurrentContext,
+                getString(R.string.station_mode_confirm_msg , ssid , password),
+                getString(R.string.yes), getString(R.string.change_password), new TwoButtonDialogListener() {
+
+                    @Override
+                    public void positiveButtonClicked() {
+                        // start setting station mode
+                        StationModeModel stationModeModel = new StationModeModel();
+                        stationModeModel.setSsid(ssid);
+                        stationModeModel.setPassword(password);
+                        mPresenter.moveToStationMode(stationModeModel,mSelectedDeviceModel.getDeviceName());
+
+                        // connect to device one by one and send the station mode command
+                        Toast.makeText(mCurrentContext,
+                                "Moving to station mode", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void negativeButtonClicked() {
+                        // user password has changed , take user to wifi page
+
+
+
+                    }
+                });
+
+    }
+
+
+    /**
+     * show this dialog if user doesn't have wifi router and want to connect with new router
+     *
+     */
+    private void showWifiDialog(){
+
+        DialogManager.showGenericConfirmDialogForTwoButtons(
+                mCurrentContext,
+                getString(R.string.no_router_info), getString(R.string.yes), getString(R.string.no), new TwoButtonDialogListener() {
+
+                    @Override
+                    public void positiveButtonClicked() {
+                        // take user to first page
+
+                    }
+
+                    @Override
+                    public void negativeButtonClicked() {
+                        // user don't want to provide info , continue as AP mode
+
+                    }
+                });
+
+    }
+
+
+    /**
+     * call back when station mode success
+     */
+    public void stationModeSuccess(){
+
+    }
+
+    /**
+     * call back when station mode failed
+     */
+    public void stationModeFailed(){
+
+        // connect to device one by one and send the station mode command
+        Toast.makeText(mCurrentContext,
+               getString(R.string.st_mode_fail), Toast.LENGTH_SHORT).show();
     }
 
 
