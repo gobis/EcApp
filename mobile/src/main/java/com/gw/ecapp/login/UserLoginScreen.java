@@ -20,13 +20,13 @@ public class UserLoginScreen extends AppCompatActivity {
 
 
     @BindView(R.id.user_id)
-    private EditText mUser;
+    public EditText mUser;
 
     @BindView(R.id.user_password)
-    private EditText mPassword;
+    public EditText mPassword;
 
     @BindView(R.id.login_btn)
-    private Button mLoginBtn;
+    public Button mLoginBtn;
 
 
     private UserLoginPresenter mPresenter;

@@ -1,6 +1,7 @@
 package com.gw.ecapp.engine.udpEngine.parser;
 
 import com.google.gson.annotations.SerializedName;
+import com.gw.ecapp.AppConstant;
 import com.gw.ecapp.engine.udpEngine.packetCreator.Message;
 
 /**
@@ -10,7 +11,7 @@ import com.gw.ecapp.engine.udpEngine.packetCreator.Message;
 public class CpuInfoResponse extends Message{
 
     public CpuInfoResponse(){
-
+        super(AppConstant.CPU_INFO_COMMAND_NAME);
     }
 
      @SerializedName("Model Name")

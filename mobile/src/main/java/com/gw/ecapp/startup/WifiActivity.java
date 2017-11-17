@@ -27,12 +27,14 @@ import com.gw.ecapp.storage.AppPreferences;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by iningosu on 8/27/2017.
  */
 
-public class WifiActivity extends AppCompatActivity implements WifiConnection.ConnectionStatusInterface {
+public class WifiActivity extends AppCompatActivity
+        implements WifiConnection.ConnectionStatusInterface , AssociatedWifiHelper.NetworkSniffStatus {
 
 
     RelativeLayout mMasterContainer;
@@ -105,7 +107,7 @@ public class WifiActivity extends AppCompatActivity implements WifiConnection.Co
         mWifiSsidAdapter = new WifiSsidAdapter(getApplicationContext());
         mWifiListSpinner.setAdapter(mWifiSsidAdapter);
 
-        test();
+       // test();
     }
 
     @Override
@@ -292,5 +294,13 @@ public class WifiActivity extends AppCompatActivity implements WifiConnection.Co
 
     }
 
+    @Override
+    public void sniffStarted() {
 
+    }
+
+    @Override
+    public void sniffCompleted(ConcurrentHashMap<String, String> map) {
+
+    }
 }

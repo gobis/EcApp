@@ -28,59 +28,13 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:text="@string/scan_wifi"
+        android:textColor="@color/white"
         android:layout_marginBottom="@dimen/margin_normal"
         android:layout_marginLeft="@dimen/margin_normal"
         android:layout_marginRight="@dimen/margin_normal"
         android:background="@drawable/login_button_shape"
         android:maxHeight="50dp"
         />
-
-    <!--   <LinearLayout
-           android:layout_alignParentBottom="true"
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content"
-           android:orientation="horizontal">
-
-
-           <Button
-               android:id="@+id/button10"
-               android:layout_width="wrap_content"
-               android:layout_height="wrap_content"
-               android:layout_alignTop="@+id/btn_scan"
-               android:layout_toEndOf="@+id/no_devices_found"
-               android:onClick="getCpuInfo"
-               android:text="cpuInfo" />
-
-           <Button
-               android:id="@+id/button11"
-               android:layout_width="wrap_content"
-               android:layout_height="wrap_content"
-               android:layout_alignParentBottom="true"
-               android:layout_marginStart="10dp"
-               android:layout_toEndOf="@+id/button10"
-               android:onClick="getIp"
-               android:text="getIp" />
-
-           <Button
-               android:id="@+id/button12"
-               android:layout_width="wrap_content"
-               android:layout_height="wrap_content"
-               android:layout_alignTop="@+id/button11"
-               android:layout_toEndOf="@+id/button11"
-               android:onClick="on"
-               android:text="on" />
-
-           <Button
-               android:id="@+id/button13"
-               android:layout_width="wrap_content"
-               android:layout_height="wrap_content"
-               android:layout_alignEnd="@+id/btn_scan"
-               android:layout_alignParentBottom="true"
-               android:onClick="off"
-               android:text="off" />
-
-       </LinearLayout>
-    -->
 
       <include
           layout="@layout/overlay_layout" />
