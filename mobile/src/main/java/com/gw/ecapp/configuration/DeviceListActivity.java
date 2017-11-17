@@ -56,11 +56,14 @@ import io.reactivex.functions.Consumer;
  * Created by iningosu on 9/3/2017.
  */
 
-public class DeviceListActivity extends AppCompatActivity implements WifiConnection.ConnectionStatusInterface {
+public class DeviceListActivity extends AppCompatActivity
+        implements WifiConnection.ConnectionStatusInterface , DeviceListPresenter.DeviceListInterface {
 
     private ListView mDeviceListView;
 
     private  DeviceListAdapter mDeviceListAdapter;
+    private DeviceListPresenter mDeviceListPresenter;
+
 
     ArrayList<HashMap<String, String>> mWifiList;
 
@@ -120,6 +123,8 @@ public class DeviceListActivity extends AppCompatActivity implements WifiConnect
         mCurrentContext = DeviceListActivity.this;
 
         mDeviceListAdapter = new DeviceListAdapter(this);
+        mDeviceListPresenter = new DeviceListPresenter(this);
+        mDeviceListPresenter.setFilterDeviceCallBack(this);
 
         mDeviceListView = (ListView) findViewById(R.id.device_list);
 
@@ -161,16 +166,16 @@ public class DeviceListActivity extends AppCompatActivity implements WifiConnect
     }
 
 
-
+    /**
+     * responsible to get wifi router List
+     */
     private void getWifiList(){
 
         showOverlayWhileFetchingWifi();
         mWifiList =  NetworkUtils.getWifiAccessPointsList(
                 NetworkUtils.NetworkFilter.FILTER_BY_DEVICE,DeviceListActivity.this);
+        mDeviceListPresenter.getFilteredConfigDevice(mWifiList);
         hideOverlayWhenWifiIsCompleted();
-
-        mDeviceListAdapter.setData(mWifiList);
-        mDeviceListAdapter.notifyDataSetChanged();
     }
 
 
@@ -260,17 +265,27 @@ public class DeviceListActivity extends AppCompatActivity implements WifiConnect
     }
 
 
+    @Override
+    public void filteredDeviceList(ArrayList<HashMap<String, String>> networkList) {
+        mDeviceListAdapter.setData(networkList);
+        mDeviceListAdapter.notifyDataSetChanged();
+    }
+
+
+    /**
+     *
+     */
     private void checkWifiConnection(){
 
         onSuccessfulWifiConnection();
         // get currently connected ssid
         String currentSsid = NetworkUtils.getCurrentSsid(DeviceListActivity.this);
 
-        // remove double quoute from leading and trail
+        // remove double quote from leading and trail
         currentSsid = currentSsid.replaceAll("\"","");
 
         if(mSelectedSSID.equalsIgnoreCase(currentSsid)){
-            Toast.makeText(mCurrentContext," Conneciton successful",Toast.LENGTH_SHORT).show();
+            Toast.makeText(mCurrentContext," Connection successful",Toast.LENGTH_SHORT).show();
             onSuccessfulConnection();
         }else {
             Toast.makeText(mCurrentContext,getString(R.string.connect_to_wrong_ssid),Toast.LENGTH_SHORT).show();
