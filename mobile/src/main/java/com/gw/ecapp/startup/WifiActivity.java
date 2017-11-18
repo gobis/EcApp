@@ -14,11 +14,11 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.gw.ecapp.AppConstant;
 import com.gw.ecapp.NsdHelper;
 import com.gw.ecapp.utility.AssociatedWifiHelper;
 import com.gw.ecapp.NetworkUtils;
 import com.gw.ecapp.R;
-import com.gw.ecapp.TestUtility;
 import com.gw.ecapp.WifiConnection;
 import com.gw.ecapp.configuration.DeviceListActivity;
 import com.gw.ecapp.engine.udpEngine.EngineUtils;
@@ -61,6 +61,8 @@ public class WifiActivity extends AppCompatActivity
 
     private Context mCurrentContext;
 
+    boolean mFromEditPage = false ;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -88,6 +90,15 @@ public class WifiActivity extends AppCompatActivity
         // Ui Mapping ends here
 
         mWifiConnection = WifiConnection.getInstance(this);
+
+        mFromEditPage = getIntent().getBooleanExtra(AppConstant.Extras.FROM_DEVICE_EDIT_PAGE,false);
+
+       // FROM_DEVICE_EDIT_PAGE
+        if(mFromEditPage){
+             // hide skip button
+            mSkipWifiConnect.setVisibility(View.GONE);
+
+        }
 
 
         mWifiListSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -255,19 +266,32 @@ public class WifiActivity extends AppCompatActivity
         super.onDestroy();
     }
 
-
+    /**
+     * connection is successful , now based on the scenario, it will navigate to next page
+     * @param isSkipped
+     */
     private void navigateToDeviceListPage(boolean isSkipped) {
-
-        if (!isSkipped) {
-            // store ssid , password and router availability  in pref
+        if(mFromEditPage){
+            // save the router credential in preferences
             AppPreferences.getInstance(WifiActivity.this).setRouterSSID(mSelectedSSID);
             AppPreferences.getInstance(WifiActivity.this).setRouterPassword(mPassword);
             AppPreferences.getInstance(WifiActivity.this).setRouter(true);
-        }
 
-       Intent intent = new Intent(WifiActivity.this, DeviceListActivity.class);
-       // Intent intent = new Intent(WifiActivity.this, DeviceControlListActivity.class);
-        startActivity(intent);
+            Intent intent = new Intent();
+            setResult(RESULT_OK,intent);
+            finish();
+        }else {
+            if (!isSkipped) {
+                // store ssid , password and router availability  in pref
+                AppPreferences.getInstance(WifiActivity.this).setRouterSSID(mSelectedSSID);
+                AppPreferences.getInstance(WifiActivity.this).setRouterPassword(mPassword);
+                AppPreferences.getInstance(WifiActivity.this).setRouter(true);
+            }
+
+            Intent intent = new Intent(WifiActivity.this, DeviceListActivity.class);
+            // Intent intent = new Intent(WifiActivity.this, DeviceControlListActivity.class);
+            startActivity(intent);
+        }
     }
 
 

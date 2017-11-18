@@ -7,7 +7,7 @@ import java.util.Calendar;
 import java.util.UUID;
 
 /**
- * Created by iningosu on 8/25/2017.
+ * Created by Gobi on 8/25/2017.
  */
 
 public class Message {

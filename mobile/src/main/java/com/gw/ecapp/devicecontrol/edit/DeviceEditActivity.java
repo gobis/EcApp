@@ -14,7 +14,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Switch;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -22,9 +21,8 @@ import com.gw.ecapp.AppConstant;
 import com.gw.ecapp.DialogManager;
 import com.gw.ecapp.R;
 import com.gw.ecapp.TwoButtonDialogListener;
-import com.gw.ecapp.devicecontrol.DeviceControlListActivity;
 import com.gw.ecapp.engine.udpEngine.events.MessageArrivedEvent;
-import com.gw.ecapp.engine.udpEngine.parser.CpuInfoResponse;
+import com.gw.ecapp.startup.WifiActivity;
 import com.gw.ecapp.storage.AppPreferences;
 import com.gw.ecapp.storage.DatabaseManager;
 import com.gw.ecapp.storage.model.ApplianceModel;
@@ -128,11 +126,13 @@ public class DeviceEditActivity extends AppCompatActivity {
 
 
     private DeviceModel mSelectedDeviceModel;
-    private ActionBar mAppBar ;
+    private ActionBar mAppBar;
 
     private DeviceEditPresenter mPresenter;
 
     private Context mCurrentContext;
+
+    private static final int ROUTER_DATA = 1298;
 
 
     @Override
@@ -144,8 +144,8 @@ public class DeviceEditActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         try {
             showRequiredContainer(mSelectedDeviceModel);
-        }catch (Exception e){
-            Log.e(TAG,"Exception occured " + e.toString());
+        } catch (Exception e) {
+            Log.e(TAG, "Exception occured " + e.toString());
         }
 
         mCurrentContext = DeviceEditActivity.this;
@@ -167,8 +167,8 @@ public class DeviceEditActivity extends AppCompatActivity {
         super.onResume();
     }
 
-    private void showRequiredContainer(DeviceModel deviceModel) throws Exception{
-        switch (deviceModel.getChannelCount()){
+    private void showRequiredContainer(DeviceModel deviceModel) throws Exception {
+        switch (deviceModel.getChannelCount()) {
             case 1:
                 mMasterOneChContainer.setVisibility(View.VISIBLE);
                 mMasterTwoChContainer.setVisibility(View.GONE);
@@ -193,28 +193,28 @@ public class DeviceEditActivity extends AppCompatActivity {
     }
 
 
-    private void showOneChannelInfo(DeviceModel deviceModel) throws Exception{
+    private void showOneChannelInfo(DeviceModel deviceModel) throws Exception {
 
         mOneChDeviceName.setText(deviceModel.getDeviceName());
         ArrayList<ApplianceModel> applianceModels = deviceModel.getConnectedDevices();
-        Log.i(TAG," Appliance count should be one : Check Count =>  " + applianceModels.size());
+        Log.i(TAG, " Appliance count should be one : Check Count =>  " + applianceModels.size());
         mOneChControlName.setText(applianceModels.get(0).getDeviceName());
     }
 
-    private void showTwoChannelInfo(DeviceModel deviceModel) throws Exception{
+    private void showTwoChannelInfo(DeviceModel deviceModel) throws Exception {
 
         mTwoChDeviceName.setText(deviceModel.getDeviceName());
         ArrayList<ApplianceModel> applianceModels = deviceModel.getConnectedDevices();
-        Log.i(TAG," Appliance count should be two : Check Count =>  " + applianceModels.size());
+        Log.i(TAG, " Appliance count should be two : Check Count =>  " + applianceModels.size());
         mTwoChControlOneName.setText(applianceModels.get(0).getDeviceName());
         mTwoChControlTwoName.setText(applianceModels.get(1).getDeviceName());
 
     }
 
-    private void showFourChannelInfo(DeviceModel deviceModel) throws Exception{
+    private void showFourChannelInfo(DeviceModel deviceModel) throws Exception {
         mFourChDeviceName.setText(deviceModel.getDeviceName());
         ArrayList<ApplianceModel> applianceModels = deviceModel.getConnectedDevices();
-        Log.i(TAG," Appliance count should be four : Check Count =>  " + applianceModels.size());
+        Log.i(TAG, " Appliance count should be four : Check Count =>  " + applianceModels.size());
 
         mFourChControlOneName.setText(applianceModels.get(0).getDeviceName());
         mFourChControlTwoName.setText(applianceModels.get(1).getDeviceName());
@@ -233,7 +233,7 @@ public class DeviceEditActivity extends AppCompatActivity {
 
     /**
      * On selecting action bar icons
-     * */
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -242,9 +242,9 @@ public class DeviceEditActivity extends AppCompatActivity {
                 //  show popup with wifi-router info , where user going to connect
                 // if yes, connect all the devices with router info
                 // else, show the first page
-                if(AppPreferences.getInstance(DeviceEditActivity.this).hasRouter()){
+                if (AppPreferences.getInstance(DeviceEditActivity.this).hasRouter()) {
                     showStationModeDialog();
-                }else{
+                } else {
                     showWifiDialog();
                 }
 
@@ -259,9 +259,8 @@ public class DeviceEditActivity extends AppCompatActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMainThread(MessageArrivedEvent msgArriveEvent) {
-        Log.i(TAG,"on Event called :: onEventMainThread info " + msgArriveEvent.message.toString());
+        Log.i(TAG, "on Event called :: onEventMainThread info " + msgArriveEvent.message.toString());
     }
-
 
 
     @Override
@@ -282,13 +281,13 @@ public class DeviceEditActivity extends AppCompatActivity {
 
 
     @OnClick(R.id.one_ch_device_save)
-    public void saveOneChannelInfo(){
+    public void saveOneChannelInfo() {
 
         String updatedDeviceName = mOneChDeviceName.getEditableText().toString();
         String updatedControlOneName = mOneChControlName.getEditableText().toString();
 
-        List<DeviceModel>  deviceModelList = new ArrayList<>();
-        DeviceModel deviceModel1 =  mSelectedDeviceModel.getDeepCopy();
+        List<DeviceModel> deviceModelList = new ArrayList<>();
+        DeviceModel deviceModel1 = mSelectedDeviceModel.getDeepCopy();
 
         deviceModel1.setDeviceName(updatedDeviceName);
         deviceModel1.setApplianceName(updatedControlOneName);
@@ -300,15 +299,15 @@ public class DeviceEditActivity extends AppCompatActivity {
     }
 
     @OnClick(R.id.two_ch_device_save)
-    public void saveTwoChannelInfo(){
+    public void saveTwoChannelInfo() {
 
         String updatedDeviceName = mTwoChDeviceName.getEditableText().toString();
         String updatedControlOneName = mTwoChControlOneName.getEditableText().toString();
         String updatedControlTwoName = mTwoChControlTwoName.getEditableText().toString();
 
-        List<DeviceModel>  deviceModelList = new ArrayList<>();
-        DeviceModel deviceModel1 =  mSelectedDeviceModel.getDeepCopy();
-        DeviceModel deviceModel2 =  mSelectedDeviceModel.getDeepCopy();
+        List<DeviceModel> deviceModelList = new ArrayList<>();
+        DeviceModel deviceModel1 = mSelectedDeviceModel.getDeepCopy();
+        DeviceModel deviceModel2 = mSelectedDeviceModel.getDeepCopy();
 
         deviceModel1.setDeviceName(updatedDeviceName);
         deviceModel1.setApplianceName(updatedControlOneName);
@@ -333,11 +332,11 @@ public class DeviceEditActivity extends AppCompatActivity {
         String updatedControlThreeName = mFourChControlThreeName.getEditableText().toString();
         String updatedControlFourName = mFourChControlFourName.getEditableText().toString();
 
-        List<DeviceModel>  deviceModelList = new ArrayList<>();
-        DeviceModel deviceModel1 =  mSelectedDeviceModel.getDeepCopy();
-        DeviceModel deviceModel2 =  mSelectedDeviceModel.getDeepCopy();
-        DeviceModel deviceModel3 =  mSelectedDeviceModel.getDeepCopy();
-        DeviceModel deviceModel4 =  mSelectedDeviceModel.getDeepCopy();
+        List<DeviceModel> deviceModelList = new ArrayList<>();
+        DeviceModel deviceModel1 = mSelectedDeviceModel.getDeepCopy();
+        DeviceModel deviceModel2 = mSelectedDeviceModel.getDeepCopy();
+        DeviceModel deviceModel3 = mSelectedDeviceModel.getDeepCopy();
+        DeviceModel deviceModel4 = mSelectedDeviceModel.getDeepCopy();
 
         deviceModel1.setDeviceName(updatedDeviceName);
         deviceModel1.setApplianceName(updatedControlOneName);
@@ -382,9 +381,9 @@ public class DeviceEditActivity extends AppCompatActivity {
     }
 
 
-    private void onConfigSaved(){
+    private void onConfigSaved() {
         Intent intent = new Intent();
-        setResult(RESULT_OK,intent);
+        setResult(RESULT_OK, intent);
         finish();
     }
 
@@ -395,14 +394,14 @@ public class DeviceEditActivity extends AppCompatActivity {
      * display credentials before connecting it
      * this is not only for cross verification, also serves the purpose of password change
      */
-    private void showStationModeDialog(){
+    private void showStationModeDialog() {
 
         final String ssid = AppPreferences.getInstance(mCurrentContext).getRouterSSID();
         final String password = AppPreferences.getInstance(mCurrentContext).getRouterPassword();
 
         DialogManager.showGenericConfirmDialogForTwoButtons(
                 mCurrentContext,
-                getString(R.string.station_mode_confirm_msg , ssid , password),
+                getString(R.string.station_mode_confirm_msg, ssid, password),
                 getString(R.string.yes), getString(R.string.change_password), new TwoButtonDialogListener() {
 
                     @Override
@@ -411,7 +410,7 @@ public class DeviceEditActivity extends AppCompatActivity {
                         StationModeModel stationModeModel = new StationModeModel();
                         stationModeModel.setSsid(ssid);
                         stationModeModel.setPassword(password);
-                        mPresenter.moveToStationMode(stationModeModel,mSelectedDeviceModel.getDeviceName());
+                        mPresenter.moveToStationMode(stationModeModel, mSelectedDeviceModel.getDeviceName());
 
                         // connect to device one by one and send the station mode command
                         Toast.makeText(mCurrentContext,
@@ -423,7 +422,6 @@ public class DeviceEditActivity extends AppCompatActivity {
                         // user password has changed , take user to wifi page
 
 
-
                     }
                 });
 
@@ -432,9 +430,8 @@ public class DeviceEditActivity extends AppCompatActivity {
 
     /**
      * show this dialog if user doesn't have wifi router and want to connect with new router
-     *
      */
-    private void showWifiDialog(){
+    private void showWifiDialog() {
 
         DialogManager.showGenericConfirmDialogForTwoButtons(
                 mCurrentContext,
@@ -443,6 +440,7 @@ public class DeviceEditActivity extends AppCompatActivity {
                     @Override
                     public void positiveButtonClicked() {
                         // take user to first page
+                        navigateToWifiRouterPage();
 
                     }
 
@@ -455,22 +453,57 @@ public class DeviceEditActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * take to user to wifi Router page
+     */
+    public void navigateToWifiRouterPage() {
+        Intent intent = new Intent(DeviceEditActivity.this, WifiActivity.class);
+        intent.putExtra(AppConstant.Extras.FROM_DEVICE_EDIT_PAGE, true);
+        startActivityForResult(intent, ROUTER_DATA);
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == ROUTER_DATA) {
+                String ssid = AppPreferences.getInstance(DeviceEditActivity.this).getRouterSSID();
+                String password = AppPreferences.getInstance(DeviceEditActivity.this).getRouterPassword();
+                Log.i(TAG, " Got Router Data  SSID " + ssid + " Password " + password);
+                moveToStationMode(ssid,password);
+            }
+        }
+    }
+
+    /**
+     * responsible to send the ssid & password to device
+     * @param ssid
+     * @param password
+     */
+    private void moveToStationMode(String ssid, String password) {
+        StationModeModel stationModeModel = new StationModeModel();
+        stationModeModel.setSsid(ssid);
+        stationModeModel.setPassword(password);
+        mPresenter.moveToStationMode(stationModeModel, mSelectedDeviceModel.getDeviceName());
+    }
 
     /**
      * call back when station mode success
      */
-    public void stationModeSuccess(){
+    public void stationModeSuccess() {
 
     }
 
     /**
      * call back when station mode failed
      */
-    public void stationModeFailed(){
+    public void stationModeFailed() {
 
         // connect to device one by one and send the station mode command
         Toast.makeText(mCurrentContext,
-               getString(R.string.st_mode_fail), Toast.LENGTH_SHORT).show();
+                getString(R.string.st_mode_fail), Toast.LENGTH_SHORT).show();
     }
 
 

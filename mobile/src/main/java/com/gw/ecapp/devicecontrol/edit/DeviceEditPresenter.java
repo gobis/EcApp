@@ -11,7 +11,7 @@ import com.gw.ecapp.engine.udpEngine.udpComms.UDPClient;
 import com.gw.ecapp.utility.StationModeModel;
 
 /**
- * Created by iningosu on 11/16/2017.
+ * Created by Gobi on 11/16/2017.
  */
 
 public class DeviceEditPresenter {

@@ -58,6 +58,8 @@ public class UDPClient extends CommEngine {
 
     ExecutorService executor;
 
+    private String TAG = getClass().getSimpleName();
+
     private Network mWifiNetwork;
 
     public static UDPClient getInstance(Context context) {
@@ -168,10 +170,12 @@ public class UDPClient extends CommEngine {
 
     public void sendMessageToDevice(final String message) {
 
+        Log.i(TAG,"message is " + message );
+
         Runnable r = new Runnable() {
             @Override
             public void run() {
-                Future<String> future = executor.submit(new SendReceive(message));
+              executor.submit(new SendReceive(message));
             }
         };
 
