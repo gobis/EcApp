@@ -69,7 +69,7 @@ public class DeviceListPresenter {
                 }, new Consumer<Throwable>() {
                     @Override
                     public void accept(@NonNull Throwable throwable) throws Exception {
-                        Log.i(TAG, "Exception in inserting models " + throwable.getMessage());
+                        Log.i(TAG, "Exception in getting device models " + throwable.getMessage());
                         filterByAddedDevice(null);
                     }
                 });
@@ -91,7 +91,7 @@ public class DeviceListPresenter {
 
                 for (int i = 0; i < mNetworkList.size(); i++) {
                     HashMap<String, String> networkMap = mNetworkList.get(i);
-                    if (deviceModel.getDeviceName().equalsIgnoreCase(networkMap.get(EngineUtils.SSID))) {
+                    if (deviceModel.getDeviceSsid().equalsIgnoreCase(networkMap.get(EngineUtils.SSID))) {
                         deviceFound = true;
                         itemPos = i;
                     }
