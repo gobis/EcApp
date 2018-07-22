@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-
 import android.support.v4.util.ArraySet;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -34,6 +33,7 @@ import com.gw.ecapp.devicecontrol.events.DeviceEditEvent;
 import com.gw.ecapp.engine.CommEngine;
 import com.gw.ecapp.engine.udpEngine.events.MessageArrivedEvent;
 import com.gw.ecapp.engine.udpEngine.udpComms.UDPClient;
+import com.gw.ecapp.engine.udpEngine.udpComms.UDPRequestStatus;
 import com.gw.ecapp.storage.AppPreferences;
 import com.gw.ecapp.storage.DatabaseManager;
 import com.gw.ecapp.storage.model.ApplianceModel;
@@ -63,7 +63,7 @@ import io.reactivex.schedulers.Schedulers;
 
 public class DeviceControlListActivity extends AppCompatActivity
         implements WifiConnection.ConnectionStatusInterface ,
-        AssociatedWifiHelper.NetworkSniffStatus {
+        AssociatedWifiHelper.NetworkSniffStatus , UDPRequestStatus {
 
     private RecyclerView mDeviceRecyclerView;
     private DeviceControlListAdapter mAdapter;
@@ -185,6 +185,13 @@ public class DeviceControlListActivity extends AppCompatActivity
 
             case R.id.action_scan_device:
                 startScanLocalNetwork();
+                break;
+            case R.id.action_clear_log:
+                break;
+            case R.id.action_enable_log:
+                break;
+            case R.id.action_send_text:
+                enableTextCommand();
                 break;
             default:
                 break;
@@ -332,6 +339,22 @@ public class DeviceControlListActivity extends AppCompatActivity
         }
     }
 
+    private void enableTextCommand(){
+        // show the layout to send the text
+        //
+    }
+
+    private void clearLogs(){
+
+    }
+
+    private void enableLogs(){
+
+    }
+
+    private void disableLogs(){
+
+    }
 
     @Override
     public void ConnectionStatus(WifiConnection.ConnStatus status) {
@@ -423,7 +446,7 @@ public class DeviceControlListActivity extends AppCompatActivity
 
     private void sendCommand(final ApplianceControlEvent controlEvent){
         // get cpu info
-        UDPClient mEngine = (UDPClient) CommEngine.getCommsEngine(DeviceControlListActivity.this, CommEngine.ENGINE_TYPE.UDP);
+        UDPClient mEngine = (UDPClient) CommEngine.getCommsEngine(DeviceControlListActivity.this, CommEngine.ENGINE_TYPE.UDP,this);
         mEngine.sendMessageToDevice(controlEvent.mMessage);
     }
 
@@ -580,5 +603,29 @@ public class DeviceControlListActivity extends AppCompatActivity
         helper.setMacIds(macList);
     }
 
+    /**
+     * call back when udp request is successful
+     */
+    @Override
+    public void requestSuccess() {
 
+    }
+
+    /**
+     * call back when given requst if timeout
+     */
+    @Override
+    public void requestTimeOut() {
+
+    }
+
+    /**
+     * call back for retry count
+     *
+     * @param retryCount
+     */
+    @Override
+    public void requestRetryCount(int retryCount) {
+
+    }
 }

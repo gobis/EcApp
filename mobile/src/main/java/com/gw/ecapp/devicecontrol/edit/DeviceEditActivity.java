@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -13,10 +14,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.gw.ecapp.AppConfig;
 import com.gw.ecapp.AppConstant;
 import com.gw.ecapp.DialogManager;
 import com.gw.ecapp.R;
@@ -259,7 +261,35 @@ public class DeviceEditActivity extends AppCompatActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMainThread(MessageArrivedEvent msgArriveEvent) {
+
         Log.i(TAG, "on Event called :: onEventMainThread info " + msgArriveEvent.message.toString());
+
+        // if message is STA command, then need to wait for 10 sec
+        // this is to Gateway has to move to station mode
+
+        startTimer();
+
+
+
+    }
+
+    /**
+     * starting station mode timer
+     */
+    private void startTimer(){
+
+        new CountDownTimer(AppConfig.ST_MODE_INTERVAL, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+               Log.i(TAG,"Timer tick");
+            }
+
+            public void onFinish() {
+                Log.i(TAG," ST Mode timer completed");
+            }
+        }.start();
+
+
     }
 
 
@@ -424,7 +454,6 @@ public class DeviceEditActivity extends AppCompatActivity {
 
                     }
                 });
-
     }
 
 

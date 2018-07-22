@@ -35,6 +35,7 @@ import com.gw.ecapp.engine.udpEngine.events.MessageArrivedEvent;
 import com.gw.ecapp.engine.udpEngine.packetCreator.GetCpuMsgPacket;
 import com.gw.ecapp.engine.udpEngine.parser.CpuInfoResponse;
 import com.gw.ecapp.engine.udpEngine.udpComms.UDPClient;
+import com.gw.ecapp.engine.udpEngine.udpComms.UDPRequestStatus;
 import com.gw.ecapp.storage.DatabaseManager;
 import com.gw.ecapp.storage.model.ApplianceModel;
 import com.gw.ecapp.storage.model.DeviceModel;
@@ -57,7 +58,8 @@ import io.reactivex.functions.Consumer;
  */
 
 public class DeviceListActivity extends AppCompatActivity
-        implements WifiConnection.ConnectionStatusInterface , DeviceListPresenter.DeviceListInterface {
+        implements WifiConnection.ConnectionStatusInterface , DeviceListPresenter.DeviceListInterface
+         , UDPRequestStatus{
 
     private ListView mDeviceListView;
 
@@ -113,7 +115,7 @@ public class DeviceListActivity extends AppCompatActivity
 
         mUiHandler = new Handler();
 
-        mUdpClient  = UDPClient.getInstance(this);
+        mUdpClient  = UDPClient.getInstance(this,this);
 
 
         // ui mapping done
@@ -340,7 +342,20 @@ public class DeviceListActivity extends AppCompatActivity
         mLoadingText.setText("");
     }
 
+    @Override
+    public void requestSuccess() {
 
+    }
+
+    @Override
+    public void requestTimeOut() {
+
+    }
+
+    @Override
+    public void requestRetryCount(int retryCount) {
+
+    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMainThread(MessageArrivedEvent msgArriveEvent) {
@@ -351,7 +366,7 @@ public class DeviceListActivity extends AppCompatActivity
     private void onSuccessfulConnection() {
         // get cpu info
         GetCpuMsgPacket cpuPacket = new GetCpuMsgPacket();
-        UDPClient mEngine = (UDPClient) CommEngine.getCommsEngine(DeviceListActivity.this, CommEngine.ENGINE_TYPE.UDP);
+        UDPClient mEngine = (UDPClient) CommEngine.getCommsEngine(DeviceListActivity.this, CommEngine.ENGINE_TYPE.UDP,this);
         mEngine.sendMessageToDevice(AppUtils.getJsonFromObject(cpuPacket));
     }
 

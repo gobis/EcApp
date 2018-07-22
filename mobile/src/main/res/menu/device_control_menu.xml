@@ -21,6 +21,22 @@
             android:title="@string/scan_device"
             app:showAsAction="never" />
 
+        <item
+            android:id="@+id/action_clear_log"
+            android:title="@string/clear_log"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/action_enable_log"
+            android:title="@string/enable_log"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/action_disable_log"
+            android:title="@string/enable_log"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/action_send_text"
+            android:title="@string/text_command"
+            app:showAsAction="never" />
     </group>
 
 </menu>

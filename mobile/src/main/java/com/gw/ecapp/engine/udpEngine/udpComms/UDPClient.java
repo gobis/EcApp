@@ -12,6 +12,7 @@ import android.util.Log;
 
 import com.google.android.gms.tasks.Task;
 import com.google.gson.Gson;
+import com.gw.ecapp.AppConfig;
 import com.gw.ecapp.AppUtils;
 import com.gw.ecapp.engine.CommEngine;
 import com.gw.ecapp.engine.udpEngine.EngineUtils;
@@ -32,12 +33,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.StringTokenizer;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 
 /**
@@ -49,6 +46,8 @@ public class UDPClient extends CommEngine {
 
     private static UDPClient mUDP_instance;
     private Context mContext;
+
+    private UDPRequestStatus mUDPRequestStatus;
 
     private Gson gson;
 
@@ -62,7 +61,7 @@ public class UDPClient extends CommEngine {
 
     private Network mWifiNetwork;
 
-    public static UDPClient getInstance(Context context) {
+    public static UDPClient getInstance(Context context , UDPRequestStatus status) {
         if (null == mUDP_instance) {
             synchronized (UDPClient.class) {
                 mUDP_instance = new UDPClient();
@@ -72,6 +71,7 @@ public class UDPClient extends CommEngine {
                 mUDP_instance.executor = Executors.newFixedThreadPool(3);
             }
         }
+        mUDP_instance.mUDPRequestStatus = status ;
         return mUDP_instance;
     }
 
@@ -98,11 +98,11 @@ public class UDPClient extends CommEngine {
             checkForNetworkConnection();
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                Log.i(getClass().getSimpleName(), " Binding to Wifi Network " );
+                Log.i(getClass().getSimpleName(), " Binding to Wifi Network ");
                 mWifiNetwork.bindSocket(clientSocket);
             }
 
-            clientSocket.setSoTimeout(3000);
+            clientSocket.setSoTimeout(AppConfig.SOCKET_TIMEOUT);
 
             clientSocket.send(send_packet);
             ReceiveMessage(clientSocket);
@@ -135,8 +135,10 @@ public class UDPClient extends CommEngine {
                         if (tokenizer.hasMoreElements()) {
                             String finalPacket = tokenizer.nextToken() + "}";
                             CpuInfoResponse cpuResponse = gson.fromJson(finalPacket, CpuInfoResponse.class);
-
                             EventBus.getDefault().post(new MessageArrivedEvent(cpuResponse));
+
+
+
                         }
                     } catch (Exception e) {
                         Log.e(getClass().getSimpleName(), " Exception " + e.toString());
@@ -170,12 +172,12 @@ public class UDPClient extends CommEngine {
 
     public void sendMessageToDevice(final String message) {
 
-        Log.i(TAG,"message is " + message );
+        Log.i(TAG, "message is " + message);
 
         Runnable r = new Runnable() {
             @Override
             public void run() {
-              executor.submit(new SendReceive(message));
+                executor.submit(new SendReceive(message));
             }
         };
 

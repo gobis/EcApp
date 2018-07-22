@@ -51,6 +51,10 @@
     <string name = "help">Help</string>
     <string name = "connect_station_mode">Connect to Wifi Router</string>
     <string name = "scan_device">Scan Device</string>
+    <string name = "clear_log">Clear Log</string>
+    <string name = "enable_log">Enable Log</string>
+    <string name = "disable_log">Disable Log</string>
+    <string name = "text_command">Send Text</string>
 
     <string name = "st_mode_fail">Station mode failed, Try again</string>
 

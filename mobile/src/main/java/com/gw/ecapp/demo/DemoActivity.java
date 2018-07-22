@@ -14,12 +14,13 @@ import com.gw.ecapp.R;
 import com.gw.ecapp.engine.CommEngine;
 import com.gw.ecapp.engine.udpEngine.EngineUtils;
 import com.gw.ecapp.engine.udpEngine.udpComms.UDPClient;
+import com.gw.ecapp.engine.udpEngine.udpComms.UDPRequestStatus;
 
 /**
  * Created by iningosu on 8/26/2017.
  */
 
-public class DemoActivity extends Activity {
+public class DemoActivity extends Activity implements UDPRequestStatus {
 
     UDPClient mEngine;
 
@@ -54,7 +55,7 @@ public class DemoActivity extends Activity {
 
 
     private void createConnectionWithEngine(){
-        mEngine = (UDPClient)CommEngine.getCommsEngine(DemoActivity.this, CommEngine.ENGINE_TYPE.UDP);
+        mEngine = (UDPClient)CommEngine.getCommsEngine(DemoActivity.this, CommEngine.ENGINE_TYPE.UDP,this);
     }
 
     public void onCommandSendClick(View v) {
@@ -78,6 +79,20 @@ public class DemoActivity extends Activity {
     }
 
 
+    @Override
+    public void requestSuccess() {
+
+    }
+
+    @Override
+    public void requestTimeOut() {
+
+    }
+
+    @Override
+    public void requestRetryCount(int retryCount) {
+
+    }
 
     @Override
     protected void onPause() {

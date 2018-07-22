@@ -5,6 +5,7 @@ import android.content.Context;
 import com.google.gson.Gson;
 import com.gw.ecapp.engine.udpEngine.packetCreator.Message;
 import com.gw.ecapp.engine.udpEngine.udpComms.UDPClient;
+import com.gw.ecapp.engine.udpEngine.udpComms.UDPRequestStatus;
 
 import java.util.ArrayList;
 
@@ -12,21 +13,22 @@ import java.util.ArrayList;
  * Created by iningosu on 8/26/2017.
  */
 
-public class CommEngine implements CommsInterface{
+public class CommEngine implements CommsInterface {
 
 
     private static CommEngine mCommsEngine;
     private Context mContext;
+
 
     public enum ENGINE_TYPE{
         UDP,
         CLOUD
     }
 
-    public static CommEngine getCommsEngine(Context context , ENGINE_TYPE type){
+    public static CommEngine getCommsEngine(Context context , ENGINE_TYPE type , UDPRequestStatus status){
        switch (type){
            case UDP:
-               mCommsEngine = UDPClient.getInstance(context);
+               mCommsEngine = UDPClient.getInstance(context,status);
                break;
            case CLOUD:
                break;
