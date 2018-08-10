@@ -31,7 +31,7 @@
             app:showAsAction="never" />
         <item
             android:id="@+id/action_disable_log"
-            android:title="@string/enable_log"
+            android:title="@string/disable_log"
             app:showAsAction="never" />
         <item
             android:id="@+id/action_send_text"

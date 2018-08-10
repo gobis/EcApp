@@ -85,22 +85,22 @@ public class DeviceControlListAdapter extends RecyclerView.Adapter<DeviceControl
         // Control -1
         ImageView mFourChControlOneImage;
         TextView mFourChControlOneName;
-        Switch mFourChControlOneSwitch;
+        ImageView mFourChControlOneSwitch;
 
         // Control -2
         ImageView mFourChControlTwoImage;
         TextView mFourChControlTwoName;
-        Switch mFourChControlTwoSwitch;
+        ImageView mFourChControlTwoSwitch;
 
         // Control -3
         ImageView mFourChControlThreeImage;
         TextView mFourChControlThreeName;
-        Switch mFourChControlThreeSwitch;
+        ImageView mFourChControlThreeSwitch;
 
         // Control -4
         ImageView mFourChControlFourImage;
         TextView mFourChControlFourName;
-        Switch mFourChControlFourSwitch;
+        ImageView mFourChControlFourSwitch;
 
 
         public MyViewHolder(View view) {
@@ -133,24 +133,22 @@ public class DeviceControlListAdapter extends RecyclerView.Adapter<DeviceControl
             // control -1 info
             mFourChControlOneImage = (ImageView) view.findViewById(R.id.ch4_control_1_image);
             mFourChControlOneName = (TextView) view.findViewById(R.id.ch4_control_1_name);
-            mFourChControlOneSwitch = (Switch) view.findViewById(R.id.ch4_control_1_switch);
+            mFourChControlOneSwitch = (ImageView) view.findViewById(R.id.ch4_control_1_switch);
 
             // control -2 info
             mFourChControlTwoImage = (ImageView) view.findViewById(R.id.ch4_control_2_image);
             mFourChControlTwoName = (TextView) view.findViewById(R.id.ch4_control_2_name);
-            mFourChControlTwoSwitch = (Switch) view.findViewById(R.id.ch4_control_2_switch);
+            mFourChControlTwoSwitch = (ImageView) view.findViewById(R.id.ch4_control_2_switch);
 
             // control -3 info
             mFourChControlThreeImage = (ImageView) view.findViewById(R.id.ch4_control_3_image);
             mFourChControlThreeName = (TextView) view.findViewById(R.id.ch4_control_3_name);
-            mFourChControlThreeSwitch = (Switch) view.findViewById(R.id.ch4_control_3_switch);
+            mFourChControlThreeSwitch = (ImageView) view.findViewById(R.id.ch4_control_3_switch);
 
             // control -4 info
             mFourChControlFourImage = (ImageView) view.findViewById(R.id.ch4_control_4_image);
             mFourChControlFourName = (TextView) view.findViewById(R.id.ch4_control_4_name);
-            mFourChControlFourSwitch = (Switch) view.findViewById(R.id.ch4_control_4_switch);
-
-
+            mFourChControlFourSwitch = (ImageView) view.findViewById(R.id.ch4_control_4_switch);
         }
     }
 
@@ -340,89 +338,130 @@ public class DeviceControlListAdapter extends RecyclerView.Adapter<DeviceControl
 
 
         holder.mFourChControlOneSwitch.setTag(deviceModel);
-        holder.mFourChControlOneSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                DeviceModel deviceModel =  (DeviceModel)buttonView.getTag();
-                if(isChecked){
-                    Log.i(TAG,"Relay one is ON");
+        holder.mFourChControlOneSwitch.setTag(R.id.ch4_control_1_switch,R.drawable.switch_off_state);
 
-                }else{
-                    Log.i(TAG,"Relay one is OFF");
+        holder.mFourChControlOneSwitch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ImageView imageView = (ImageView) v;
+                DeviceModel deviceModel =  (DeviceModel)v.getTag();
+
+                int state = 0;
+
+                switch (Integer.parseInt(v.getTag(R.id.ch4_control_1_switch).toString())){
+
+                    case R.drawable.switch_off_state:
+                        imageView.setImageResource(R.drawable.switch_on_state);
+                        imageView.setTag(R.id.ch4_control_1_switch,R.drawable.switch_on_state);
+                        state = 0;
+                        break;
+                    case R.drawable.switch_on_state:
+                        imageView.setImageResource(R.drawable.switch_off_state);
+                        imageView.setTag(R.id.ch4_control_1_switch,R.drawable.switch_off_state);
+                        state = 1;
+                        break;
                 }
 
-                Log.i(TAG,"Device info " + buttonView.getTag().toString());
+                Log.i(TAG,"Device info " + v.getTag().toString());
 
-                String val = String.valueOf(isChecked ? 1 : 0);
+                String val = String.valueOf(state);
                 EventBus.getDefault().post(new ApplianceControlEvent("{\"Relay1\":"+val+"}",deviceModel));
-
             }
         });
 
         holder.mFourChControlTwoSwitch.setTag(deviceModel);
-        holder.mFourChControlTwoSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+        holder.mFourChControlTwoSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            public void onClick(View v) {
+                ImageView imageView = (ImageView) v;
+                DeviceModel deviceModel =  (DeviceModel)v.getTag();
 
-                DeviceModel deviceModel =  (DeviceModel)buttonView.getTag();
-                if(isChecked){
-                    Log.i(TAG,"Relay two is ON");
+                int state = 0;
 
-                }else{
-                    Log.i(TAG,"Relay two is OFF");
+                switch (Integer.parseInt(v.getTag(R.id.ch4_control_2_switch).toString())){
+
+                    case R.drawable.switch_off_state:
+                        imageView.setImageResource(R.drawable.switch_on_state);
+                        imageView.setTag(R.id.ch4_control_2_switch,R.drawable.switch_on_state);
+                        state = 0;
+                        break;
+                    case R.drawable.switch_on_state:
+                        imageView.setImageResource(R.drawable.switch_off_state);
+                        imageView.setTag(R.id.ch4_control_2_switch,R.drawable.switch_off_state);
+                        state = 1;
+                        break;
                 }
 
-                Log.i(TAG,"Device info " + buttonView.getTag().toString());
+                Log.i(TAG,"Device info " + v.getTag().toString());
 
-                String val = String.valueOf(isChecked ? 1 : 0);
+                String val = String.valueOf(state);
                 EventBus.getDefault().post(new ApplianceControlEvent("{\"Relay2\":"+val+"}",deviceModel));
             }
         });
 
 
         holder.mFourChControlThreeSwitch.setTag(deviceModel);
-        holder.mFourChControlThreeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        holder.mFourChControlThreeSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            public void onClick(View v) {
+                ImageView imageView = (ImageView) v;
+                DeviceModel deviceModel =  (DeviceModel)v.getTag();
 
-                DeviceModel deviceModel =  (DeviceModel)buttonView.getTag();
-                if(isChecked){
-                    Log.i(TAG,"Relay three is ON");
+                int state = 0;
 
-                }else{
-                    Log.i(TAG,"Relay three is OFF");
+                switch (Integer.parseInt(v.getTag(R.id.ch4_control_3_switch).toString())){
+
+                    case R.drawable.switch_off_state:
+                        imageView.setImageResource(R.drawable.switch_on_state);
+                        imageView.setTag(R.id.ch4_control_3_switch,R.drawable.switch_on_state);
+                        state = 0;
+                        break;
+                    case R.drawable.switch_on_state:
+                        imageView.setImageResource(R.drawable.switch_off_state);
+                        imageView.setTag(R.id.ch4_control_3_switch,R.drawable.switch_off_state);
+                        state = 1;
+                        break;
                 }
 
-                Log.i(TAG,"Device info " + buttonView.getTag().toString());
+                Log.i(TAG,"Device info " + v.getTag().toString());
 
-                String val = String.valueOf(isChecked ? 1 : 0);
+                String val = String.valueOf(state);
                 EventBus.getDefault().post(new ApplianceControlEvent("{\"Relay3\":"+val+"}",deviceModel));
-
             }
         });
 
+
         holder.mFourChControlFourSwitch.setTag(deviceModel);
-        holder.mFourChControlFourSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        holder.mFourChControlFourSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            public void onClick(View v) {
+                ImageView imageView = (ImageView) v;
+                DeviceModel deviceModel =  (DeviceModel)v.getTag();
 
-                DeviceModel deviceModel =  (DeviceModel)buttonView.getTag();
-                if(isChecked){
-                    Log.i(TAG,"Relay four is ON");
+                int state = 0;
 
-                }else{
-                    Log.i(TAG,"Relay four is OFF");
+                switch (Integer.parseInt(v.getTag(R.id.ch4_control_4_switch).toString())){
+
+                    case R.drawable.switch_off_state:
+                        imageView.setImageResource(R.drawable.switch_on_state);
+                        imageView.setTag(R.id.ch4_control_4_switch,R.drawable.switch_on_state);
+                        state = 0;
+                        break;
+                    case R.drawable.switch_on_state:
+                        imageView.setImageResource(R.drawable.switch_off_state);
+                        imageView.setTag(R.id.ch4_control_4_switch,R.drawable.switch_off_state);
+                        state = 1;
+                        break;
                 }
 
-                Log.i(TAG,"Device info " + buttonView.getTag().toString());
-                String val = String.valueOf(isChecked ? 1 : 0);
+                Log.i(TAG,"Device info " + v.getTag().toString());
+
+                String val = String.valueOf(state);
                 EventBus.getDefault().post(new ApplianceControlEvent("{\"Relay4\":"+val+"}",deviceModel));
-
-
             }
         });
 
     }
-
 
 }

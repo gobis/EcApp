@@ -31,6 +31,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by iningosu on 8/27/2017.
+ *  on start of activity, it will scan the wifi
+ *  user can make connection or skip / and add it later
+ *
  */
 
 public class WifiActivity extends AppCompatActivity

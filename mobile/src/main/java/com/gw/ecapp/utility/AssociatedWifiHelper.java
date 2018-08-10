@@ -175,8 +175,6 @@ public class AssociatedWifiHelper {
 
         }
 
-
-        String macAddress = null;
        /* try {
             InetAddress address = InetAddress.getByName(ip);
 
@@ -206,7 +204,7 @@ public class AssociatedWifiHelper {
         }
         */
 
-        return macAddress;
+        return null;
     }
 
 

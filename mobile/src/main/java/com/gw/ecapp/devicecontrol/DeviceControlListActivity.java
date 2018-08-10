@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.annotation.UiThread;
 import android.support.v4.util.ArraySet;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +17,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,8 +35,10 @@ import com.gw.ecapp.configuration.DeviceListActivity;
 import com.gw.ecapp.devicecontrol.edit.DeviceEditActivity;
 import com.gw.ecapp.devicecontrol.events.ApplianceControlEvent;
 import com.gw.ecapp.devicecontrol.events.DeviceEditEvent;
+import com.gw.ecapp.devicecontrol.stationmode.StationModeHelper;
 import com.gw.ecapp.engine.CommEngine;
 import com.gw.ecapp.engine.udpEngine.events.MessageArrivedEvent;
+import com.gw.ecapp.engine.udpEngine.packetCreator.RestartMsgPacket;
 import com.gw.ecapp.engine.udpEngine.udpComms.UDPClient;
 import com.gw.ecapp.engine.udpEngine.udpComms.UDPRequestStatus;
 import com.gw.ecapp.storage.AppPreferences;
@@ -51,7 +58,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
@@ -82,8 +88,15 @@ public class DeviceControlListActivity extends AppCompatActivity
 
     private DeviceControlListPresenter mControlListPresenter;
 
+    private EditText mSendMessageText;
+    private Button mSendButton;
+    private LinearLayout mSendMsgLayout;
+
     private int EDIT_ACTIVITY_RESULT  = 765;
     private ActionBar mAppBar;
+
+    private RelativeLayout mMasterDeviceListLayout;
+    private RelativeLayout mMasterConsoleLayout;
 
 
 
@@ -102,6 +115,13 @@ public class DeviceControlListActivity extends AppCompatActivity
         mNoResultText = (TextView) findViewById(R.id.no_devices_found);
 
         mDeviceRecyclerView = (RecyclerView) findViewById(R.id.device_recycle_view);
+
+        mSendButton = (Button) findViewById(R.id.send_message_btn);
+        mSendMessageText = (EditText) findViewById(R.id.send_message_text);
+        mSendMsgLayout = (LinearLayout) findViewById(R.id.send_message_layout);
+
+        mMasterDeviceListLayout = (RelativeLayout) findViewById(R.id.device_list_layout);
+        mMasterConsoleLayout = (RelativeLayout) findViewById(R.id.console_layout);
 
         hideOverLay();
 
@@ -258,7 +278,7 @@ public class DeviceControlListActivity extends AppCompatActivity
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Consumer<List<DeviceModel>>() {
                     @Override
-                    public void accept(@NonNull List<DeviceModel> deviceModels) throws Exception {
+                    public void accept(List<DeviceModel> deviceModels) throws Exception {
 
                         List<DeviceModel> deviceModelList = new ArrayList<DeviceModel>();
 
@@ -303,7 +323,7 @@ public class DeviceControlListActivity extends AppCompatActivity
                     }
                 }, new Consumer<Throwable>() {
                     @Override
-                    public void accept(@NonNull Throwable throwable) throws Exception {
+                    public void accept( Throwable throwable) throws Exception {
                         Log.i(TAG, "Exception in inserting models " + throwable.getMessage());
                     }
                 });
@@ -341,7 +361,7 @@ public class DeviceControlListActivity extends AppCompatActivity
 
     private void enableTextCommand(){
         // show the layout to send the text
-        //
+        mSendMsgLayout.setVisibility(View.VISIBLE);
     }
 
     private void clearLogs(){
@@ -492,6 +512,21 @@ public class DeviceControlListActivity extends AppCompatActivity
                         // connect to device one by one and send the station mode command
                         Toast.makeText(DeviceControlListActivity.this,
                                 "Moving to station mode", Toast.LENGTH_SHORT).show();
+                        // TODO: pass command to station mode
+                        StationModeHelper stationModeHelper = new StationModeHelper();
+                        stationModeHelper.setDeviceInStationMode(DeviceControlListActivity.this);
+
+                        stationModeHelper.restartDevice(DeviceControlListActivity.this);
+
+                        // TODO: make some 3 sec delay
+                         runOnUiThread(new Runnable() {
+                             @Override
+                             public void run() {
+                                 connectToRouter();
+                             }
+                         });
+
+
                     }
 
                     @Override
@@ -530,8 +565,32 @@ public class DeviceControlListActivity extends AppCompatActivity
 
     }
 
+    /**
+     * this function will be called once
+     *  1. set station mode command
+     *  2. call restart command
+     *  pref file has router username and password
+     *
+     */
+    @UiThread
+    private void connectToRouter(){
+
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                final String ssid = AppPreferences.getInstance(DeviceControlListActivity.this).getRouterSSID();
+                final String password = AppPreferences.getInstance(DeviceControlListActivity.this).getRouterPassword();
+                makeConnection(ssid,password);
+            }
+        }, 3000);
+    }
 
     private void startScanLocalNetwork(){
+        // this needs to be triggered when phone connected to WIFI router
+        // how to ensure phone connected to WIFI router
+        // get the current connection and check with WIFI data stored , both are matching then you can start sniff
+
         macAddressList();
 
     }
@@ -577,7 +636,7 @@ public class DeviceControlListActivity extends AppCompatActivity
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Consumer<List<DeviceModel>>() {
                     @Override
-                    public void accept(@NonNull List<DeviceModel> deviceModels) throws Exception {
+                    public void accept( List<DeviceModel> deviceModels) throws Exception {
                         Set<String> macSet = new ArraySet<String>();
                         for (DeviceModel deviceModel:deviceModels) {
                             macSet.add(deviceModel.getMacId());
@@ -589,7 +648,7 @@ public class DeviceControlListActivity extends AppCompatActivity
                     }
                 },new Consumer<Throwable>() {
                     @Override
-                    public void accept(@NonNull Throwable throwable) throws Exception {
+                    public void accept(Throwable throwable) throws Exception {
 
 
                     }

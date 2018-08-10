@@ -30,8 +30,8 @@ public class EngineUtils {
 
 
     public static void setUdpUniCastIp(String inetAddress, int portNumber){
-       /* UDP_UNI_CAST_IP = inetAddress;
-        UDP_UNI_CAST_PORT = portNumber;*/
+        UDP_UNI_CAST_IP = inetAddress;
+        UDP_UNI_CAST_PORT = portNumber;
     }
 
 

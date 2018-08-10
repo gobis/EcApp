@@ -37,5 +37,6 @@ public class AppConstant {
     public static String STATION_COMMAND_NAME = "st_command";
     public static String CPU_INFO_COMMAND_NAME = "cpuinfo";
     public static String DEVICE_STATUS_COMMAND_NAME = "device_status";
+    public static String RESTART_COMMAND_NAME = "Restart";
 
 }

@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothClass;
 
 import com.gw.ecapp.AppConstant;
 import com.gw.ecapp.AppUtils;
+import com.gw.ecapp.engine.udpEngine.EngineUtils;
 import com.gw.ecapp.storage.model.DeviceModel;
 
 import java.util.ArrayList;
@@ -26,6 +27,8 @@ public class DeviceControlListPresenter {
             }else{
                 // mac found , device is in station mode
                 device.setConnMode(AppConstant.STATION_MODE);
+                // setting IP address once identified it 
+                EngineUtils.setUdpUniCastIp(mapList.get(device.getMacId()),EngineUtils.UDP_UNI_CAST_PORT);
             }
         }
         return deviceList;

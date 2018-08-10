@@ -168,8 +168,10 @@ public class WifiConnection {
             for(int i = 0 ; i< allNetwork.length ; i++){
 
                 NetworkInfo networkInfo = connectivityManager.getNetworkInfo(allNetwork[i]);
-                Log.i(TAG," Network Type " +networkInfo.getTypeName() + "  Network state " + networkInfo.getState()
-                        + " " +networkInfo.getTypeName());
+
+                if(networkInfo != null) {
+                    Log.i(TAG, " Network Type " + networkInfo.getTypeName() + "  Network state " + networkInfo.getState());
+                }
 
 
                 // if active network type is wifi

@@ -15,6 +15,11 @@ import com.gw.ecapp.R;
 import com.gw.ecapp.devicecontrol.DeviceControlListActivity;
 import com.gw.ecapp.storage.AppPreferences;
 
+/**
+ * very first screen, it asks for permission
+ *  if already configured, then navigate to device list activity
+ *   if not configured then navigate to wifi activity
+ */
 public class SplashScreen extends Activity {
 
     private static final int REQ_PERMISSION_CODE = 124;

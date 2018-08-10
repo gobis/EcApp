@@ -3,6 +3,12 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/device_list_layout"
+        android:visibility="visible">
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/device_recycle_view"
         android:layout_width="match_parent"
@@ -16,6 +22,7 @@
         android:id="@+id/add_new_device"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         android:text="@string/add_device"
         android:gravity="center"
         android:drawableTop="@drawable/add_device_icon"
@@ -25,7 +32,42 @@
         android:textColor="@color/cyan"
         android:onClick="onAddNewDevice"
         android:layout_alignParentBottom="true"/>
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/console_layout"
+        android:visibility="gone">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/send_message_layout"
+            android:layout_alignParentTop="true"
+            android:orientation="horizontal"
+            android:visibility="visible">
+
+            <EditText
+                android:id="@+id/send_message_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
+            <Button
+                android:id="@+id/send_message_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="@string/send"/>
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/send_message_layout"
+            android:layout_weight="1"
+            android:text="dfsfsdbdgkdgkdg"
+            android:layout_margin="@dimen/margin_normal"
+            />
+    </RelativeLayout>
     <include
         layout="@layout/overlay_layout" />
 
