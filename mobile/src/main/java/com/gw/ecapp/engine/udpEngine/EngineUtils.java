@@ -29,8 +29,8 @@ public class EngineUtils {
     public static final String WIFI_LEVEL = "WifiLevel";
 
 
-    public static void setUdpUniCastIp(String inetAddress, int portNumber){
-        UDP_UNI_CAST_IP = inetAddress;
+    public static void setUdpUniCastIp(String ipAddress, int portNumber){
+        UDP_UNI_CAST_IP = ipAddress;
         UDP_UNI_CAST_PORT = portNumber;
     }
 

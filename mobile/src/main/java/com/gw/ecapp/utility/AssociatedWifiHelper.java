@@ -14,6 +14,7 @@ import android.util.Log;
 
 import com.gw.ecapp.AppConfig;
 import com.gw.ecapp.NetworkUtils;
+import com.gw.ecapp.engine.udpEngine.EngineUtils;
 import com.gw.ecapp.engine.udpEngine.udpComms.UDPClient;
 
 import java.io.BufferedReader;
@@ -55,8 +56,6 @@ public class AssociatedWifiHelper {
 
     // IP as Key and MAC address as value here
     private ConcurrentHashMap<String, String> macAddressMap;
-
-    public static final String NoMac = "00:00:00:00:00:00";
 
     String TAG = getClass().getSimpleName();
 
@@ -119,7 +118,7 @@ public class AssociatedWifiHelper {
 
         ((NetworkSniffStatus)mContext).sniffStarted();
         try {
-            for (int i = 0; i < 255; i++) {
+            for (int i = 0; i < 254; i++) {
                 final String testIp = ipMask + String.valueOf(i);
                 mExecutor.submit(new NwSniffTask(testIp));
             }
@@ -157,54 +156,32 @@ public class AssociatedWifiHelper {
     private String checkCurrentIP(final String ip) {
 
         try {
-
-            if(ip.endsWith("254")){
-                Log.i(TAG, "reading table after reaching last ip ");
-                readTable();
-            }
             Process p1 = Runtime.getRuntime().exec("ping -c 1 " + ip);
             int returnVal = p1.waitFor();
+
             boolean reachable = (returnVal == 0);
             if (reachable) {
                 //currentHost (the IP Address) actually exists in the network
                 Log.i(TAG, ip + " is reachable using ping");
+
+                String macAddress = getMacFromArpCache(ip);
+                if(macAddress != null) {
+                    Log.i(TAG, " mac address is from  arp table " + macAddress);
+                    if(mMacIdList.contains(macAddress.toUpperCase()) || mMacIdList.contains(macAddress.toLowerCase())){
+                        // terminate the executor
+                        terminateExecutor();
+                        // set the ip for further communication
+                        Log.i(TAG, " Setting station mode ip  : " + ip);
+                        EngineUtils.setUdpUniCastIp(ip,EngineUtils.UDP_UNI_CAST_PORT);
+                    }
+            }
             } else {
                 Log.i(TAG, ip + " is not reachable using ping");
             }
         } catch (Exception e) {
 
         }
-
-       /* try {
-            InetAddress address = InetAddress.getByName(ip);
-
-            boolean reachable = address.isReachable(AppConfig.NETWORK_SNIFF_INTERVAL) ;
-
-            if (reachable) {
-                NetworkInterface nwInterface = NetworkInterface.getByInetAddress(address);
-                if (null != nwInterface) {
-                    byte[] mac = nwInterface.getHardwareAddress();
-                    StringBuilder sb = new StringBuilder();
-                    for (int j = 0; j < mac.length; j++) {
-                        sb.append(String.format("%02X%s", mac[j], (j < mac.length - 1) ? "-" : ""));
-                    }
-                    System.out.println("Current MAC address : " + sb.toString());
-                    macAddress = sb.toString();
-
-                    checkForExecutorTermination(macAddress);
-
-                }
-
-                Log.i(TAG, ip + " is reachable using reachable API" );
-            }else{
-                Log.i(TAG, ip + " is not reachable using reachable API" );
-            }
-        }catch (Exception e){
-            Log.e(TAG, " Exception " + e.toString());
-        }
-        */
-
-        return null;
+    return null;
     }
 
 
@@ -250,33 +227,38 @@ public class AssociatedWifiHelper {
         mExecutor.shutdown();
     }
 
-    private void readTable() {
+
+    public String getMacFromArpCache(String ip) {
+        if (ip == null)
+            return null;
+        BufferedReader br = null;
         try {
-            BufferedReader localBufferedReader = new BufferedReader(new FileReader("/proc/net/arp"));
-
-            // read the output from the command
-            String s = null;
-
-            while ((s = localBufferedReader.readLine()) != null) {
-               String[] ipmac = s.split("\\s+");
-                if (!ipmac[0].contains("IP")) {
-                    String ip = ipmac[0].trim();
-                    String mac = ipmac[3].trim();
-                    if (!NoMac.equals(mac)) {
-                        Log.i(TAG, "IP " + ip + "  mac address " + mac);
-                        if (macAddressMap.containsKey(ip)) {
-                            macAddressMap.put(ip, mac);
-                        }
+            br = new BufferedReader(new FileReader("/proc/net/arp"));
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] splitted = line.split(" +");
+                if (splitted != null && splitted.length >= 4 && ip.equals(splitted[0])) {
+                    // Basic sanity check
+                    String mac = splitted[3];
+                    Log.i(TAG, "mac address from arp table is " + mac);
+                    if (mac.matches("..:..:..:..:..:..")) {
+                        return mac;
+                    } else {
+                        return null;
                     }
                 }
             }
-        } catch (IOException ex) {
-            System.err.println(ex);
-        }finally {
-            ((NetworkSniffStatus)mContext).sniffCompleted(macAddressMap);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                br.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+        return null;
     }
-
 
     /**
      * get network sniff result

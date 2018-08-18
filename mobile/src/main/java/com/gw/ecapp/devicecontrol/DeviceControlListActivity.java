@@ -335,8 +335,7 @@ public class DeviceControlListActivity extends AppCompatActivity
 
         if (AppPreferences.getInstance(DeviceControlListActivity.this).hasRouter()) {
             // System is already configured in station mode
-
-
+            sendCommand(controlEvent);
         } else {
 
             // System is in AP mode only..
