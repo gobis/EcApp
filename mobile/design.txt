@@ -1,0 +1,54 @@
+
+Jorgans
+===========
+AP Mode :
+  Phone can directly connect to device
+
+Station mode:
+  Phone can connect to device via router
+
+
+Design:
+   Splash Screen:
+      initial screen where will ask for the permission
+
+   WiFiActivity
+      shows the wifi apart from the device
+      mFromEditPage => you can reach this screen from splash screen or DeviceEditScreen
+        -- it is about moving AP mode to station mode
+
+   DeviceListActivity
+      shows the device list apart from wifi
+
+   AssociatedWifiHelper :
+      class used to sniff the network
+
+      step1 : create instance of the class
+      step 2 : startSniffingNetwork()
+         there are two callbacks
+            sniffStarted();
+            sniffCompleted();  // this results mac with IP address
+
+
+
+   DeviceControlListActivity
+      page actually has the device, and can control it
+
+      showStationModeDialog : fn to move it to station mode
+      IMP: only page where you can set it to station mode
+      this will post the Router info to the Gateway
+
+      you has to click on the scan device , to scan the device
+
+
+
+
+
+   DeviceEditActivity
+      page user can edit it
+
+   QrCodeScanActivity
+      qr code scan page where user can scan the qr code for password
+
+
+
