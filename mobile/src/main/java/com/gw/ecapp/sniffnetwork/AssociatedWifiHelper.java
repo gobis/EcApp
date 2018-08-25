@@ -1,4 +1,4 @@
-package com.gw.ecapp.utility;
+package com.gw.ecapp.sniffnetwork;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -6,31 +6,16 @@ import android.net.Network;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
-import android.os.AsyncTask;
 import android.os.Build;
-import android.os.Handler;
-import android.text.format.Formatter;
 import android.util.Log;
 
 import com.gw.ecapp.AppConfig;
 import com.gw.ecapp.NetworkUtils;
-import com.gw.ecapp.engine.udpEngine.EngineUtils;
-import com.gw.ecapp.engine.udpEngine.udpComms.UDPClient;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.lang.ref.WeakReference;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.NetworkInterface;
-import java.net.Socket;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -49,12 +34,7 @@ public class AssociatedWifiHelper {
 
     private String ipMask;
 
-    private List<String> mMacIdList;
-
-
-    private int mDeviceCount;
-
-    // IP as Key and MAC address as value here
+    // MAC as Key and IP address as value here
     private ConcurrentHashMap<String, String> macAddressMap;
 
     String TAG = getClass().getSimpleName();
@@ -66,17 +46,6 @@ public class AssociatedWifiHelper {
         macAddressMap = new ConcurrentHashMap<>();
     }
 
-    /**
-     * setting mac id
-     *
-     * @param macIds
-     */
-    public void setMacIds(List<String> macIds) {
-        mMacIdList = macIds;
-        Log.i(TAG, "Mac Id list" + macIds.toString());
-        mDeviceCount = 0;
-        startSniffingNetwork();
-    }
 
     /**
      * prepare IP with mask for reachablity
@@ -113,19 +82,34 @@ public class AssociatedWifiHelper {
     /**
      * start sniffing the network
      */
-    private void startSniffingNetwork() {
-        mDeviceCount = 0;
+    public void startSniffingNetwork() {
 
-        ((NetworkSniffStatus)mContext).sniffStarted();
+        // inform to client about starting of sniffing
+        ((NetworkSniffStatus) mContext).sniffStarted(ipMask);
+
+        ArrayList<Future> futureTasks = new ArrayList<>();
         try {
             for (int i = 0; i < 254; i++) {
                 final String testIp = ipMask + String.valueOf(i);
-                mExecutor.submit(new NwSniffTask(testIp));
+                futureTasks.add(mExecutor.submit(new NwSniffTask(testIp)));
+            }
+            // iterate through future group
+            for (Future future : futureTasks) {
+                if (future.isDone()) {
+                    String sniffResult = future.get().toString().trim();
+                    // expecting this should result macId and IP
+                    if (!sniffResult.isEmpty()) {
+                        String[] splitResult = sniffResult.split(",");
+                        macAddressMap.putIfAbsent(splitResult[0], splitResult[1]);
+                    }
+                }
             }
         } catch (Exception e) {
-
+            Log.e(TAG, "Exception => " + e);
         } finally {
-
+            // inform to client about completion of sniffing
+            terminateExecutor();
+            ((NetworkSniffStatus) mContext).sniffCompleted(macAddressMap);
         }
     }
 
@@ -154,7 +138,7 @@ public class AssociatedWifiHelper {
      * @return
      */
     private String checkCurrentIP(final String ip) {
-
+        String result = "";
         try {
             Process p1 = Runtime.getRuntime().exec("ping -c 1 " + ip);
             int returnVal = p1.waitFor();
@@ -165,23 +149,21 @@ public class AssociatedWifiHelper {
                 Log.i(TAG, ip + " is reachable using ping");
 
                 String macAddress = getMacFromArpCache(ip);
-                if(macAddress != null) {
+                if (macAddress != null) {
+                    result = macAddress + "," + ip;
+                    macAddressMap.putIfAbsent(macAddress.toLowerCase(), ip);
                     Log.i(TAG, " mac address is from  arp table " + macAddress);
-                    if(mMacIdList.contains(macAddress.toUpperCase()) || mMacIdList.contains(macAddress.toLowerCase())){
-                        // terminate the executor
-                        terminateExecutor();
-                        // set the ip for further communication
-                        Log.i(TAG, " Setting station mode ip  : " + ip);
-                        EngineUtils.setUdpUniCastIp(ip,EngineUtils.UDP_UNI_CAST_PORT);
-                    }
-            }
+
+                }
             } else {
                 Log.i(TAG, ip + " is not reachable using ping");
             }
         } catch (Exception e) {
+            Log.i(TAG, "Exception occurred while sniffing IP => " + ip);
+        } finally {
 
         }
-    return null;
+        return result;
     }
 
 
@@ -204,21 +186,6 @@ public class AssociatedWifiHelper {
     }
 
     /**
-     * checking the given mac id and taking call on terminating the executors
-     *
-     * @param macAddress
-     */
-    private void checkForExecutorTermination(String macAddress) {
-        Log.i(TAG, "Checking mac address");
-        if (null != mMacIdList && mMacIdList.contains(macAddress)) {
-            mDeviceCount++;
-            if (mMacIdList.size() == mDeviceCount) {
-                terminateExecutor();
-            }
-        }
-    }
-
-    /**
      * terminating executor
      * called when all the given mac Ids are found
      */
@@ -228,7 +195,7 @@ public class AssociatedWifiHelper {
     }
 
 
-    public String getMacFromArpCache(String ip) {
+    private String getMacFromArpCache(String ip) {
         if (ip == null)
             return null;
         BufferedReader br = null;
@@ -262,15 +229,16 @@ public class AssociatedWifiHelper {
 
     /**
      * get network sniff result
+     *
      * @return
      */
-    public ConcurrentHashMap<String,String> getNetworkSniffResult(){
+    public ConcurrentHashMap<String, String> getNetworkSniffResult() {
         return macAddressMap;
     }
 
-    public interface NetworkSniffStatus{
-        void sniffStarted();
-        void sniffCompleted(ConcurrentHashMap<String,String> map);
+    public interface NetworkSniffStatus {
+        void sniffStarted(String maskIp);
+        void sniffCompleted(ConcurrentHashMap<String, String> map);
     }
 
 }

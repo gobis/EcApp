@@ -16,7 +16,7 @@ import android.widget.Toast;
 
 import com.gw.ecapp.AppConstant;
 import com.gw.ecapp.NsdHelper;
-import com.gw.ecapp.utility.AssociatedWifiHelper;
+import com.gw.ecapp.sniffnetwork.AssociatedWifiHelper;
 import com.gw.ecapp.NetworkUtils;
 import com.gw.ecapp.R;
 import com.gw.ecapp.WifiConnection;
@@ -309,7 +309,7 @@ public class WifiActivity extends AppCompatActivity
         ArrayList<String> macIdList = new ArrayList<>();
         macIdList.add("4C-66-41-2C-11-A0");
         AssociatedWifiHelper helper = new AssociatedWifiHelper(WifiActivity.this);
-        helper.setMacIds(macIdList);
+        // helper.setMacIds(macIdList);
 
        /* mNsdHelper = new NsdHelper(this);
         mNsdHelper.initializeNsd();
@@ -322,7 +322,7 @@ public class WifiActivity extends AppCompatActivity
     }
 
     @Override
-    public void sniffStarted() {
+    public void sniffStarted(String ipMask) {
 
     }
 

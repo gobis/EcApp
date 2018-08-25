@@ -37,15 +37,15 @@ import com.gw.ecapp.devicecontrol.events.ApplianceControlEvent;
 import com.gw.ecapp.devicecontrol.events.DeviceEditEvent;
 import com.gw.ecapp.devicecontrol.stationmode.StationModeHelper;
 import com.gw.ecapp.engine.CommEngine;
+import com.gw.ecapp.engine.udpEngine.EngineUtils;
 import com.gw.ecapp.engine.udpEngine.events.MessageArrivedEvent;
-import com.gw.ecapp.engine.udpEngine.packetCreator.RestartMsgPacket;
 import com.gw.ecapp.engine.udpEngine.udpComms.UDPClient;
 import com.gw.ecapp.engine.udpEngine.udpComms.UDPRequestStatus;
 import com.gw.ecapp.storage.AppPreferences;
 import com.gw.ecapp.storage.DatabaseManager;
 import com.gw.ecapp.storage.model.ApplianceModel;
 import com.gw.ecapp.storage.model.DeviceModel;
-import com.gw.ecapp.utility.AssociatedWifiHelper;
+import com.gw.ecapp.sniffnetwork.AssociatedWifiHelper;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -97,6 +97,8 @@ public class DeviceControlListActivity extends AppCompatActivity
 
     private RelativeLayout mMasterDeviceListLayout;
     private RelativeLayout mMasterConsoleLayout;
+
+    List<String> deviceMacList ;
 
 
 
@@ -594,34 +596,10 @@ public class DeviceControlListActivity extends AppCompatActivity
 
     }
 
-    @Override
-    public void sniffStarted() {
-     // show loading UI
-      Log.i(TAG," Network sniff started");
-
-    }
-
-    @Override
-    public void sniffCompleted(ConcurrentHashMap<String,String> macMap) {
-        // hide loading UI
-        // Log.i(TAG," Network sniff completed");
-        // map key is IP value is mac address
-        List<DeviceModel> deviceModelList = mAdapter.getDeviceList();
-
-        deviceModelList = mControlListPresenter.getDevicesAfterSniff(deviceModelList,macMap);
-
-        mAdapter.setData(deviceModelList);
-        mAdapter.notifyDataSetChanged();
-
-    }
-
     // this function will tell you in
-    private AppUtils.ConnMode getCurrentConnectionMode(){
+    private AppUtils.ConnMode getCurrentConnectionMode() {
         AppUtils.ConnMode connMode = AppUtils.ConnMode.AP_MODE;
-
-       List<DeviceModel> deviceModelList = mAdapter.getDeviceList();
-
-
+        List<DeviceModel> deviceModelList = mAdapter.getDeviceList();
         return connMode;
     }
 
@@ -642,6 +620,7 @@ public class DeviceControlListActivity extends AppCompatActivity
                         }
 
                         List<String> macList = new ArrayList<String>(macSet);
+                        deviceMacList = macList;
                         scanNetwork(macList);
 
                     }
@@ -656,9 +635,39 @@ public class DeviceControlListActivity extends AppCompatActivity
         return macAddressList;
     }
 
-    private void scanNetwork(List<String> macList){
+    private void scanNetwork(List<String> macList) {
         AssociatedWifiHelper helper = new AssociatedWifiHelper(DeviceControlListActivity.this);
-        helper.setMacIds(macList);
+        helper.startSniffingNetwork();
+    }
+
+    @Override
+    public void sniffStarted(String ipMask) {
+        // show loading UI
+        Log.i(TAG," Network sniff started, Mask IP => " + ipMask);
+    }
+
+    @Override
+    public void sniffCompleted(ConcurrentHashMap<String,String> macMap) {
+        // hide loading UI
+        // Log.i(TAG," Network sniff completed");
+        // map key is IP value is mac address
+       /* List<DeviceModel> deviceModelList = mAdapter.getDeviceList();
+
+        deviceModelList = mControlListPresenter.getDevicesAfterSniff(deviceModelList,macMap);
+
+        mAdapter.setData(deviceModelList);
+        mAdapter.notifyDataSetChanged();*/
+
+       // hide loading UI
+
+        for (String mac : deviceMacList) {
+            String ip = macMap.get(mac.toLowerCase());
+            if(ip != null){
+                // currently there is only one device, hence set the IP and break it
+                EngineUtils.setUdpUniCastIp(ip, EngineUtils.UDP_UNI_CAST_PORT);
+                break;
+            }
+        }
     }
 
     /**
