@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorPrimary">#00B900</color>
+    <color name="colorPrimaryDark">#00B962</color>
     <color name="colorAccent">#FF4081</color>
 
     <color name="selected">#3F51B5</color>
@@ -16,6 +16,9 @@
     <color name="blue">#1289c4</color>
     <color name="red">#ff0000</color>
     <color name="translucent_white">#eeffffff</color>
+    <color name="faded_white">#EEEEEE</color>
+    <color name="text_color_green">#78BA9B</color>
+
 
     <!-- Alarms -->
     <color name="divider_line">#bababa</color>

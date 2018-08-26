@@ -33,6 +33,7 @@ public class AssociatedWifiHelper {
     private Network mWifiNetwork;
 
     private String ipMask;
+    private boolean isSniffCompleted ;
 
     // MAC as Key and IP address as value here
     private ConcurrentHashMap<String, String> macAddressMap;
@@ -86,30 +87,32 @@ public class AssociatedWifiHelper {
 
         // inform to client about starting of sniffing
         ((NetworkSniffStatus) mContext).sniffStarted(ipMask);
+        isSniffCompleted = false ;
 
         ArrayList<Future> futureTasks = new ArrayList<>();
         try {
-            for (int i = 0; i < 254; i++) {
+            for (int i = 1; i <= 254; i++) {
                 final String testIp = ipMask + String.valueOf(i);
                 futureTasks.add(mExecutor.submit(new NwSniffTask(testIp)));
             }
             // iterate through future group
-            for (Future future : futureTasks) {
+            /*for (Future future : futureTasks) {
                 if (future.isDone()) {
                     String sniffResult = future.get().toString().trim();
                     // expecting this should result macId and IP
                     if (!sniffResult.isEmpty()) {
                         String[] splitResult = sniffResult.split(",");
                         macAddressMap.putIfAbsent(splitResult[0], splitResult[1]);
+                        Log.i(TAG, "mac and ips are " + sniffResult);
                     }
                 }
-            }
+            }*/
         } catch (Exception e) {
             Log.e(TAG, "Exception => " + e);
         } finally {
             // inform to client about completion of sniffing
             terminateExecutor();
-            ((NetworkSniffStatus) mContext).sniffCompleted(macAddressMap);
+           // ((NetworkSniffStatus) mContext).sniffCompleted(macAddressMap);
         }
     }
 
@@ -151,9 +154,7 @@ public class AssociatedWifiHelper {
                 String macAddress = getMacFromArpCache(ip);
                 if (macAddress != null) {
                     result = macAddress + "," + ip;
-                    macAddressMap.putIfAbsent(macAddress.toLowerCase(), ip);
-                    Log.i(TAG, " mac address is from  arp table " + macAddress);
-
+                    macAddressMap.putIfAbsent(macAddress, ip);
                 }
             } else {
                 Log.i(TAG, ip + " is not reachable using ping");
@@ -163,9 +164,22 @@ public class AssociatedWifiHelper {
         } finally {
 
         }
+        checkForSniffCompletion(ip);
         return result;
     }
 
+    private void checkForSniffCompletion(String ip) {
+
+        String[] splitIp = ip.split("\\.");
+        String last = splitIp[3];
+
+        int lastDigit = Integer.parseInt(last);
+
+        if (lastDigit > 252 && !isSniffCompleted) {
+            isSniffCompleted = true;
+            ((NetworkSniffStatus) mContext).sniffCompleted(macAddressMap);
+        }
+    }
 
     public void checkForNetworkConnection() {
         ConnectivityManager connectivityManager = (ConnectivityManager)

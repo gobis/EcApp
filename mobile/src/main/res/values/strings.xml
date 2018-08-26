@@ -56,7 +56,13 @@
     <string name = "disable_log">Disable Log</string>
     <string name = "text_command">Send Text</string>
 
+    <string name = "find_device_ip">Please wait, Device finding is in progress</string>
+    <string name = "wrong_router">You are connected to different router</string>
+
     <string name = "st_mode_fail">Station mode failed, Try again</string>
+    <string name = "try_again">Try again</string>
+    <string name = "exit_app">Exit app</string>
+    <string name = "unable_to_find_device">Unable to find device</string>
 
 
 </resources>

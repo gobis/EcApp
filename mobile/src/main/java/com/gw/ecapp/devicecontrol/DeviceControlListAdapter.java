@@ -301,11 +301,14 @@ public class DeviceControlListAdapter extends RecyclerView.Adapter<DeviceControl
         holder.mMasterTwoChContainer.setVisibility(View.GONE);
         holder.mMasterOneChContainer.setVisibility(View.GONE);
 
+
         if(deviceModel.getConnMode() == AppConstant.AP_MODE) {
             holder.mMasterFourChContainer.setBackgroundColor(ContextCompat.getColor(mContext, R.color.brownish_grey));
         }else {
             holder.mMasterFourChContainer.setBackgroundColor(ContextCompat.getColor(mContext, R.color.color_leaf));
         }
+
+        holder.mMasterFourChContainer.setBackgroundColor(ContextCompat.getColor(mContext, R.color.faded_white));
 
         holder.mFourChDeviceName.setText(deviceModel.getDeviceName());
         ArrayList<ApplianceModel> connectedDevices = deviceModel.getConnectedDevices();
@@ -353,12 +356,12 @@ public class DeviceControlListAdapter extends RecyclerView.Adapter<DeviceControl
                     case R.drawable.switch_off_state:
                         imageView.setImageResource(R.drawable.switch_on_state);
                         imageView.setTag(R.id.ch4_control_1_switch,R.drawable.switch_on_state);
-                        state = 0;
+                        state = 1;
                         break;
                     case R.drawable.switch_on_state:
                         imageView.setImageResource(R.drawable.switch_off_state);
                         imageView.setTag(R.id.ch4_control_1_switch,R.drawable.switch_off_state);
-                        state = 1;
+                        state = 0;
                         break;
                 }
 
@@ -370,7 +373,7 @@ public class DeviceControlListAdapter extends RecyclerView.Adapter<DeviceControl
         });
 
         holder.mFourChControlTwoSwitch.setTag(deviceModel);
-
+        holder.mFourChControlTwoSwitch.setTag(R.id.ch4_control_2_switch,R.drawable.switch_off_state);
         holder.mFourChControlTwoSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -384,12 +387,12 @@ public class DeviceControlListAdapter extends RecyclerView.Adapter<DeviceControl
                     case R.drawable.switch_off_state:
                         imageView.setImageResource(R.drawable.switch_on_state);
                         imageView.setTag(R.id.ch4_control_2_switch,R.drawable.switch_on_state);
-                        state = 0;
+                        state = 1;
                         break;
                     case R.drawable.switch_on_state:
                         imageView.setImageResource(R.drawable.switch_off_state);
                         imageView.setTag(R.id.ch4_control_2_switch,R.drawable.switch_off_state);
-                        state = 1;
+                        state = 0;
                         break;
                 }
 
@@ -402,6 +405,7 @@ public class DeviceControlListAdapter extends RecyclerView.Adapter<DeviceControl
 
 
         holder.mFourChControlThreeSwitch.setTag(deviceModel);
+        holder.mFourChControlThreeSwitch.setTag(R.id.ch4_control_3_switch,R.drawable.switch_off_state);
         holder.mFourChControlThreeSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -415,12 +419,12 @@ public class DeviceControlListAdapter extends RecyclerView.Adapter<DeviceControl
                     case R.drawable.switch_off_state:
                         imageView.setImageResource(R.drawable.switch_on_state);
                         imageView.setTag(R.id.ch4_control_3_switch,R.drawable.switch_on_state);
-                        state = 0;
+                        state = 1;
                         break;
                     case R.drawable.switch_on_state:
                         imageView.setImageResource(R.drawable.switch_off_state);
                         imageView.setTag(R.id.ch4_control_3_switch,R.drawable.switch_off_state);
-                        state = 1;
+                        state = 0;
                         break;
                 }
 
@@ -433,6 +437,7 @@ public class DeviceControlListAdapter extends RecyclerView.Adapter<DeviceControl
 
 
         holder.mFourChControlFourSwitch.setTag(deviceModel);
+        holder.mFourChControlFourSwitch.setTag(R.id.ch4_control_4_switch,R.drawable.switch_off_state);
         holder.mFourChControlFourSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -446,12 +451,12 @@ public class DeviceControlListAdapter extends RecyclerView.Adapter<DeviceControl
                     case R.drawable.switch_off_state:
                         imageView.setImageResource(R.drawable.switch_on_state);
                         imageView.setTag(R.id.ch4_control_4_switch,R.drawable.switch_on_state);
-                        state = 0;
+                        state = 1;
                         break;
                     case R.drawable.switch_on_state:
                         imageView.setImageResource(R.drawable.switch_off_state);
                         imageView.setTag(R.id.ch4_control_4_switch,R.drawable.switch_off_state);
-                        state = 1;
+                        state = 0;
                         break;
                 }
 

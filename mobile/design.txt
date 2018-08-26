@@ -29,6 +29,9 @@ Design:
             sniffStarted();
             sniffCompleted();  // this results mac with IP address
 
+       hack : network sniff parallelism is set as 5 (ie using  5 threads to find out reachable IP )
+       sniffing completion is done only when ip reaches 252 and above
+       NOTE: have to find some way to address this issue
 
 
    DeviceControlListActivity

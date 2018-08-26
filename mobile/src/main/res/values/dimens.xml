@@ -24,5 +24,7 @@
 
     <dimen name="device_name_font_size">16sp</dimen>
 
+    <dimen name="device_control_row_height">45dp</dimen>
+
 
 </resources>

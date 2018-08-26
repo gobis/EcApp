@@ -151,6 +151,7 @@ public class DeviceControlListActivity extends AppCompatActivity
         boolean scanLocalNetwork =  intent.getBooleanExtra(AppConstant.Extras.SCAN_LAN,false);
 
         if(scanLocalNetwork){
+            // already in station mode , start sniff the network
             startScanLocalNetwork();
         }
 
@@ -461,7 +462,9 @@ public class DeviceControlListActivity extends AppCompatActivity
     }
 
     private  void showOverlay(){
-        mOverlayContainer.setVisibility(View.VISIBLE);
+        if(mOverlayContainer.getVisibility() != View.VISIBLE) {
+            mOverlayContainer.setVisibility(View.VISIBLE);
+        }
     }
 
 
@@ -526,16 +529,11 @@ public class DeviceControlListActivity extends AppCompatActivity
                                  connectToRouter();
                              }
                          });
-
-
                     }
 
                     @Override
                     public void negativeButtonClicked() {
                         // user password has changed , take user to wifi page
-
-
-
                     }
                 });
 
@@ -591,9 +589,16 @@ public class DeviceControlListActivity extends AppCompatActivity
         // this needs to be triggered when phone connected to WIFI router
         // how to ensure phone connected to WIFI router
         // get the current connection and check with WIFI data stored , both are matching then you can start sniff
+        final String ssid = AppPreferences.getInstance(DeviceControlListActivity.this).getRouterSSID();
 
-        macAddressList();
-
+        String currentSsid = NetworkUtils.getCurrentSsid(DeviceControlListActivity.this);
+        // remove double quoute from leading and trail
+        currentSsid = currentSsid.replaceAll("\"","");
+        if(currentSsid.equalsIgnoreCase(ssid)) {
+            macAddressList();
+        }else{
+            Toast.makeText(mCurrentContext, "You are connected to different router, make connection with " + ssid, Toast.LENGTH_SHORT).show();
+        }
     }
 
     // this function will tell you in
@@ -606,31 +611,35 @@ public class DeviceControlListActivity extends AppCompatActivity
 
     private List<String> macAddressList(){
         List<String> macAddressList = new ArrayList<>();
+        try {
 
-        DatabaseManager dbManager = DatabaseManager.getInstance(DeviceControlListActivity.this);
-        dbManager.getDeviceList()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(new Consumer<List<DeviceModel>>() {
-                    @Override
-                    public void accept( List<DeviceModel> deviceModels) throws Exception {
-                        Set<String> macSet = new ArraySet<String>();
-                        for (DeviceModel deviceModel:deviceModels) {
-                            macSet.add(deviceModel.getMacId());
+            DatabaseManager dbManager = DatabaseManager.getInstance(DeviceControlListActivity.this);
+            dbManager.getDeviceList()
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.io())
+                    .subscribe(new Consumer<List<DeviceModel>>() {
+                        @Override
+                        public void accept(List<DeviceModel> deviceModels) throws Exception {
+                            Set<String> macSet = new ArraySet<String>();
+                            for (DeviceModel deviceModel : deviceModels) {
+                                macSet.add(deviceModel.getMacId());
+                            }
+
+                            List<String> macList = new ArrayList<String>(macSet);
+                            deviceMacList = macList;
+                            scanNetwork(macList);
+
                         }
-
-                        List<String> macList = new ArrayList<String>(macSet);
-                        deviceMacList = macList;
-                        scanNetwork(macList);
-
-                    }
-                },new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
+                    }, new Consumer<Throwable>() {
+                        @Override
+                        public void accept(Throwable throwable) throws Exception {
 
 
-                    }
-                });
+                        }
+                    });
+        }catch (Exception ex){
+            Log.e(TAG,"Exception in getting devices");
+        }
 
         return macAddressList;
     }
@@ -644,10 +653,12 @@ public class DeviceControlListActivity extends AppCompatActivity
     public void sniffStarted(String ipMask) {
         // show loading UI
         Log.i(TAG," Network sniff started, Mask IP => " + ipMask);
+        showOverlay();
+        mLoadingText.setText(R.string.find_device_ip);
     }
 
     @Override
-    public void sniffCompleted(ConcurrentHashMap<String,String> macMap) {
+    public void sniffCompleted(final ConcurrentHashMap<String,String> macMap) {
         // hide loading UI
         // Log.i(TAG," Network sniff completed");
         // map key is IP value is mac address
@@ -658,16 +669,55 @@ public class DeviceControlListActivity extends AppCompatActivity
         mAdapter.setData(deviceModelList);
         mAdapter.notifyDataSetChanged();*/
 
-       // hide loading UI
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
 
-        for (String mac : deviceMacList) {
-            String ip = macMap.get(mac.toLowerCase());
-            if(ip != null){
-                // currently there is only one device, hence set the IP and break it
-                EngineUtils.setUdpUniCastIp(ip, EngineUtils.UDP_UNI_CAST_PORT);
-                break;
+                Log.i(TAG," Network sniff completed, values are  => " + macMap.toString());
+
+                boolean isDeviceFound = false ;
+
+                for (String mac : deviceMacList) {
+                    String ip = macMap.get(mac.toLowerCase());
+                    if(ip != null){
+                        isDeviceFound = true ;
+                        Toast.makeText(DeviceControlListActivity.this,"IP => " + ip,Toast.LENGTH_LONG).show();
+                        Log.i(TAG," Device is connected to " + ip);
+                        // currently there is only one device, hence set the IP and break it
+                        EngineUtils.setUdpUniCastIp(ip, EngineUtils.UDP_UNI_CAST_PORT);
+                        break;
+                    }
+                }
+
+                // hide loading UI
+                hideOverLay();
+
+                if(!isDeviceFound){
+                    showExitAppDialog();
+                }
             }
-        }
+        });
+
+    }
+
+
+    private void showExitAppDialog(){
+        DialogManager.showGenericConfirmDialogForTwoButtons(
+                DeviceControlListActivity.this,
+                getString(R.string.unable_to_find_device), getString(R.string.try_again), getString(R.string.exit_app), new TwoButtonDialogListener() {
+
+                    @Override
+                    public void positiveButtonClicked() {
+                       // try scanning again
+                       startScanLocalNetwork();
+                    }
+
+                    @Override
+                    public void negativeButtonClicked() {
+                       // exit app
+                       finishAndRemoveTask();
+                    }
+                });
     }
 
     /**

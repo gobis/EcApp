@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -65,7 +66,7 @@ public class WifiActivity extends AppCompatActivity
     private Context mCurrentContext;
 
     boolean mFromEditPage = false ;
-
+    private String TAG = getClass().getSimpleName();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -167,6 +168,8 @@ public class WifiActivity extends AppCompatActivity
 
         mWifiSsidAdapter.setData(mWifiListData);
         mWifiSsidAdapter.notifyDataSetChanged();
+
+      //  test();
     }
 
     @Override
@@ -309,25 +312,17 @@ public class WifiActivity extends AppCompatActivity
         ArrayList<String> macIdList = new ArrayList<>();
         macIdList.add("4C-66-41-2C-11-A0");
         AssociatedWifiHelper helper = new AssociatedWifiHelper(WifiActivity.this);
-        // helper.setMacIds(macIdList);
-
-       /* mNsdHelper = new NsdHelper(this);
-        mNsdHelper.initializeNsd();
-
-        mNsdHelper.registerService(7677);
-        mNsdHelper.discoverServices();*/
-
-
+        helper.startSniffingNetwork();
 
     }
 
     @Override
     public void sniffStarted(String ipMask) {
-
+        Log.i(TAG," Network sniff started, Mask IP => " + ipMask);
     }
 
     @Override
     public void sniffCompleted(ConcurrentHashMap<String, String> map) {
-
+        Log.i(TAG," Network sniff completed, Mask IP => " + map.toString());
     }
 }
