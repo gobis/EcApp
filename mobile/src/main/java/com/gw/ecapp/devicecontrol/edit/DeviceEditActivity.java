@@ -341,9 +341,11 @@ public class DeviceEditActivity extends AppCompatActivity {
 
         deviceModel1.setDeviceName(updatedDeviceName);
         deviceModel1.setApplianceName(updatedControlOneName);
+        deviceModel1.setRelayNumber("1");
 
         deviceModel2.setDeviceName(updatedDeviceName);
         deviceModel2.setApplianceName(updatedControlTwoName);
+        deviceModel2.setRelayNumber("2");
 
         deviceModelList.add(deviceModel1);
         deviceModelList.add(deviceModel2);

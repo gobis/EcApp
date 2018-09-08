@@ -16,6 +16,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -37,14 +38,17 @@ public class AssociatedWifiHelper {
 
     // MAC as Key and IP address as value here
     private ConcurrentHashMap<String, String> macAddressMap;
-
+    private List<String> macList;
+    private List<String> smartIpList;
     String TAG = getClass().getSimpleName();
 
-    public AssociatedWifiHelper(Context context) {
+    public AssociatedWifiHelper(Context context , List<String> macIds, List<String> smartIpList) {
         mExecutor = Executors.newFixedThreadPool(AppConfig.NETWORK_SNIFF_PARALLELISM);
         mContext = context;
         prepareIpWithMask();
         macAddressMap = new ConcurrentHashMap<>();
+        macList = macIds;
+        this.smartIpList = smartIpList;
     }
 
 
@@ -91,22 +95,18 @@ public class AssociatedWifiHelper {
 
         ArrayList<Future> futureTasks = new ArrayList<>();
         try {
-            for (int i = 1; i <= 254; i++) {
-                final String testIp = ipMask + String.valueOf(i);
-                futureTasks.add(mExecutor.submit(new NwSniffTask(testIp)));
-            }
-            // iterate through future group
-            /*for (Future future : futureTasks) {
-                if (future.isDone()) {
-                    String sniffResult = future.get().toString().trim();
-                    // expecting this should result macId and IP
-                    if (!sniffResult.isEmpty()) {
-                        String[] splitResult = sniffResult.split(",");
-                        macAddressMap.putIfAbsent(splitResult[0], splitResult[1]);
-                        Log.i(TAG, "mac and ips are " + sniffResult);
-                    }
+
+            if (smartIpList.size() > 0 && AppConfig.SNIFF_STRATEGY == 0) {
+                for (String smartIp : smartIpList) {
+                    futureTasks.add(mExecutor.submit(new NwSniffTask(smartIp)));
                 }
-            }*/
+            } else {
+                for (int i = 1; i <= 254; i++) {
+                    final String testIp = ipMask + String.valueOf(i);
+                    futureTasks.add(mExecutor.submit(new NwSniffTask(testIp)));
+                }
+            }
+
         } catch (Exception e) {
             Log.e(TAG, "Exception => " + e);
         } finally {
@@ -115,7 +115,6 @@ public class AssociatedWifiHelper {
            // ((NetworkSniffStatus) mContext).sniffCompleted(macAddressMap);
         }
     }
-
 
     /**
      * class responsible for sending and receiving data
@@ -175,7 +174,14 @@ public class AssociatedWifiHelper {
 
         int lastDigit = Integer.parseInt(last);
 
+        // strategy 1: when all IP completes
         if (lastDigit > 252 && !isSniffCompleted) {
+            isSniffCompleted = true;
+            ((NetworkSniffStatus) mContext).sniffCompleted(macAddressMap);
+        }
+
+        // strategy 2: when we found all mac Ids
+        if (!isSniffCompleted && foundAllMacIds()) {
             isSniffCompleted = true;
             ((NetworkSniffStatus) mContext).sniffCompleted(macAddressMap);
         }
@@ -239,6 +245,21 @@ public class AssociatedWifiHelper {
             }
         }
         return null;
+    }
+
+    private boolean foundAllMacIds() {
+        boolean foundAll = true;
+        if(macList == null || macList.size() > 0 ){
+            return false;
+        }
+        for (String mac : macList) {
+            boolean found = macAddressMap.contains(mac);
+            if (!found) {
+                foundAll = false;
+                break;
+            }
+        }
+        return foundAll;
     }
 
     /**

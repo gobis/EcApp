@@ -8,7 +8,7 @@ public class AppConfig {
 
     public static  boolean DeviceFilter = true ;
 
-    public static final String GATEWAY_PREFIX = "GKWAVE";
+    public static String GATEWAY_PREFIX = "GKWAVE";
 
     public  static  String DEVICE_IP = "192.168.4.1";
 
@@ -24,8 +24,16 @@ public class AppConfig {
     public static final int NETWORK_SNIFF_PARALLELISM = 5;  // parallelism is 5
     // do not increase the parallelism , 5 is very optimum found it after so many iteration
 
-
     public static final int ST_MODE_INTERVAL  = 10000;  // 10 Sec
 
+    public static int SNIFF_STRATEGY  = 0;  // 0 sec
+
+    public static void setGatewayPrefix(String prefix){
+        GATEWAY_PREFIX = prefix;
+    }
+
+    public static void setSniffStrategy(int strategy){
+        SNIFF_STRATEGY = strategy;
+    }
 
 }

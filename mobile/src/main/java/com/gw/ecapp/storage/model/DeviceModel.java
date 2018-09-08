@@ -40,6 +40,7 @@ public class DeviceModel {
 
     @DatabaseField
     public String macId;
+
     @DatabaseField
     public String mPreferredIP;
     @DatabaseField
@@ -63,13 +64,6 @@ public class DeviceModel {
     @DatabaseField
     public String EXTRA_COL2;
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public String getDeviceName() {
         return deviceName;
@@ -143,14 +137,6 @@ public class DeviceModel {
         this.connectedDevices = connectedDevices;
     }
 
-    public int getDeviceId() {
-        return id;
-    }
-
-    public void setDeviceId(int deviceId) {
-        this.id = deviceId;
-    }
-
     public String getEXTRA_COL1() {
         return EXTRA_COL1;
     }
@@ -200,12 +186,21 @@ public class DeviceModel {
         this.connMode = connMode;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+
+
     public DeviceModel getDeepCopy() {
         DeviceModel deviceModel = new DeviceModel();
 
         deviceModel.setMacId(this.getMacId());
         deviceModel.setConfigureName(this.getConfigureName());
-        deviceModel.setDeviceId(this.getDeviceId());
         deviceModel.setDeviceName(this.getDeviceName());
         deviceModel.setApplianceName(this.getApplianceName());
         deviceModel.setDeviceSsid(this.getDeviceSsid());

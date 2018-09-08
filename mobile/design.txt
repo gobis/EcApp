@@ -44,7 +44,10 @@ Design:
       you has to click on the scan device , to scan the device
 
 
-
+    Storage point :
+        in case, you are adding four channel device (ie 1 device with 4 relays)
+        there will be 4 records gets created with info...
+        in case, you want to update any device level info, then all the four rows needs to be updated
 
 
    DeviceEditActivity

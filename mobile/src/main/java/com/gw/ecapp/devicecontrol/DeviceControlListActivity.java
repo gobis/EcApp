@@ -41,11 +41,11 @@ import com.gw.ecapp.engine.udpEngine.EngineUtils;
 import com.gw.ecapp.engine.udpEngine.events.MessageArrivedEvent;
 import com.gw.ecapp.engine.udpEngine.udpComms.UDPClient;
 import com.gw.ecapp.engine.udpEngine.udpComms.UDPRequestStatus;
+import com.gw.ecapp.sniffnetwork.AssociatedWifiHelper;
 import com.gw.ecapp.storage.AppPreferences;
 import com.gw.ecapp.storage.DatabaseManager;
 import com.gw.ecapp.storage.model.ApplianceModel;
 import com.gw.ecapp.storage.model.DeviceModel;
-import com.gw.ecapp.sniffnetwork.AssociatedWifiHelper;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -58,6 +58,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
@@ -621,14 +622,26 @@ public class DeviceControlListActivity extends AppCompatActivity
                         @Override
                         public void accept(List<DeviceModel> deviceModels) throws Exception {
                             Set<String> macSet = new ArraySet<String>();
+                            Set<String> ipSet = new ArraySet<String>();
                             for (DeviceModel deviceModel : deviceModels) {
                                 macSet.add(deviceModel.getMacId());
+
+                                String ip = deviceModel.getLastConnectedIP();
+                                if(ip != null && ip.trim().length()>0){
+                                    ipSet.add(ip);
+                                }
+
+                                ip = deviceModel.getPreferredIP();
+                                if(ip != null && ip.trim().length()>0){
+                                    ipSet.add(ip);
+                                }
                             }
 
                             List<String> macList = new ArrayList<String>(macSet);
                             deviceMacList = macList;
-                            scanNetwork(macList);
 
+                            List<String> ipList = new ArrayList<String>(ipSet);
+                            scanNetwork(macList, ipList);
                         }
                     }, new Consumer<Throwable>() {
                         @Override
@@ -644,8 +657,9 @@ public class DeviceControlListActivity extends AppCompatActivity
         return macAddressList;
     }
 
-    private void scanNetwork(List<String> macList) {
-        AssociatedWifiHelper helper = new AssociatedWifiHelper(DeviceControlListActivity.this);
+    private void scanNetwork(List<String> macList , List<String> smartIpList) {
+        AssociatedWifiHelper helper = new AssociatedWifiHelper(
+                DeviceControlListActivity.this,macList,smartIpList);
         helper.startSniffingNetwork();
     }
 
@@ -662,12 +676,6 @@ public class DeviceControlListActivity extends AppCompatActivity
         // hide loading UI
         // Log.i(TAG," Network sniff completed");
         // map key is IP value is mac address
-       /* List<DeviceModel> deviceModelList = mAdapter.getDeviceList();
-
-        deviceModelList = mControlListPresenter.getDevicesAfterSniff(deviceModelList,macMap);
-
-        mAdapter.setData(deviceModelList);
-        mAdapter.notifyDataSetChanged();*/
 
         runOnUiThread(new Runnable() {
             @Override
@@ -676,6 +684,8 @@ public class DeviceControlListActivity extends AppCompatActivity
                 Log.i(TAG," Network sniff completed, values are  => " + macMap.toString());
 
                 boolean isDeviceFound = false ;
+
+                updatePreferredIPList(macMap);
 
                 for (String mac : deviceMacList) {
                     String ip = macMap.get(mac.toLowerCase());
@@ -697,7 +707,78 @@ public class DeviceControlListActivity extends AppCompatActivity
                 }
             }
         });
+    }
 
+    private void updatePreferredIPList(final ConcurrentHashMap<String,String> macMap){
+
+      // get all device and check for mac id and update hte preferred Ip and last IP connected
+        try {
+
+            DatabaseManager dbManager = DatabaseManager.getInstance(DeviceControlListActivity.this);
+            dbManager.getDeviceList()
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.io())
+                    .subscribe(new Consumer<List<DeviceModel>>() {
+                        @Override
+                        public void accept(List<DeviceModel> deviceModels) throws Exception {
+                            updateDevices(macMap,deviceModels);
+                        }
+                    }, new Consumer<Throwable>() {
+                        @Override
+                        public void accept(Throwable throwable) throws Exception {
+
+
+                        }
+                    });
+        }catch (Exception ex){
+            Log.e(TAG,"Exception in getting devices");
+        }
+
+    }
+
+    private void updateDevices(ConcurrentHashMap<String,String> map, List<DeviceModel> deviceModelList){
+        Log.i(TAG,"updateDevices start");
+        boolean isUpdatedNeeded = false;
+        for (DeviceModel deviceModel : deviceModelList) {
+            String macId = deviceModel.getMacId();
+
+            String ip = map.get(macId);
+
+            if(ip  != null){
+                String lastConnectedIP = deviceModel.getLastConnectedIP();
+                if(!ip.equalsIgnoreCase(lastConnectedIP)) {
+                    deviceModel.setLastConnectedIP(ip);
+                    isUpdatedNeeded = true;
+                }
+                // pref connected IP needs to be tuned
+                String preferredIP = deviceModel.getPreferredIP();
+                if(!ip.equalsIgnoreCase(preferredIP)) {
+                    deviceModel.setPreferredIP(ip);
+                    isUpdatedNeeded = true;
+                }
+            }
+        }
+
+        if(isUpdatedNeeded){
+            Log.i(TAG,"updation of device is needed");
+            persistUpdatedInfo(deviceModelList);
+        }
+    }
+
+    private void persistUpdatedInfo(List<DeviceModel> deviceModelList) {
+
+        DatabaseManager dbManager = DatabaseManager.getInstance(DeviceControlListActivity.this);
+        dbManager.bulkUpdateDevice(deviceModelList)
+                .subscribe(new Consumer<Boolean>() {
+                    @Override
+                    public void accept(@NonNull Boolean aBoolean) throws Exception {
+                        Toast.makeText(DeviceControlListActivity.this,"IP updated successfully",Toast.LENGTH_SHORT).show();
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(@NonNull Throwable throwable) throws Exception {
+                    }
+                });
     }
 
 

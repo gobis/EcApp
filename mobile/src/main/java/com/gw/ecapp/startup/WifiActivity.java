@@ -311,7 +311,7 @@ public class WifiActivity extends AppCompatActivity
 
         ArrayList<String> macIdList = new ArrayList<>();
         macIdList.add("4C-66-41-2C-11-A0");
-        AssociatedWifiHelper helper = new AssociatedWifiHelper(WifiActivity.this);
+        AssociatedWifiHelper helper = new AssociatedWifiHelper(WifiActivity.this,macIdList,new ArrayList<String>());
         helper.startSniffingNetwork();
 
     }
