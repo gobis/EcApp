@@ -742,7 +742,7 @@ public class DeviceControlListActivity extends AppCompatActivity
         for (DeviceModel deviceModel : deviceModelList) {
             String macId = deviceModel.getMacId();
 
-            String ip = map.get(macId);
+            String ip = map.get(macId.toLowerCase());
 
             if(ip  != null){
                 String lastConnectedIP = deviceModel.getLastConnectedIP();

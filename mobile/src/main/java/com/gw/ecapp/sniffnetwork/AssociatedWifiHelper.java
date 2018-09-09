@@ -141,6 +141,11 @@ public class AssociatedWifiHelper {
      */
     private String checkCurrentIP(final String ip) {
         String result = "";
+
+        if (isSniffCompleted) {
+            // no need to proceed once sniff completed
+            return result;
+        }
         try {
             Process p1 = Runtime.getRuntime().exec("ping -c 1 " + ip);
             int returnVal = p1.waitFor();
@@ -153,7 +158,7 @@ public class AssociatedWifiHelper {
                 String macAddress = getMacFromArpCache(ip);
                 if (macAddress != null) {
                     result = macAddress + "," + ip;
-                    macAddressMap.putIfAbsent(macAddress, ip);
+                    macAddressMap.putIfAbsent(macAddress.toLowerCase(), ip);
                 }
             } else {
                 Log.i(TAG, ip + " is not reachable using ping");
@@ -249,11 +254,11 @@ public class AssociatedWifiHelper {
 
     private boolean foundAllMacIds() {
         boolean foundAll = true;
-        if(macList == null || macList.size() > 0 ){
+        if(macList == null || macList.size() == 0 ){
             return false;
         }
         for (String mac : macList) {
-            boolean found = macAddressMap.contains(mac);
+            boolean found = macAddressMap.containsKey(mac.toLowerCase()) ;
             if (!found) {
                 foundAll = false;
                 break;

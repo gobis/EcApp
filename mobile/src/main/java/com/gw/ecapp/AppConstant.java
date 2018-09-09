@@ -23,6 +23,8 @@ public class AppConstant {
         public static String MAC_ID = "macId";
         public static String DEVICE_NAME_ID = "deviceName";
         public static String APPLIANCE_NAME_ID = "applianceName";
+        public static String PREFERRED_IP_ID = "mPreferredIP";
+        public static String LAST_CONNECTED_IP_ID = "mLastConnectedIP";
 
     }
 

@@ -137,6 +137,8 @@ public class DatabaseManager {
 
                         updateBuilder.updateColumnValue(AppConstant.DBField.APPLIANCE_NAME_ID,deviceModels.get(i).getApplianceName());
                         updateBuilder.updateColumnValue(AppConstant.DBField.DEVICE_NAME_ID,deviceModels.get(i).getDeviceName());
+                        updateBuilder.updateColumnValue(AppConstant.DBField.LAST_CONNECTED_IP_ID,deviceModels.get(i).getLastConnectedIP());
+                        updateBuilder.updateColumnValue(AppConstant.DBField.PREFERRED_IP_ID,deviceModels.get(i).getPreferredIP());
                         rowsAffected = updateBuilder.update();
                     }
 
