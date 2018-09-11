@@ -68,6 +68,14 @@ import io.reactivex.schedulers.Schedulers;
  * This is landing page when all the devices are configured
  */
 
+        /*
+          if scan mode is selected, then once connection is successful, then start sniff the network
+         */
+     enum MODE {
+         Normal,
+         Scan
+     }
+
 public class DeviceControlListActivity extends AppCompatActivity
         implements WifiConnection.ConnectionStatusInterface ,
         AssociatedWifiHelper.NetworkSniffStatus , UDPRequestStatus {
@@ -100,6 +108,8 @@ public class DeviceControlListActivity extends AppCompatActivity
     private RelativeLayout mMasterConsoleLayout;
 
     List<String> deviceMacList ;
+
+    MODE mCurrentMode = MODE.Normal;
 
 
 
@@ -349,7 +359,7 @@ public class DeviceControlListActivity extends AppCompatActivity
             String controlPassword = deviceModel.getDevicePassword();
 
              String currentSsid = NetworkUtils.getCurrentSsid(DeviceControlListActivity.this);
-            // remove double quoute from leading and trail
+            // remove double quote from leading and trail
              currentSsid = currentSsid.replaceAll("\"","");
             if(currentSsid.equalsIgnoreCase(controlSsid)){
                 sendCommand(controlEvent);
@@ -402,20 +412,26 @@ public class DeviceControlListActivity extends AppCompatActivity
     }
 
 
-    private void checkWifiConnection(){
+    private void checkWifiConnection() {
 
         onSuccessfulWifiConnection();
         // get currently connected ssid
         String currentSsid = NetworkUtils.getCurrentSsid(mCurrentContext);
 
         // remove double quoute from leading and trail
-        currentSsid = currentSsid.replaceAll("\"","");
+        currentSsid = currentSsid.replaceAll("\"", "");
 
-        if(mSelectedSSID.equalsIgnoreCase(currentSsid)){
-            Toast.makeText(mCurrentContext," Connection successful",Toast.LENGTH_SHORT).show();
-            onSuccessfulWifiConnection();
-        }else {
-            Toast.makeText(mCurrentContext,getString(R.string.connect_to_wrong_ssid),Toast.LENGTH_SHORT).show();
+        if (mSelectedSSID.equalsIgnoreCase(currentSsid)) {
+            Toast.makeText(mCurrentContext, " Connection successful", Toast.LENGTH_SHORT).show();
+            if (mCurrentMode == MODE.Normal) {
+                onSuccessfulWifiConnection();
+            } else if (mCurrentMode == MODE.Scan) {
+                // reset the mode status
+                mCurrentMode = MODE.Normal;
+                startScanLocalNetwork();
+            }
+        } else {
+            Toast.makeText(mCurrentContext, getString(R.string.connect_to_wrong_ssid), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -562,7 +578,33 @@ public class DeviceControlListActivity extends AppCompatActivity
 
                     }
                 });
+    }
 
+
+    /**
+     * show when user has connected to different router and wanted to scan / do the work
+     */
+    private void showDialogForWrongRouter(final String ssid){
+
+        DialogManager.showGenericConfirmDialogForTwoButtons(
+                DeviceControlListActivity.this,
+                getString(R.string.different_router,ssid), getString(R.string.yes), getString(R.string.no_exit), new TwoButtonDialogListener() {
+
+                    @Override
+                    public void positiveButtonClicked() {
+                        // user wants to connect to the router where device is connected
+                        mCurrentMode = MODE.Scan;
+                        final String ssid = AppPreferences.getInstance(DeviceControlListActivity.this).getRouterSSID();
+                        final String password = AppPreferences.getInstance(DeviceControlListActivity.this).getRouterPassword();
+                        makeConnection(ssid, password);
+                    }
+
+                    @Override
+                    public void negativeButtonClicked() {
+                        // user don't want to make connection and  exit
+                        finishAndRemoveTask();
+                    }
+                });
     }
 
     /**
@@ -598,7 +640,7 @@ public class DeviceControlListActivity extends AppCompatActivity
         if(currentSsid.equalsIgnoreCase(ssid)) {
             macAddressList();
         }else{
-            Toast.makeText(mCurrentContext, "You are connected to different router, make connection with " + ssid, Toast.LENGTH_SHORT).show();
+            showDialogForWrongRouter(ssid);
         }
     }
 

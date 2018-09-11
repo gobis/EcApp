@@ -18,7 +18,6 @@
     <string name="connection_loading_text">Please wait, While making connection...</string>
     <string name="wait_for_executing_command">Please wait, while executing command</string>
 
-
     <string name="connect_to_wrong_ssid">Wifi is not connected to selected router, Try again...</string>
 
     <string name="unable_connect_to_given_wifi">Unable to connect to %1$s , Try again</string>
@@ -45,6 +44,7 @@
         Are you sure you want to connect to this Wifi router </string>
     <string name = "yes">Yes</string>
     <string name = "no">No</string>
+    <string name = "no_exit">No, Exit</string>
     <string name = "change_password">Change Password</string>
 
     <string name = "settings">Settings</string>
@@ -63,6 +63,9 @@
     <string name = "try_again">Try again</string>
     <string name = "exit_app">Exit app</string>
     <string name = "unable_to_find_device">Unable to find device</string>
+
+    <string name = "different_router">You are connected to different router, make connection with %1$s</string>
+
 
 
 </resources>
